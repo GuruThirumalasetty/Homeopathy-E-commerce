@@ -59,6 +59,10 @@ export class SubscriptionMasterComponent implements OnInit {
     popular: new FormControl(false, { nonNullable: true })
   });
 
+  get show_pof_type(): boolean {
+    return this.subscriptions().some(x=>x.type == 'perceptions on homeopathy');
+  }
+
   get benefits(): FormArray {
     return this.subscriptionForm.get('benefits') as FormArray;
   }
