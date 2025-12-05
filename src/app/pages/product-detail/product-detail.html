@@ -1,0 +1,128 @@
+@if (product(); as product) {
+  <section class="product-detail">
+    <div class="product-preview">
+      <img [src]="product.image" [alt]="product.title" class="preview-image" />
+
+      @if (product.type === 'book' && product.previewPages?.length) {
+        <div class="book-preview-pages">
+          <h3>Book Preview</h3>
+          <div class="preview-grid">
+            @for (page of product.previewPages; track page; let index = $index) {
+              <figure class="preview-page">
+                <img [src]="page" [alt]="'Preview page ' + (index + 1)" />
+                <figcaption>Page {{ index + 1 }}</figcaption>
+              </figure>
+            }
+          </div>
+        </div>
+      }
+
+      @if (product.type === 'video' && safeVideoUrl(); as videoUrl) {
+        <div class="video-preview">
+          <iframe
+            width="100%"
+            height="400"
+            [src]="videoUrl"
+            frameborder="0"
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+            allowfullscreen
+          ></iframe>
+        </div>
+      }
+    </div>
+
+    <div class="product-details">
+      <span class="pill">{{ product.type === 'book' ? 'Book' : 'Video Course' }}</span>
+      <h1>{{ product.title }}</h1>
+      <p class="product-meta">by {{ product.author || product.instructor }}</p>
+
+      <div class="rating-row">
+        <i class="fas fa-star star" *ngFor="let star of [1,2,3,4,5]; let i = index" [class.empty]="product.rating < i + 1"></i>
+        <span>{{ product.rating }} rating</span>
+      </div>
+
+      <div class="price-block">
+        @if (hasDiscount()) {
+          <div class="discount-pricing">
+            <div class="original-price">
+              {{ product.price | currency:'INR':'symbol':'1.2-2' }}
+            </div>
+            <div class="discounted-price">
+              {{ getDiscountedPrice() | currency:'INR':'symbol':'1.2-2' }}
+            </div>
+            <div class="discount-info">
+              <span class="discount-badge">
+                Save {{ getDiscountAmount() | currency:'INR':'symbol':'1.2-2' }}
+                ({{ product.discountType === 'percentage' ? product.discount + '%' : '₹' + product.discount }} off)
+              </span>
+            </div>
+          </div>
+        } @else {
+          <div class="regular-price">
+            {{ product.price | currency:'INR':'symbol':'1.2-2' }}
+          </div>
+        }
+
+        @if (product.type === 'book' && (product.shipping_charges || product.tax)) {
+          <div class="additional-charges">
+            <div class="pricing-breakdown">
+              <div class="pricing-row">
+                <span>Actual Amount:</span>
+                <span>{{ product.price | currency:'INR':'symbol':'1.2-2' }}</span>
+              </div>
+              @if (product.discount && product.discount > 0) {
+                <div class="pricing-row">
+                  <span>Discount ({{ product.discountType === 'percentage' ? product.discount + '%' : '₹' + product.discount }}):</span>
+                  <span>-{{ getDiscountAmount() | currency:'INR':'symbol':'1.2-2' }}</span>
+                </div>
+                <div class="pricing-row">
+                  <span>Discounted Amount:</span>
+                  <span>{{ getDiscountedPrice() | currency:'INR':'symbol':'1.2-2' }}</span>
+                </div>
+              }
+              @if (product.shipping_charges) {
+                <div class="pricing-row">
+                  <span>Shipping Charges:</span>
+                  <span>+{{ product.shipping_charges | currency:'INR':'symbol':'1.2-2' }}</span>
+                </div>
+              }
+              @if (product.tax) {
+                <div class="pricing-row">
+                  <span>Tax ({{ product.tax }}%):</span>
+                  <span>+{{ getTaxAmount() | currency:'INR':'symbol':'1.2-2' }}</span>
+                </div>
+              }
+              <div class="pricing-row total-row">
+                <span>Final Bill Price:</span>
+                <span>{{ getFinalPrice() | currency:'INR':'symbol':'1.2-2' }}</span>
+              </div>
+            </div>
+          </div>
+        }
+      </div>
+
+      <p class="product-description">{{ product.description }}</p>
+
+      <div class="action-buttons">
+        <button class="btn btn-primary" (click)="addToCart()">
+          <i class="fas fa-shopping-cart"></i> Add to Cart
+        </button>
+        <button class="btn btn-outline" (click)="buyNow()">Buy Now</button>
+      </div>
+
+      <section class="detail-list">
+        <h3>Product Details</h3>
+        <ul>
+          <li>High quality content</li>
+          <li>Instant access after purchase</li>
+          <li>Lifetime access</li>
+          <li>Mobile friendly</li>
+        </ul>
+      </section>
+    </div>
+  </section>
+} @else {
+  <section class="product-detail">
+    <p>Product not found.</p>
+  </section>
+}

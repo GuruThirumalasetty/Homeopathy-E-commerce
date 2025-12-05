@@ -1,0 +1,488 @@
+<div class="event-admin-dashboard">
+  <!-- Dashboard Header -->
+  <div class="dashboard-header">
+    <div class="header-content">
+      <h1 class="dashboard-title">
+        <i class="fas fa-calendar-alt"></i>
+        Event Administration Dashboard
+      </h1>
+      <div class="header-actions">
+        <button class="btn btn-primary" (click)="onCreateEvent()" [disabled]="!canCreateEvent()">
+          <i class="fas fa-plus"></i>
+          Create New Event
+        </button>
+        <!-- <div class="export-dropdown">
+          <button class="btn btn-secondary dropdown-toggle" data-bs-toggle="dropdown">
+            <i class="fas fa-download"></i>
+            Export
+          </button>
+          <ul class="dropdown-menu">
+            <li><a class="dropdown-item" (click)="exportEvents('csv')">CSV Format</a></li>
+            <li><a class="dropdown-item" (click)="exportEvents('pdf')">PDF Report</a></li>
+          </ul>
+        </div> -->
+      </div>
+    </div>
+  </div>
+
+  <!-- Dashboard Statistics Cards -->
+  <div class="stats-section">
+    <div class="stats-grid">
+      <div class="stat-card">
+        <div class="stat-icon upcoming">
+          <i class="fas fa-calendar-plus"></i>
+        </div>
+        <div class="stat-content">
+          <h3 class="stat-number">{{ upcomingEvents }}</h3>
+          <p class="stat-label">Upcoming Events</p>
+        </div>
+      </div>
+      
+      <div class="stat-card">
+        <div class="stat-icon in-progress">
+          <i class="fas fa-play-circle"></i>
+        </div>
+        <div class="stat-content">
+          <h3 class="stat-number">{{ inProgressEvents }}</h3>
+          <p class="stat-label">In Progress</p>
+        </div>
+      </div>
+      
+      <div class="stat-card">
+        <div class="stat-icon completed">
+          <i class="fas fa-check-circle"></i>
+        </div>
+        <div class="stat-content">
+          <h3 class="stat-number">{{ completedEvents }}</h3>
+          <p class="stat-label">Completed</p>
+        </div>
+      </div>
+      
+      <div class="stat-card">
+        <div class="stat-icon attendees">
+          <i class="fas fa-users"></i>
+        </div>
+        <div class="stat-content">
+          <h3 class="stat-number">{{ totalAttendees }}</h3>
+          <p class="stat-label">Total Attendees</p>
+        </div>
+      </div>
+      
+      <div class="stat-card">
+        <div class="stat-icon capacity">
+          <i class="fas fa-percentage"></i>
+        </div>
+        <div class="stat-content">
+          <h3 class="stat-number">{{ averageCapacityUtilization }}%</h3>
+          <p class="stat-label">Avg Capacity Usage</p>
+        </div>
+      </div>
+      
+      <div class="stat-card">
+        <div class="stat-icon total">
+          <i class="fas fa-calendar"></i>
+        </div>
+        <div class="stat-content">
+          <h3 class="stat-number">{{ totalEvents }}</h3>
+          <p class="stat-label">Total Events</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Filters and Search Section -->
+  <div class="filters-section">
+    <div class="filters-header">
+      <h3>Filter & Search</h3>
+      <button 
+        class="btn btn-outline-secondary" 
+        (click)="toggleFilters()"
+        [class.active]="showFilters">
+        <i class="fas fa-filter"></i>
+        {{ showFilters ? 'Hide' : 'Show' }} Filters
+      </button>
+    </div>
+    
+    <div class="filters-content" [class.show]="showFilters">
+      <div class="search-bar">
+        <div class="search-input-group">
+          <i class="fas fa-search"></i>
+          <input 
+            type="text" 
+            class="form-control" 
+            placeholder="Search events by name, venue, or organizer..."
+            [ngModel]="filters.searchTerm || ''"
+            (ngModelChange)="onFilterChange({ searchTerm: $event })">
+        </div>
+      </div>
+      
+      <div class="filters-row">
+        <div class="filter-group">
+          <label>Status</label>
+          <div class="status-filters">
+            <label class="status-filter">
+              <input type="checkbox" value="upcoming" 
+                     [checked]="isStatusSelected('upcoming')"
+                     (change)="toggleStatusFilter('upcoming')">
+              <span class="status-badge upcoming">Upcoming</span>
+            </label>
+            <label class="status-filter">
+              <input type="checkbox" value="in_progress" 
+                     [checked]="isStatusSelected('in_progress')"
+                     (change)="toggleStatusFilter('in_progress')">
+              <span class="status-badge in-progress">In Progress</span>
+            </label>
+            <label class="status-filter">
+              <input type="checkbox" value="completed" 
+                     [checked]="isStatusSelected('completed')"
+                     (change)="toggleStatusFilter('completed')">
+              <span class="status-badge completed">Completed</span>
+            </label>
+          </div>
+        </div>
+        
+        <div class="filter-group">
+          <label>Date Range</label>
+          <div class="date-range">
+            <input type="date" class="form-control" 
+                   [ngModel]="dateRangeStart"
+                   (ngModelChange)="onDateRangeStartChange($event)">
+            <span>to</span>
+            <input type="date" class="form-control" 
+                   [ngModel]="dateRangeEnd"
+                   (ngModelChange)="onDateRangeEndChange($event)">
+          </div>
+        </div>
+        
+        <div class="filter-group">
+          <label>Location</label>
+          <input type="text" class="form-control" 
+                 placeholder="City or venue name"
+                 [ngModel]="filters.location || ''"
+                 (ngModelChange)="onFilterChange({ location: $event })">
+        </div>
+        
+        <div class="filter-group">
+          <label>Organizer</label>
+          <input type="text" class="form-control" 
+                 placeholder="Organizer name"
+                 [ngModel]="filters.organizer || ''"
+                 (ngModelChange)="onFilterChange({ organizer: $event })">
+        </div>
+      </div>
+      
+      <div class="filters-actions">
+        <button class="btn btn-outline-primary" (click)="clearFilters()">
+          <i class="fas fa-times"></i>
+          Clear All Filters
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Events List Section -->
+  <div class="events-section">
+    <div class="events-header">
+      <div class="events-count">
+        <h3>Events ({{ filteredEvents.length }})</h3>
+        <span class="events-info">Showing {{ paginatedEvents.length }} of {{ filteredEvents.length }} events</span>
+      </div>
+      
+      <div class="events-controls">
+        <div class="view-mode-toggle">
+          <button 
+            class="btn btn-outline-secondary" 
+            [class.active]="viewMode === 'list'"
+            (click)="onViewModeChange('list')">
+            <i class="fas fa-list"></i>
+          </button>
+          <button 
+            class="btn btn-outline-secondary" 
+            [class.active]="viewMode === 'grid'"
+            (click)="onViewModeChange('grid')">
+            <i class="fas fa-th-large"></i>
+          </button>
+        </div>
+        
+        <div class="sort-controls">
+          <label>Sort by: </label>
+          <select class="form-select form-control" [ngModel]="sortBy" (ngModelChange)="onSortChange($event)">
+            <option value="eventStartTime">Start Time</option>
+            <option value="eventName">Event Name</option>
+            <option value="status">Status</option>
+            <option value="capacity">Capacity</option>
+          </select>
+          <button class="btn btn-outline-secondary" (click)="toggleSortDirection()">
+            <i [class]="sortDirection === 'asc' ? 'fas fa-sort-asc' : 'fas fa-sort-desc'"></i>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Loading State -->
+    @if (loading) {
+      <div class="loading-container">
+        <div class="loading-spinner">
+          <i class="fas fa-spinner fa-spin"></i>
+          <p>Loading events...</p>
+        </div>
+      </div>
+    }
+
+    <!-- No Events State -->
+    @if (!loading && filteredEvents.length === 0) {
+      <div class="no-events">
+        <div class="no-events-content">
+          <i class="fas fa-calendar-times"></i>
+          <h3>No Events Found</h3>
+          <p>No events match your current filters or search criteria.</p>
+          <button class="btn btn-primary" (click)="clearFilters()">Clear Filters</button>
+        </div>
+      </div>
+    }
+
+    <!-- Events Grid View -->
+    @if (viewMode === 'grid' && !loading && paginatedEvents.length > 0) {
+      <div class="events-grid">
+        @for (event of paginatedEvents; track event.id) {
+          <div class="event-card" (click)="onEventSelect(event)">
+            <div>
+              <div class="event-card-header">
+                <h4 class="event-name">{{ event.eventName }}</h4>
+                <span class="event-status" [style.background-color]="getEventStatusInfo(event.status).color">
+                  {{ getEventStatusInfo(event.status).display }}
+                </span>
+              </div>
+              
+              <div class="event-card-body">
+                <div class="event-info">
+                  <div class="info-item">
+                    <i class="fas fa-map-marker-alt"></i>
+                    <span>{{ event.eventLocation.venueName }}, {{ event.eventLocation.city }}</span>
+                  </div>
+                  <div class="info-item">
+                    <i class="fas fa-clock"></i>
+                    <span>{{ formatEventTime(event.eventStartTime) }}</span>
+                  </div>
+                  <div class="info-item">
+                    <i class="fas fa-user"></i>
+                    <span>{{ event.conductorDetails.primaryOrganizer.name }}</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+            
+            <div>
+              <div class="capacity-info">
+                <div class="capacity-bar">
+                  <div class="capacity-fill" 
+                       [style.width.%]="((event.capacity.currentRegistrationCount || 0) / (event.capacity.maximumAttendeeLimit || 0)) * 100"></div>
+                </div>
+                <span class="capacity-text">
+                  {{ (event.capacity.currentRegistrationCount || 0) }} / {{ (event.capacity.maximumAttendeeLimit || 0) }}
+                  @if (hasWaitlist(event)) {
+                    <span>
+                      <i class="fas fa-users" title="Has waitlist"></i>
+                    </span>
+                  }
+                </span>
+              </div>
+                @if (canEditEvent(event) || canDeleteEvent(event)) {
+                  <div class="event-card-actions">
+                    @if (canEditEvent(event)) {
+                      <button 
+                        class="btn btn-sm btn-outline-primary" 
+                        (click)="onEditEvent(event); $event.stopPropagation()"
+                        title="Edit Event">
+                        <i class="fas fa-edit"></i>
+                        Edit
+                      </button>
+                    }
+                    @if (canDeleteEvent(event)) {
+                      <button 
+                        class="btn btn-sm btn-outline-danger" 
+                        (click)="onDeleteEvent(event); $event.stopPropagation()"
+                        title="Delete Event">
+                        <i class="fas fa-trash"></i>
+                        Delete
+                      </button>
+                    }
+                  </div>
+                }
+            </div>
+            
+          </div>
+        }
+      </div>
+    }
+
+    <!-- Events List View -->
+    @if (viewMode === 'list' && !loading && paginatedEvents.length > 0) {
+      <div class="events-table-container">
+        <table class="events-table">
+          <thead>
+            <tr>
+              <th (click)="onSortChange('eventName')" class="sortable">
+                Event Name
+                <i [class]="getSortIcon('eventName')"></i>
+              </th>
+              <th>Location</th>
+              <th (click)="onSortChange('eventStartTime')" class="sortable">
+                Start Time
+                <i [class]="getSortIcon('eventStartTime')"></i>
+              </th>
+              <th (click)="onSortChange('status')" class="sortable">
+                Status
+                <i [class]="getSortIcon('status')"></i>
+              </th>
+              <th (click)="onSortChange('capacity')" class="sortable">
+                Capacity
+                <i [class]="getSortIcon('capacity')"></i>
+              </th>
+              <th>Organizer</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (event of paginatedEvents; track event.id) {
+              <tr class="event-row" (click)="onEventSelect(event)">
+                <td>
+                  <div class="event-name-cell">
+                    <strong>{{ event.eventName }}</strong>
+                  </div>
+                </td>
+                <td>
+                  <div class="location-cell">
+                    <i class="fas fa-map-marker-alt"></i>
+                    {{ event.eventLocation.venueName }}<br>
+                    <small>{{ event.eventLocation.city }}, {{ event.eventLocation.state }}</small>
+                  </div>
+                </td>
+                <td>
+                  <div class="time-cell">
+                    <strong>{{ formatEventTime(event.eventStartTime) }}</strong>
+                    <br>
+                    <small>{{ formatEventTime(event.eventEndTime, event.timeZone) }}</small>
+                  </div>
+                </td>
+                <td>
+                  <span class="status-badge" [style.background-color]="getEventStatusInfo(event.status).color">
+                    {{ getEventStatusInfo(event.status).display }}
+                  </span>
+                </td>
+                <td>
+                  <div class="capacity-cell">
+                    <div class="capacity-bar">
+                      <div class="capacity-fill" 
+                           [style.width.%]="((event.capacity.currentRegistrationCount || 0) / (event.capacity.maximumAttendeeLimit || 0)) * 100"></div>
+                    </div>
+                    <div class="capacity-text">
+                      {{ (event.capacity.currentRegistrationCount || 0) }} / {{ (event.capacity.maximumAttendeeLimit || 0) }}
+                      @if (hasWaitlist(event)) {
+                        <span class="waitlist-indicator">
+                          <i class="fas fa-users" title="Has waitlist"></i>
+                        </span>
+                      }
+                    </div>
+                  </div>
+                </td>
+                <td>
+                  <div class="organizer-cell">
+                    <strong>{{ event.conductorDetails.primaryOrganizer.name }}</strong>
+                    <br>
+                    <small>{{ event.conductorDetails.primaryOrganizer.department }}</small>
+                  </div>
+                </td>
+                <td>
+                  <div class="action-buttons">
+                    <button 
+                      class="btn btn-sm btn-outline-primary" 
+                      (click)="onEditEvent(event); $event.stopPropagation()"
+                      [disabled]="!canEditEvent(event)"
+                      title="Edit Event">
+                      <i class="fas fa-edit"></i>
+                    </button>
+                    <button 
+                      class="btn btn-sm btn-outline-danger" 
+                      (click)="onDeleteEvent(event); $event.stopPropagation()"
+                      [disabled]="!canDeleteEvent(event)"
+                      title="Delete Event">
+                      <i class="fas fa-trash"></i>
+                    </button>
+                    <!-- <button 
+                      class="btn btn-sm btn-outline-info" 
+                      (click)="onViewAttendees(event); $event.stopPropagation()"
+                      [disabled]="!canViewAttendees(event)"
+                      title="View Attendees">
+                      <i class="fas fa-users"></i>
+                    </button> -->
+                  </div>
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    }
+
+    <!-- Pagination -->
+    @if (totalPages > 1) {
+      <div class="pagination-container">
+        <nav aria-label="Events pagination">
+          <ul class="pagination">
+            <li class="page-item" [class.disabled]="!canGoToPreviousPage">
+              <button class="page-link" (click)="onPageChange(currentPage - 1)" [disabled]="!canGoToPreviousPage">
+                <i class="fas fa-chevron-left"></i>
+              </button>
+            </li>
+            
+            @for (page of getPageNumbers(); track page) {
+              <li class="page-item" [class.active]="page === currentPage">
+                <button class="page-link" (click)="onPageChange(page)">{{ page }}</button>
+              </li>
+            }
+            
+            <li class="page-item" [class.disabled]="!canGoToNextPage">
+              <button class="page-link" (click)="onPageChange(currentPage + 1)" [disabled]="!canGoToNextPage">
+                <i class="fas fa-chevron-right"></i>
+              </button>
+            </li>
+          </ul>
+        </nav>
+        
+        <div class="pagination-info">
+          <span>Showing {{ (currentPage - 1) * itemsPerPage + 1 }} to {{ getMin(currentPage * itemsPerPage, filteredEvents.length) }} of {{ filteredEvents.length }} events</span>
+        </div>
+      </div>
+    }
+  </div>
+
+  <!-- Event Form Modal -->
+  @if (showEventForm) {
+    <div class="modal fade" [class.show]="showEventForm">
+      <div class="modal-dialog modal-xl">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title">
+              <i class="fas fa-calendar-plus"></i>
+              {{ selectedEvent ? 'Edit Event' : 'Create New Event' }}
+            </h5>
+            <button type="button" class="btn cancel-btn" (click)="onEventFormClose()"><i class="fas fa-times"></i></button>
+          </div>
+          <div class="modal-body">
+            <!-- Event form component will be injected here -->
+            <app-event-form 
+              [event]="selectedEvent" 
+              [isEditMode]="!!selectedEvent"
+              (formClose)="onEventFormClose()"
+              (eventSaved)="onEventSaved($event)">
+            </app-event-form>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Modal Backdrop -->
+    <div class="modal-backdrop fade" [class.show]="showEventForm"></div>
+  }
+</div>

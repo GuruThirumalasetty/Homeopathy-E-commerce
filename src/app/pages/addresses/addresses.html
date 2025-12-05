@@ -1,0 +1,119 @@
+<section class="addresses-page">
+  <div class="page-header">
+    <h1>My Addresses</h1>
+    <p class="subtitle">Manage your delivery addresses</p>
+  </div>
+
+  <div class="actions">
+    <button class="btn btn-primary" (click)="addAddress()">
+      <i class="fas fa-plus"></i> Add New Address
+    </button>
+  </div>
+
+  @if (showForm()) {
+    <div class="address-form-card">
+      <div class="form-header">
+        <h3>{{ editingAddress() ? 'Edit Address' : 'Add New Address' }}</h3>
+        <button class="btn-icon" (click)="cancelEdit()">
+          <i class="fas fa-times"></i>
+        </button>
+      </div>
+      <form [formGroup]="addressForm" (ngSubmit)="submit()">
+        <div class="form-grid">
+          <label>
+            <span>Address Name <span class="required">*</span></span>
+            <input type="text" formControlName="name" placeholder="e.g., Home, Office" />
+          </label>
+          <label>
+            <span>Phone</span>
+            <input type="tel" formControlName="phone" placeholder="Phone number" />
+          </label>
+        </div>
+
+        <label>
+          <span>Street Address <span class="required">*</span></span>
+          <input type="text" formControlName="street" placeholder="Street address" />
+        </label>
+
+        <div class="form-grid">
+          <label>
+            <span>City <span class="required">*</span></span>
+            <input type="text" formControlName="city" placeholder="City" />
+          </label>
+          <label>
+            <span>State <span class="required">*</span></span>
+            <input type="text" formControlName="state" placeholder="State" />
+          </label>
+        </div>
+
+        <div class="form-grid">
+          <label>
+            <span>ZIP Code <span class="required">*</span></span>
+            <input type="text" formControlName="zipCode" placeholder="ZIP/Postal code" />
+          </label>
+          <label>
+            <span>Country <span class="required">*</span></span>
+            <input type="text" formControlName="country" placeholder="Country" />
+          </label>
+        </div>
+
+        <label class="checkbox-label">
+          <input type="checkbox" formControlName="isDefault" />
+          <span>Set as default address</span>
+        </label>
+
+        <div class="form-actions">
+          <button class="btn btn-secondary" type="button" (click)="cancelEdit()">Cancel</button>
+          <button class="btn btn-primary" type="submit" [disabled]="addressForm.invalid">
+            {{ editingAddress() ? 'Update Address' : 'Add Address' }}
+          </button>
+        </div>
+      </form>
+    </div>
+  }
+
+  <div class="addresses-grid">
+    @for (address of addresses(); track address.id) {
+      <article class="address-card" [class.default]="address.isDefault">
+        @if (address.isDefault) {
+          <div class="default-badge">Default</div>
+        }
+        <div class="address-header">
+          <h3>{{ address.name }}</h3>
+          <div class="card-actions">
+            <button class="btn-icon" (click)="editAddress(address)" title="Edit">
+              <i class="fas fa-edit"></i>
+            </button>
+            <button class="btn-icon btn-delete" (click)="deleteAddress(address)" title="Delete">
+              <i class="fas fa-trash"></i>
+            </button>
+          </div>
+        </div>
+        <div class="address-content">
+          <p>{{ address.street }}</p>
+          <p>{{ address.city }}, {{ address.state }} {{ address.zipCode }}</p>
+          <p>{{ address.country }}</p>
+          @if (address.phone) {
+            <p><i class="fas fa-phone"></i> {{ address.phone }}</p>
+          }
+        </div>
+        @if (!address.isDefault) {
+          <div class="card-footer">
+            <button class="btn btn-outline" (click)="setDefault(address)">Set as Default</button>
+          </div>
+        }
+      </article>
+    }
+  </div>
+
+  @if (addresses().length === 0 && !showForm()) {
+    <div class="empty-state">
+      <i class="fas fa-map-marker-alt"></i>
+      <h3>No Addresses Yet</h3>
+      <p>Add your first delivery address to get started.</p>
+      <button class="btn btn-primary" (click)="addAddress()">
+        <i class="fas fa-plus"></i> Add Address
+      </button>
+    </div>
+  }
+</section>

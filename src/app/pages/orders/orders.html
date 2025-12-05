@@ -1,0 +1,131 @@
+<section class="orders-page">
+  <div class="orders-header">
+    <h1>My Orders</h1>
+    <p class="subtitle">Track and manage your purchases</p>
+  </div>
+
+  @if (orders().length === 0) {
+    <div class="empty-state">
+      <i class="fas fa-inbox"></i>
+      <h3>No Orders Yet</h3>
+      <p>You haven't placed any orders yet. Start shopping now!</p>
+      <a routerLink="/products" class="btn btn-primary">
+        <i class="fas fa-shopping-bag"></i>
+        Browse Products
+      </a>
+    </div>
+  } @else {
+    <div class="orders-list">
+      @for (order of orders(); track order.id) {
+        <article class="order-card" [class]="'status-' + order.status">
+          <div class="order-summary">
+            <div class="order-left">
+              <h3 class="order-id"><a class="order-link" (click)="viewOrderDetails(order.id)">Order #{{ order.id }}</a></h3>
+            </div>
+            <div class="order-right">
+              <div class="order-meta">
+                <p class="order-date">{{ order.createdAt | date:'medium' }}</p>
+                <span class="status-badge" [class]="'badge-' + order.status">
+                  {{ order.status | titlecase }}
+                </span>
+              </div>
+              <p class="order-summary-details">{{ order.items.length }} items • {{ order.total | currency:'INR':'symbol':'1.2-2' }}</p>
+            </div>
+            <button class="expand-toggle" (click)="toggleExpansion(order.id)" [attr.aria-expanded]="isExpanded(order.id)" aria-label="Toggle order details">
+              <i class="fas" [class]="isExpanded(order.id) ? 'fa-chevron-up' : 'fa-chevron-down'"></i>
+            </button>
+          </div>
+
+          @if (isExpanded(order.id)) {
+            <div class="order-details">
+              <div class="order-timeline">
+            <div class="timeline-step" [class.active]="['pending', 'processing', 'shipped', 'delivered'].indexOf(order.status) >= 0">
+              <div class="timeline-dot"></div>
+              <span>Order Placed</span>
+            </div>
+            <div class="timeline-step" [class.active]="['processing', 'shipped', 'delivered'].indexOf(order.status) >= 0">
+              <div class="timeline-dot"></div>
+              <span>Processing</span>
+            </div>
+            <div class="timeline-step" [class.active]="['shipped', 'delivered'].indexOf(order.status) >= 0">
+              <div class="timeline-dot"></div>
+              <span>Shipped</span>
+            </div>
+            <div class="timeline-step" [class.active]="order.status === 'delivered'">
+              <div class="timeline-dot"></div>
+              <span>Delivered</span>
+            </div>
+          </div>
+
+          <div class="order-items">
+            <h4>Items</h4>
+            <ul>
+              @for (item of order.items; track item.type !== 'subscription' ? item.id : item.subscriptionId) {
+                <li class="item-row">
+                  @if (item.type !== 'subscription') {
+                    <img [src]="item.image" [alt]="item.title" class="item-image" [routerLink]="['/product', item.id]" />
+                  } @else {
+                    <div class="subscription-icon">
+                      <i class="fas fa-crown"></i>
+                    </div>
+                  }
+                  <div class="item-details">
+                    <span class="item-name">{{ item.quantity }}× {{ item.type !== 'subscription' ? item.title : item.name }}</span>
+                    <div class="item-pricing">
+                      <span class="item-price">{{ item.purchasePrice || item.price | currency:'INR':'symbol':'1.2-2' }} each </span>
+                      @if (item.discount && item.discount > 0) {
+                        <span class="discount-summary">{{ item.discount }}{{ item.discountType === 'percentage' ? '%' : '₹' }} off per item </span>
+                        <div class="line-total" style="text-align: end;">Line Total: {{ (item.purchasePrice || item.price) * item.quantity | currency:'INR':'symbol':'1.2-2' }}</div>
+                      } @else {
+                        <span class="line-total">Line Total: {{ (item.purchasePrice || item.price) * item.quantity | currency:'INR':'symbol':'1.2-2' }}</span>
+                      }
+                    </div>
+                  </div>
+                </li>
+              }
+            </ul>
+          </div>
+
+          <div class="order-charges">
+            <div class="charge-row">
+              <span>Subtotal</span>
+              <span>{{ order.subtotal || order.total | currency:'INR':'symbol':'1.2-2' }}</span>
+            </div>
+            @if (hasDiscount(order)) {
+              <div class="charge-row discount-row">
+                <span>Total Discount</span>
+                <span>-{{ getTotalDiscount(order) | currency:'INR':'symbol':'1.2-2' }}</span>
+              </div>
+            }
+            <div class="charge-row">
+              <span>Tax({{order.gst || 0}}%)</span>
+              <span>{{ order.tax || 0 | currency:'INR':'symbol':'1.2-2' }}</span>
+            </div>
+            <div class="charge-row">
+              <span>Shipping</span>
+              <span>{{ order.shipping || 0 | currency:'INR':'symbol':'1.2-2' }}</span>
+            </div>
+            <div class="charge-row total">
+              <span>Order Total</span>
+              <span>{{ order.total | currency:'INR':'symbol':'1.2-2' }}</span>
+            </div>
+          </div>
+          @if (order.status === 'delivered' && order.delivered_on) {
+            <p class="delivered-date">
+              <i class="fas fa-check-circle"></i>
+              Delivered on {{ order.delivered_on | date:'medium' }}
+            </p>
+          }
+          <!-- @if (order.status !== 'delivered' && order.status !== 'cancelled') {
+            <button class="btn btn-danger cancel-btn" (click)="cancelOrder(order); $event.stopPropagation()">
+              <i class="fas fa-times"></i>
+              Cancel Order
+            </button>
+          } -->
+            </div>
+          }
+        </article>
+      }
+    </div>
+  }
+</section>

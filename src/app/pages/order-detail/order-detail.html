@@ -1,0 +1,294 @@
+<section class="order-detail-page">
+  <div class="container">
+    <div class="header">
+      <button class="back-btn" (click)="goBack()">
+        <i class="fas fa-arrow-left"></i>
+        Back
+      </button>
+      <h1>Order Details</h1>
+    </div>
+
+    @if (error()) {
+      <div class="error-message">
+        <i class="fas fa-exclamation-triangle"></i>
+        {{ error() }}
+      </div>
+    } @else if (order(); as order) {
+      <div class="order-content">
+        <!-- Order Header -->
+        <div class="order-header-card">
+          <div class="order-info">
+            <h2>Order #{{ order.id }}</h2>
+            <p class="order-date">Placed on {{ order.createdAt | date:'medium' }}</p>
+            <span class="status-badge" [class]="'badge-' + order.status">
+              {{ order.status | titlecase }}
+            </span>
+          </div>
+        </div>
+
+        <!-- Customer Information -->
+        @if (user(); as user) {
+          <div class="info-card">
+            <h3><i class="fas fa-user"></i> Customer Information</h3>
+            <div class="card-content">
+              <p><strong>Name:</strong> {{ user.name }}</p>
+              <p><strong>Email:</strong> {{ user.email }}</p>
+              @if (user.mobile_number) {
+                <p><strong>Phone:</strong> {{ user.mobile_number }}</p>
+              }
+            </div>
+          </div>
+        }
+
+        <!-- Shipping Address -->
+        @if (address(); as address) {
+          <div class="info-card">
+            <h3><i class="fas fa-map-marker-alt"></i> Shipping Address</h3>
+            <div class="card-content">
+              <p><strong>{{ address.name }}</strong></p>
+              <p>{{ address.street }}</p>
+              <p>{{ address.city }}, {{ address.state }} {{ address.zipCode }}</p>
+              <p>{{ address.country }}</p>
+              @if (address.phone) {
+                <p><strong>Phone:</strong> {{ address.phone }}</p>
+              }
+            </div>
+          </div>
+        }
+
+        <!-- Transaction Details -->
+        @if (transactions().length > 0) {
+          <div class="transactions-section">
+            <h3><i class="fas fa-credit-card"></i> Payment Transactions</h3>
+
+            <!-- Success Transactions -->
+            @if (successTransactions().length > 0) {
+              <div class="transaction-group success-group">
+                <div class="group-header">
+                  <h4><i class="fas fa-check-circle"></i> Payment Transactions</h4>
+                  <span class="transaction-count">{{ successTransactions().length }}</span>
+                </div>
+                <div class="transactions-grid">
+                  @for (transaction of successTransactions(); track transaction.id) {
+                    <div class="transaction-card success-card">
+                      <div class="transaction-icon">
+                        <i class="fas" [class]="getTransactionIcon(transaction.method)"></i>
+                      </div>
+                      <div class="transaction-content">
+                        <div class="transaction-header">
+                          <span class="transaction-id">{{ transaction.id }}</span>
+                          <span class="transaction-status success">
+                            <i class="fas fa-check"></i>
+                            Paid
+                          </span>
+                        </div>
+                        <div class="transaction-details">
+                          <span class="transaction-method">
+                            <i class="fas fa-credit-card"></i>
+                            {{ transaction.method | titlecase }}
+                          </span>
+                          <span class="transaction-date">
+                            <i class="fas fa-calendar"></i>
+                            {{ transaction.createdAt | date:'short' }}
+                          </span>
+                        </div>
+                      </div>
+                      <div class="transaction-amount">
+                        <span class="amount paid-amount">{{ transaction.amount | currency:'INR':'symbol':'1.2-2' }}</span>
+                      </div>
+                    </div>
+                  }
+                </div>
+              </div>
+            }
+
+            <!-- Refund Transactions -->
+            @if (refundTransactions().length > 0) {
+              <div class="transaction-group refund-group">
+                <div class="group-header">
+                  <h4><i class="fas fa-undo-alt"></i> Refund Transactions</h4>
+                  <span class="transaction-count">{{ refundTransactions().length }}</span>
+                </div>
+                <div class="transactions-grid">
+                  @for (transaction of refundTransactions(); track transaction.id) {
+                    <div class="transaction-card refund-card">
+                      <div class="transaction-icon">
+                        <i class="fas fa-undo"></i>
+                      </div>
+                      <div class="transaction-content">
+                        <div class="transaction-header">
+                          <span class="transaction-id">{{ transaction.id }}</span>
+                          <span class="transaction-status refunded">
+                            <i class="fas fa-undo"></i>
+                            Refunded
+                          </span>
+                        </div>
+                        <div class="transaction-details">
+                          <span class="transaction-method">
+                            <i class="fas fa-wallet"></i>
+                            {{ transaction.method | titlecase }}
+                          </span>
+                          <span class="transaction-date">
+                            <i class="fas fa-calendar"></i>
+                            {{ transaction.createdAt | date:'short' }}
+                          </span>
+                        </div>
+                      </div>
+                      <div class="transaction-amount">
+                        <span class="amount refund-amount">{{ transaction.amount | currency:'INR':'symbol':'1.2-2' }}</span>
+                      </div>
+                    </div>
+                  }
+                </div>
+              </div>
+            }
+
+            <!-- Transaction Summary -->
+            <div class="transaction-summary-card">
+              <div class="summary-grid">
+                <div class="summary-item">
+                  <span class="summary-label">Total Paid</span>
+                  <span class="summary-value paid">{{ totalPaid() | currency:'INR':'symbol':'1.2-2' }}</span>
+                </div>
+                <div class="summary-item">
+                  <span class="summary-label">Total Refunded</span>
+                  <span class="summary-value refunded">{{ totalRefunded() | currency:'INR':'symbol':'1.2-2' }}</span>
+                </div>
+                <div class="summary-item total">
+                  <span class="summary-label">Net Amount</span>
+                  <span class="summary-value net">{{ netPaid() | currency:'INR':'symbol':'1.2-2' }}</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        }
+
+        <!-- Order Items -->
+        <div class="info-card">
+          <h3><i class="fas fa-shopping-cart"></i> Order Items</h3>
+          <div class="card-content">
+            <div class="items-list">
+              @for (item of order.items; track item.type !== 'subscription' ? item.id : item.subscriptionId) {
+                <div class="item-row">
+                  @if (item.type !== 'subscription') {
+                    <img [src]="item.image" (click)="open_product_detail(item.id!)" [alt]="item.title" class="item-image product-link" />
+                  } @else {
+                    <div class="subscription-icon">
+                      <i class="fas fa-crown"></i>
+                    </div>
+                  }
+                  <div class="item-details">
+                    <h4 [class]="item.type !== 'subscription' ? 'product-link' : ''" (click)="item.type !== 'subscription' ? open_product_detail(item.id!) : null">{{ item.type !== 'subscription' ? item.title : item.name }}</h4>
+                    <p class="item-description">{{ item.description || 'No description available' }}</p>
+                    @if (item.type !== 'subscription') {
+                      <div class="rating-row">
+                        <i class="fas fa-star star" [ngClass]="{ 'product-link' : item.rating == 0 && order.status == 'delivered' }"
+                        *ngFor="let star of [1,2,3,4,5]; let i = index"
+                        (click)="item.rating == 0 && order.status == 'delivered' ? give_rating(order, item, star) : null"
+                        [class.empty]="(item.rating || 0) < i + 1"></i>
+                        <span *ngIf="item.rating != 0">{{ item.rating }} rating</span>
+                        <span *ngIf="item.rating == 0 && order.status == 'delivered'">Rate here</span>
+                      </div>
+                    }
+                    <div class="item-meta">
+                      <span class="quantity">Quantity: {{ item.quantity }}</span>
+                      <div class="item-pricing">
+                        <span class="price">{{ item.purchasePrice || item.price || 0 | currency:'INR':'symbol':'1.2-2' }} per item </span>
+                        @if (item.discount && item.discount > 0) {
+                          <span class="discount-summary">{{ item.discount }}{{ item.discountType === 'percentage' ? '%' : '₹' }} off per item. </span>
+                          <span class="line-total">Line Total: {{ (item.purchasePrice || item.price || 0) * item.quantity | currency:'INR':'symbol':'1.2-2' }}</span>
+                        } @else {
+                          <span class="line-total">Line Total: {{ (item.purchasePrice || item.price || 0) * item.quantity | currency:'INR':'symbol':'1.2-2' }}</span>
+                        }
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              }
+            </div>
+          </div>
+        </div>
+
+        <!-- Order Summary -->
+        <div class="info-card">
+          <h3><i class="fas fa-receipt"></i> Order Summary</h3>
+          <div class="card-content">
+            <div class="summary-table">
+              <div class="summary-row">
+                <span>Subtotal</span>
+                <span>{{ order.subtotal | currency:'INR':'symbol':'1.2-2' }}</span>
+              </div>
+              @if (hasDiscount(order)) {
+                <div class="summary-row discount-row">
+                  <span>Total Discount</span>
+                  <span>-{{ getTotalDiscount(order) | currency:'INR':'symbol':'1.2-2' }}</span>
+                </div>
+              }
+              <div class="summary-row">
+                <span>Tax({{order.gst || 0}}%)</span>
+                <span>{{ order.tax | currency:'INR':'symbol':'1.2-2' }}</span>
+              </div>
+              <div class="summary-row">
+                <span>Shipping</span>
+                <span>{{ order.shipping | currency:'INR':'symbol':'1.2-2' }}</span>
+              </div>
+              <div class="summary-row">
+                <span>Order Total</span>
+                <span>{{ order.total | currency:'INR':'symbol':'1.2-2' }}</span>
+              </div>
+              @if (totalRefunded() > 0) {
+                <div class="summary-row refund-row">
+                  <span>Refunded</span>
+                  <span class="refund-amount">-{{ totalRefunded() | currency:'INR':'symbol':'1.2-2' }}</span>
+                </div>
+                <div class="summary-row total net-total">
+                  <span><strong>Net Paid</strong></span>
+                  <span><strong>{{ netPaid() | currency:'INR':'symbol':'1.2-2' }}</strong></span>
+                </div>
+              } @else {
+                <div class="summary-row total">
+                  <span><strong>Total Paid</strong></span>
+                  <span><strong>{{ order.total | currency:'INR':'symbol':'1.2-2' }}</strong></span>
+                </div>
+              }
+            </div>
+          </div>
+        </div>
+
+        <!-- Additional Info -->
+        @if (order.deliveryDate) {
+          <div class="info-card">
+            <h3><i class="fas fa-truck"></i> Delivery Information</h3>
+            <div class="card-content">
+              <p><strong>Delivered on:</strong> {{ order.deliveryDate | date:'mediumDate' }}</p>
+            </div>
+          </div>
+        }
+
+        @if (order.status == 'shipped' || order.status == 'delivered') {
+          <div class="info-card">
+            <h3><i class="fas fa-clock"></i> Timestamps</h3>
+            <div class="card-content">
+              <p><strong>Placed On:</strong> {{ order.placed_on | date:'medium' }}</p>
+              <p><strong>Shipped On:</strong> {{ order.shipped_on | date:'medium' }}</p>
+              <p *ngIf="order.status == 'delivered'"><strong>Delivered On:</strong> {{ order.delivered_on | date:'medium' }}</p>
+            </div>
+          </div>
+        }
+
+        <!-- Download Invoice  *ngIf="order.status == 'delivered'" -->
+        <div class="info-card">
+          <h3><i class="fas fa-download"></i> Invoice</h3>
+          <div class="card-content">
+            <button class="btn btn-primary" (click)="downloadInvoice()" [disabled]="isGeneratingPdf()">
+              <i class="fas fa-file-pdf"></i>
+              {{ isGeneratingPdf() ? 'Generating...' : 'Download Invoice PDF' }}
+            </button>
+          </div>
+        </div>
+      </div>
+    } @else {
+      <app-loading-spinner></app-loading-spinner>
+    }
+  </div>
+</section>

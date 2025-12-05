@@ -1,0 +1,160 @@
+<section class="checkout container">
+  <h2>Checkout</h2>
+  <div class="checkout-layout">
+    <form [formGroup]="checkoutForm" (ngSubmit)="placeOrder()" novalidate>
+      <div class="form-grid">
+        <label>
+          Full Name
+          <input type="text" formControlName="fullName" placeholder="Enter your name" />
+        </label>
+        <label>
+          Email
+          <input type="email" formControlName="email" placeholder="you@example.com" />
+        </label>
+      </div>
+
+      @if (!videosOnly() && !subscriptionsOnly()) {
+        <section class="address-selection">
+          <h3>Shipping Address</h3>
+          @if (addresses().length === 0) {
+            <p>No saved addresses. <a routerLink="/addresses">Add an address</a></p>
+          } @else {
+            <div class="address-list">
+              @for (address of addresses(); track address.id) {
+                <div class="address-option" [class.selected]="selectedAddress()?.id === address.id">
+                  <label class="address-radio">
+                    <input type="radio" name="selectedAddress" [value]="address.id" (change)="selectAddress(address)" [checked]="selectedAddress()?.id === address.id" />
+                  </label>
+                  <div class="address-content">
+                    <div class="address-name">{{ address.name }} @if (address.isDefault) { (Default) }</div>
+                    <div class="address-details">{{ address.street }}, {{ address.city }}, {{ address.state }} {{ address.zipCode }}</div>
+                    <div class="address-country">{{ address.country }}</div>
+                    @if (address.phone) {
+                      <div class="address-phone">{{ address.phone }}</div>
+                    }
+                  </div>
+                  <button class="edit-btn" (click)="editAddress(address)" title="Edit Address">
+                    <i class="fas fa-edit"></i>
+                  </button>
+                </div>
+              }
+            </div>
+            <a routerLink="/addresses" class="manage-addresses">Add New Address</a>
+          }
+        </section>
+      }
+
+      <section class="payment-methods">
+        <h3>Payment Method</h3>
+        <label>
+          <input type="radio" value="card" formControlName="paymentMethod" /> Credit / Debit Card
+        </label>
+        <label>
+          <input type="radio" value="upi" formControlName="paymentMethod" /> UPI
+        </label>
+        <label>
+          <input type="radio" value="netbanking" formControlName="paymentMethod" /> Net Banking
+        </label>
+      </section>
+
+      <!-- Edit Address Dialog -->
+      @if (showEditDialog()) {
+        <div class="dialog-overlay" (click)="closeEditDialog()">
+          <div class="dialog-content" (click)="$event.stopPropagation()">
+            <div class="dialog-header">
+              <h3>Edit Address</h3>
+              <button class="dialog-close" (click)="closeEditDialog()">
+                <i class="fas fa-times"></i>
+              </button>
+            </div>
+            <div class="dialog-body">
+              @if (selectedAddressForEdit()) {
+                <form class="address-form">
+                  <div class="form-grid">
+                    <label>
+                      <span>Address Name <span class="required">*</span></span>
+                      <input type="text" [(ngModel)]="selectedAddressForEdit()!.name" placeholder="e.g., Home, Office" />
+                    </label>
+                    <label>
+                      <span>Phone</span>
+                      <input type="tel" [(ngModel)]="selectedAddressForEdit()!.phone" placeholder="Phone number" />
+                    </label>
+                  </div>
+
+                  <label>
+                    <span>Street Address <span class="required">*</span></span>
+                    <input type="text" [(ngModel)]="selectedAddressForEdit()!.street" placeholder="Street address" />
+                  </label>
+
+                  <div class="form-grid">
+                    <label>
+                      <span>City <span class="required">*</span></span>
+                      <input type="text" [(ngModel)]="selectedAddressForEdit()!.city" placeholder="City" />
+                    </label>
+                    <label>
+                      <span>State <span class="required">*</span></span>
+                      <input type="text" [(ngModel)]="selectedAddressForEdit()!.state" placeholder="State" />
+                    </label>
+                  </div>
+
+                  <div class="form-grid">
+                    <label>
+                      <span>ZIP Code <span class="required">*</span></span>
+                      <input type="text" [(ngModel)]="selectedAddressForEdit()!.zipCode" placeholder="ZIP/Postal code" />
+                    </label>
+                    <label>
+                      <span>Country <span class="required">*</span></span>
+                      <input type="text" [(ngModel)]="selectedAddressForEdit()!.country" placeholder="Country" />
+                    </label>
+                  </div>
+
+                  <label class="checkbox-label">
+                    <input type="checkbox" [(ngModel)]="selectedAddressForEdit()!.isDefault" />
+                    <span>Set as default address</span>
+                  </label>
+                </form>
+              }
+            </div>
+            <div class="dialog-footer">
+              <button class="btn btn-secondary" (click)="closeEditDialog()">Cancel</button>
+              <button class="btn btn-primary" (click)="updateAddress()">Update Address</button>
+            </div>
+          </div>
+        </div>
+      }
+    </form>
+
+    <aside class="order-summary">
+      <h3>Order Summary</h3>
+      @for (item of items(); track item.type !== 'subscription' ? item.id : item.subscriptionId) {
+        <div class="summary-item">
+          <div>
+            <p>{{ item.type !== 'subscription' ? item.title : item.name }}</p>
+            <span>{{ item.quantity }} × {{ item.purchasePrice || item.price || 0 | currency:'INR':'symbol':'1.2-2' }} each </span>
+            @if (item.discount && item.discount > 0) {
+              <span class="discount-summary">{{ item.discount }}{{ item.discountType === 'percentage' ? '%' : '₹' }} off</span>
+            }
+          </div>
+          <strong>{{ (item.finalPrice || item.purchasePrice || item.price || 0) * item.quantity | currency:'INR':'symbol':'1.2-2' }}</strong>
+        </div>
+      }
+      @if (totalDiscount() > 0) {
+        <div class="summary-row discount-row">
+          <span>Total Discount</span>
+          <strong>-{{ totalDiscount() | currency:'INR':'symbol':'1.2-2' }}</strong>
+        </div>
+      }
+      <div class="summary-row">
+        <span>Shipping</span>
+        <strong>{{ shipping() | currency:'INR':'symbol':'1.2-2' }}</strong>
+      </div>
+      <div class="summary-row total">
+        <span>Total</span>
+        <strong>{{ total() | currency:'INR':'symbol':'1.2-2' }}</strong>
+      </div>
+      <button class="btn btn-primary" type="button" (click)="placeOrder()" [disabled]="!isValid()">
+        Place Order
+      </button>
+    </aside>
+  </div>
+</section>

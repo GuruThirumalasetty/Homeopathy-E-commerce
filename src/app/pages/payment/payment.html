@@ -1,0 +1,10 @@
+<section class="container payment">
+  <h2>Payment Options</h2>
+  <p>Outstanding amount: {{ total() | currency:'INR':'symbol':'1.2-2' }}</p>
+  <ul class="payment-options">
+    <li><i class="fas fa-credit-card"></i> Pay with Credit / Debit Card</li>
+    <li><i class="fas fa-mobile-alt"></i> Pay with UPI</li>
+    <li><i class="fas fa-university"></i> Net Banking</li>
+    <li><i class="fas fa-wallet"></i> Wallet</li>
+  </ul>
+</section>

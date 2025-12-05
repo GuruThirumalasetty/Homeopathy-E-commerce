@@ -1,0 +1,224 @@
+<div class="subscription-master-container">
+  <div class="header">
+    <h1>Subscription Management</h1>
+    <button class="btn btn-primary" (click)="showForm.set(true)" *ngIf="!showForm()">
+      <i class="fas fa-plus"></i> Add New Subscription
+    </button>
+  </div>
+
+  <!-- Form Section -->
+  <div class="form-section" *ngIf="showForm()">
+    <div class="form-card">
+      <h3>{{ editingSubscriptionId() ? 'Edit Subscription' : 'Add New Subscription' }}</h3>
+      <form [formGroup]="subscriptionForm" (ngSubmit)="submit()">
+
+        <!-- Basic Info -->
+        <div class="form-row grid grid-cols-3">
+          <div class="form-group">
+            <label for="name">Plan Name *</label>
+            <input type="text" id="name" formControlName="name" class="form-control">
+            <div class="error" *ngIf="subscriptionForm.get('name')?.invalid && subscriptionForm.get('name')?.touched">
+              Plan name is required
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="type">Type Of Product *</label>
+            <select formControlName="type" class="form-control">
+              <option value="book">Book</option>
+              <option value="video">Video</option>
+              <option value="perceptions on homeopathy">Perceptions on Homeopathy</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="duration">Duration *</label>
+            <select id="duration" formControlName="duration" class="form-control">
+              <option value="monthly">Monthly</option>
+              <option value="yearly">Yearly</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="description">Description *</label>
+          <textarea id="description" formControlName="description" class="form-control" rows="3"></textarea>
+          <div class="error" *ngIf="subscriptionForm.get('description')?.invalid && subscriptionForm.get('description')?.touched">
+            Description is required
+          </div>
+        </div>
+
+        <!-- Pricing -->
+        <div class="form-row grid grid-cols-3">
+          <div class="form-group">
+            <label for="price">Price (₹) *</label>
+            <input type="number" id="price" formControlName="price" class="form-control" min="0" step="0.01">
+            <div class="error" *ngIf="subscriptionForm.get('price')?.invalid && subscriptionForm.get('price')?.touched">
+              Valid price is required
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="discountType">Discount Type</label>
+            <select id="discountType" formControlName="discountType" class="form-control">
+              <option value="percentage">Percentage (%)</option>
+              <option value="fixed">Fixed Amount (₹)</option>
+            </select>
+          </div>
+          
+          <div class="form-group">
+            <label for="discount">Discount</label>
+            <input type="number" id="discount" formControlName="discount" class="form-control" min="0" step="0.01">
+          </div>
+        </div>
+
+        <!-- Preview Pricing -->
+        <div class="pricing-preview" *ngIf="(subscriptionForm.get('price')?.value || 0) > 0">
+          <h4>Pricing Preview:</h4>
+          <div class="price-display">
+            <span class="original-price" *ngIf="(subscriptionForm.get('discount')?.value || 0) > 0">
+              ₹{{ subscriptionForm.get('price')?.value }}
+            </span>
+            <span class="discounted-price">
+              ₹{{ getFormDiscountedPrice() }}
+            </span>
+            <span class="discount-info" *ngIf="(subscriptionForm.get('discount')?.value || 0) > 0">
+              (Save ₹{{ getFormDiscountAmount() }})
+            </span>
+          </div>
+        </div>
+
+        <!-- Benefits -->
+        <div class="form-group">
+          <label>Benefits/Features</label>
+          <div class="array-inputs">
+            <div class="array-item" *ngFor="let benefit of benefits.controls; let i = index">
+              <input type="text" [formControl]="$any(benefit)" class="form-control" placeholder="Enter benefit">
+              <button type="button" class="btn btn-danger btn-sm" (click)="removeBenefit(i)">
+                <i class="fas fa-trash"></i>
+              </button>
+            </div>
+            <button type="button" class="btn btn-secondary btn-sm" (click)="addBenefit()">
+              <i class="fas fa-plus"></i> Add Benefit
+            </button>
+          </div>
+        </div>
+
+        <!-- Limitations -->
+        <div class="form-group">
+          <label>Limitations</label>
+          <div class="array-inputs">
+            <div class="array-item" *ngFor="let limitation of limitations.controls; let i = index">
+              <input type="text" [formControl]="$any(limitation)" class="form-control" placeholder="Enter limitation">
+              <button type="button" class="btn btn-danger btn-sm" (click)="removeLimitation(i)">
+                <i class="fas fa-trash"></i>
+              </button>
+            </div>
+            <button type="button" class="btn btn-secondary btn-sm" (click)="addLimitation()">
+              <i class="fas fa-plus"></i> Add Limitation
+            </button>
+          </div>
+        </div>
+
+        <!-- Popular Flag -->
+        <div class="form-group">
+          <label class="checkbox-label">
+            <input type="checkbox" formControlName="popular">
+            Mark as Popular Plan
+          </label>
+        </div>
+
+        <!-- Form Actions -->
+        <div class="form-actions">
+          <button type="submit" class="btn btn-primary" [disabled]="subscriptionForm.invalid">
+            {{ editingSubscriptionId() ? 'Update' : 'Create' }} Subscription
+          </button>
+          <button type="button" class="btn btn-secondary" (click)="cancelEdit()">
+            Cancel
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Table Section -->
+  <div class="table-section">
+    <div class="table-card">
+      <h3>Existing Subscriptions</h3>
+      <div class="table-responsive">
+        <table class="subscription-table">
+          <thead>
+            <tr>
+              <th>Name</th>
+              <th>Duration</th>
+              <th>Pricing</th>
+              <th>Benefits</th>
+              <th>Limitations</th>
+              <th>Type</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let subscription of subscriptions()">
+              <td>
+                <div class="plan-name">
+                  <i class="fas fa-crown" *ngIf="subscription.popular"></i>
+                  {{ subscription.name }}
+                </div>
+                <div class="plan-description">{{ subscription.description }}</div>
+              </td>
+              <td class="duration-cell">
+                <span class="badge" [ngClass]="subscription.duration === 'yearly' ? 'badge-primary' : 'badge-secondary'">
+                  {{ subscription.duration | titlecase }}
+                </span>
+              </td>
+              <td class="pricing-cell">
+                <div class="price-display">
+                  <span class="original-price" *ngIf="subscription.discount && subscription.discount > 0">
+                    ₹{{ subscription.price }}
+                  </span>
+                  <span class="discounted-price">
+                    ₹{{ getDiscountedPrice(subscription) }}
+                  </span>
+                  <div class="discount-info" *ngIf="subscription.discount && subscription.discount > 0">
+                    Save ₹{{ getDiscountAmount(subscription) }}
+                    ({{ subscription.discountType === 'percentage' ? subscription.discount + '%' : '₹' + subscription.discount }})
+                  </div>
+                </div>
+              </td>
+              <td>
+                <ul class="feature-list">
+                  <li *ngFor="let benefit of subscription.benefits">{{ benefit }}</li>
+                </ul>
+              </td>
+              <td>
+                <ul class="limitation-list">
+                  <li *ngFor="let limitation of subscription.limitations">{{ limitation }}</li>
+                </ul>
+              </td>
+              <td class="popular-cell">
+                <!-- <i class="fas fa-star" *ngIf="subscription.popular" title="Popular Plan"></i> -->
+                 {{subscription.type | titlecase}}
+              </td>
+              <td class="actions-cell">
+                <button class="btn btn-sm btn-outline-primary" (click)="editSubscription(subscription)">
+                  <i class="fas fa-edit"></i> 
+                  <!-- Edit -->
+                </button>
+                <button class="btn btn-sm btn-outline-danger" (click)="deleteSubscription(subscription.id)">
+                  <i class="fas fa-trash"></i> 
+                  <!-- Delete -->
+                </button>
+              </td>
+            </tr>
+            <tr *ngIf="subscriptions().length === 0">
+              <td colspan="7" class="no-data">
+                No subscriptions found. Click "Add New Subscription" to create one.
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,129 @@
+<section class="featured-section">
+  <div class="container">
+    <div class="section-header">
+      <h2>{{ currentType() === 'books' ? 'Books' : currentType() === 'videos' ? 'Video Courses' : 'All Products' }}</h2>
+      <div class="search-box">
+        <input
+          type="text"
+          class="form-input"
+          placeholder="Search products..."
+          [formControl]="filterForm.controls.search"
+        />
+      </div>
+    </div>
+
+    <div class="catalog-layout">
+      <aside class="filter-sidebar">
+        <h3><i class="fas fa-filter"></i> Filters</h3>
+
+        <section class="filter-section">
+          <h4 class="filter-title">Price Range</h4>
+          <div class="price-range">
+            <input 
+              type="number" 
+              placeholder="Min" 
+              class="form-input" 
+              [formControl]="filterForm.controls.minPrice"
+            />
+            <span>-</span>
+            <input 
+              type="number" 
+              placeholder="Max" 
+              class="form-input" 
+              [formControl]="filterForm.controls.maxPrice"
+            />
+          </div>
+        </section>
+
+        <section class="filter-section">
+          <h4 class="filter-title">Rating</h4>
+          <ul class="filter-list">
+            @for (rating of [4.5, 4, 3.5, 3]; track rating) {
+              <li>
+                <label>
+                  <input type="checkbox" [checked]="selectedRatings().includes(rating)" (change)="toggleRating(rating)" />
+                  <span>{{ rating }} & above</span>
+                </label>
+              </li>
+            }
+          </ul>
+        </section>
+
+        <section class="filter-section">
+          <h4 class="filter-title">Category</h4>
+          <ul class="filter-list">
+            @for (category of categories_master(); track category) {
+              <li>
+                <label>
+                  <input type="checkbox" [checked]="selectedCategories().includes(category)" (change)="toggleCategory(category)" />
+                  <span class="text-capitalize">{{ category }}</span>
+                </label>
+              </li>
+            }
+          </ul>
+        </section>
+
+        <section class="filter-section">
+          <h4 class="filter-title">Type</h4>
+          <div class="type-pill-group">
+            <button type="button" [class.active]="currentType() === null" (click)="setType(null)">All</button>
+            <button type="button" [class.active]="currentType() === 'books'" (click)="setType('books')">Books</button>
+            <button type="button" [class.active]="currentType() === 'videos'" (click)="setType('videos')">Videos</button>
+          </div>
+        </section>
+
+        <button class="btn-clear-filters" type="button" (click)="clearFilters()">
+          <i class="fas fa-times"></i> Clear All Filters
+        </button>
+      </aside>
+
+      <div>
+        <p class="results">{{ resultsCount() }} results</p>
+        <div class="products-grid">
+          @if (filteredProducts().length === 0) {
+            <p class="empty-state">No products found. Try adjusting your filters.</p>
+          } @else {
+            @for (product of filteredProducts(); track product.id) {
+              <article class="product-card" [routerLink]="['/product', product.id]">
+                <img [src]="product.image" [alt]="product.title" class="product-image" />
+                <div class="product-info">
+                  <h3 class="product-title">{{ product.title }}</h3>
+                  <p class="product-author">by {{ product.author || product.instructor }}</p>
+                  <div class="product-rating">
+                    <i class="fas fa-star star" *ngFor="let star of [1,2,3,4,5]; let i = index" [class.empty]="product.rating < i + 1"></i>
+                    <span>{{ product.rating }}</span>
+                  </div>
+                  <div class="product-footer">
+                    <div class="product-price">
+                      @if (product.discount && product.discount > 0) {
+                        <span class="original-price">{{ product.price | currency:'INR':'symbol':'1.2-2' }}</span>
+                        <span class="discounted-price">{{ calculatePurchasePrice(product.price, product.discount, product.discountType || 'percentage') | currency:'INR':'symbol':'1.2-2' }}</span>
+                        <span class="discount-info">{{ product.discount }}{{ product.discountType === 'percentage' ? '%' : '₹' }} off</span>
+                      } @else {
+                        <span>{{ product.price | currency:'INR':'symbol':'1.2-2' }}</span>
+                      }
+                      @if (product.type === 'book' && (product.shipping_charges || product.tax)) {
+                        <div class="additional-charges">
+                          @if (product.shipping_charges) {
+                            <span class="shipping-info">+ Shipping: {{ product.shipping_charges | currency:'INR':'symbol':'1.2-2' }}</span>
+                          }
+                          @if (product.tax) {
+                            <span class="tax-info">+ Tax: {{ product.tax }}%</span>
+                          }
+                          <span class="final-price">Total: {{ calculateFinalPrice(product.price, product.discount || 0, product.discountType || 'percentage', product.shipping_charges || 0, product.tax || 0) | currency:'INR':'symbol':'1.2-2' }}</span>
+                        </div>
+                      }
+                    </div>
+                    <button class="add-to-cart" (click)="addToCart(product); $event.preventDefault(); $event.stopPropagation();">
+                      <i class="fas fa-shopping-cart"></i> Add
+                    </button>
+                  </div>
+                </div>
+              </article>
+            }
+          }
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

@@ -1,0 +1,112 @@
+<section class="admin-orders-page">
+  <div class="page-header">
+    <h1>Manage Orders</h1>
+    <p class="subtitle">Monitor and update order statuses</p>
+  </div>
+
+  @if (orders().length === 0) {
+    <div class="empty-state">
+      <i class="fas fa-inbox"></i>
+      <h3>No Orders</h3>
+      <p>There are no orders to manage yet.</p>
+    </div>
+  } @else {
+    <div class="orders-stats">
+      <div class="stat-card">
+        <i class="fas fa-list"></i>
+        <div>
+          <p class="stat-label">Total Orders</p>
+          <p class="stat-value">{{ orders().length }}</p>
+        </div>
+      </div>
+      <div class="stat-card">
+        <i class="fas fa-hourglass-start"></i>
+        <div>
+          <p class="stat-label">Pending</p>
+          <p class="stat-value">{{ (orders() | countByStatus:'pending') }}</p>
+        </div>
+      </div>
+      <div class="stat-card">
+        <i class="fas fa-cogs"></i>
+        <div>
+          <p class="stat-label">Processing</p>
+          <p class="stat-value">{{ (orders() | countByStatus:'processing') }}</p>
+        </div>
+      </div>
+      <div class="stat-card">
+        <i class="fas fa-truck"></i>
+        <div>
+          <p class="stat-label">Shipped</p>
+          <p class="stat-value">{{ (orders() | countByStatus:'shipped') }}</p>
+        </div>
+      </div>
+      <div class="stat-card">
+        <i class="fas fa-check-circle"></i>
+        <div>
+          <p class="stat-label">Delivered</p>
+          <p class="stat-value">{{ (orders() | countByStatus:'delivered') }}</p>
+        </div>
+      </div>
+      <div class="stat-card">
+        <i class="fas fa-times-circle"></i>
+        <div>
+          <p class="stat-label">Cancelled</p>
+          <p class="stat-value">{{ (orders() | countByStatus:'cancelled') }}</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="orders-table-container">
+      <table class="orders-table">
+        <thead>
+          <tr>
+            <th>Order ID</th>
+            <th>Name</th>
+            <th>Items</th>
+            <th>Total</th>
+            <th>Status</th>
+            <th>Date</th>
+            <th>Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (order of orders(); track order.id) {
+            <tr [class]="'status-' + order.status">
+              <td class="order-id-cell">
+                <strong><a [routerLink]="['/order', order.id]" class="user-link">#{{ order.id }}</a></strong>
+              </td>
+              <td class="items-cell">
+                <strong><a [routerLink]="['/admin/user', order.createdBy]" class="user-link">{{ order.name }}</a></strong>
+              </td>
+              <td class="items-cell">
+                {{ order.items.length }} item(s)
+              </td>
+              <td class="amount-cell">
+                <span class="amount">{{ order.total | currency:'INR':'symbol':'1.2-2' }}</span>
+              </td>
+              <td class="status-cell">
+                <span class="status-indicator" [class]="'indicator-' + order.status"></span>
+                <span class="status-text">{{ order.status | titlecase }}</span>
+              </td>
+              <td class="date-cell">
+                {{ order.createdAt | date:'medium' }}
+              </td>
+              <td class="action-cell">
+                <select 
+                  [ngModel]="order.status" 
+                  (ngModelChange)="updateStatus(order.id, $event)"
+                  class="status-select"
+                  [class]="'select-' + order.status"
+                >
+                  @for (status of statuses; track status) {
+                    <option [value]="status">{{ status | titlecase }}</option>
+                  }
+                </select>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  }
+</section>

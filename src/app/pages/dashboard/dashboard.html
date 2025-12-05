@@ -1,0 +1,79 @@
+<section class="dashboard container">
+  <h2>{{ user()?.role === 'admin' ? 'Admin Dashboard' : 'My Dashboard' }}</h2>
+  <div class="stats-grid">
+    <article>
+      <p>Cart Items</p>
+      <h3>{{ cartCount() }}</h3>
+    </article>
+    <article>
+      <p>Cart Total</p>
+      <h3>{{ cartTotal() | currency:'INR':'symbol':'1.2-2' }}</h3>
+    </article>
+    <article>
+      <p>Orders</p>
+      <h3>{{ orders().length }}</h3>
+    </article>
+    <article>
+      <p>Transactions</p>
+      <h3>{{ transactions().length }}</h3>
+    </article>
+  </div>
+
+  <section class="panel">
+    <header>
+      <h3>Recent Orders</h3>
+      <a routerLink="/orders">View all</a>
+    </header>
+    @if (orders().length === 0) {
+      <p class="empty-state">No orders yet.</p>
+    } @else {
+      <ul>
+        @for (order of orders().slice(0, 3); track order.id) {
+          <li>
+            <span><a [routerLink]="['/order', order.id]" class="link">#{{ order.id }}</a></span>
+            <span><a [routerLink]="['/admin/user', order.createdBy]" class="link">{{ order.name }}</a></span>
+            <span>{{ order.status | titlecase}}</span>
+            <strong>{{ order.total | currency:'INR':'symbol':'1.2-2' }}</strong>
+          </li>
+        }
+      </ul>
+    }
+  </section>
+
+  <section class="panel">
+    <header>
+      <h3>Recent Transactions</h3>
+      <a routerLink="/transactions">View all</a>
+    </header>
+    @if (transactions().length === 0) {
+      <p class="empty-state">No transactions yet.</p>
+    } @else {
+      <table class="transactions-table">
+        <thead>
+          <tr>
+            <th>Transaction ID</th>
+            <th>Order ID</th>
+            <th>Amount</th>
+            <th>Status</th>
+            <th>Date</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (tx of transactions().slice(0, 5); track tx.id) {
+            <tr>
+              <td>{{ tx.id }}</td>
+              <td><a [routerLink]="['/order', tx.orderId]" class="link">#{{ tx.orderId }}</a></td>
+              <td>{{ tx.amount | currency:'INR':'symbol':'1.2-2' }}</td>
+              <td>
+                <span class="status-badge" [ngClass]="'status-' + tx.status">
+                  {{ tx.status | uppercase }}
+                </span>
+              </td>
+              <td>{{ tx.createdAt | date: 'mediumDate' }}</td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    }
+  </section>
+</section>

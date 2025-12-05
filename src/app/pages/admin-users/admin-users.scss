@@ -1,0 +1,152 @@
+.admin-table {
+  padding: 20px;
+}
+
+.user-form {
+  background: #f8f9fa;
+  padding: 20px;
+  margin: 20px 0;
+  border-radius: 8px;
+  border: 1px solid #dee2e6;
+}
+
+.form-group {
+  // margin-bottom: 15px;
+
+  label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: 500;
+  }
+
+  .form-control {
+    width: 100%;
+    padding: 8px 12px;
+    border: 1px solid #ced4da;
+    border-radius: 4px;
+    font-size: 14px;
+
+    &:focus {
+      outline: none;
+      border-color: #007bff;
+      box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.25);
+    }
+  }
+
+  .error {
+    color: #dc3545;
+    font-size: 12px;
+    margin-top: 4px;
+  }
+}
+
+.form-actions {
+  margin-top: 15px;
+  text-align: center;
+
+  .btn {
+    margin-right: 10px;
+  }
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 20px;
+
+  th, td {
+    padding: 12px;
+    text-align: left;
+    border-bottom: 1px solid #dee2e6;
+  }
+
+  th {
+    background: #f8f9fa;
+    font-weight: 600;
+  }
+
+  .btn-sm {
+    padding: 4px 8px;
+    font-size: 12px;
+    margin-right: 5px;
+  }
+
+  .btn-edit {
+    background: #ffc107;
+    color: #212529;
+    border: none;
+
+    &:hover {
+      background: #e0a800;
+    }
+
+    &:disabled {
+      background: #6c757d;
+      color: #fff;
+    }
+  }
+
+  .btn-delete {
+    background: #dc3545;
+    color: #fff;
+    border: none;
+
+    &:hover {
+      background: #c82333;
+    }
+  }
+
+  .btn-role-mapping {
+    background: #28a745;
+    color: #fff;
+    border: none;
+
+    &:hover {
+      background: #218838;
+    }
+  }
+
+  .role-assigned {
+    color: #28a745;
+    font-weight: bold;
+  }
+
+  .role-not-assigned {
+    color: #dc3545;
+    font-weight: bold;
+  }
+}
+
+.btn {
+  padding: 8px 16px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 14px;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+
+  &.btn-primary {
+    background: #007bff;
+    color: #fff;
+
+    &:hover:not(:disabled) {
+      background: #0056b3;
+    }
+  }
+
+  &.btn-secondary {
+    background: #6c757d;
+    color: #fff;
+
+    &:hover:not(:disabled) {
+      background: #545b62;
+    }
+  }
+}

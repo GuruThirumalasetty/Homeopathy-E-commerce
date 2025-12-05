@@ -1,0 +1,223 @@
+<section class="profile-page">
+  <div class="profile-container">
+    <div class="profile-header">
+      <div class="profile-avatar">
+        <i class="fas fa-user-circle"></i>
+      </div>
+      <div class="profile-info">
+        <h1>{{ user()?.name }}</h1>
+        <p class="profile-email">{{ user()?.email }}</p>
+        <p class="profile-role">{{ user()?.role | titlecase }}</p>
+      </div>
+    </div>
+
+    <div class="profile-tabs">
+      <button 
+        class="tab-button" 
+        [class.active]="!isEditMode() && !isChangePasswordMode()"
+        (click)="isEditMode.set(false); isChangePasswordMode.set(false)"
+      >
+        <i class="fas fa-info-circle"></i> Overview
+      </button>
+      <button 
+        class="tab-button" 
+        [class.active]="isEditMode()"
+        (click)="toggleEditMode()"
+      >
+        <i class="fas fa-edit"></i> Edit Profile
+      </button>
+      <button 
+        class="tab-button" 
+        [class.active]="isChangePasswordMode()"
+        (click)="togglePasswordMode()"
+      >
+        <i class="fas fa-lock"></i> Change Password
+      </button>
+    </div>
+
+    <!-- Overview Tab -->
+    @if (!isEditMode() && !isChangePasswordMode()) {
+      <div class="tab-content">
+        <div class="info-card">
+          <h3>Account Information</h3>
+          <div class="info-row">
+            <span class="label">Name</span>
+            <span class="value">{{ user()?.name }}</span>
+          </div>
+          <div class="info-row">
+            <span class="label">Email</span>
+            <span class="value">{{ user()?.email }}</span>
+          </div>
+          <div class="info-row">
+            <span class="label">User ID</span>
+            <span class="value">{{ user()?.id }}</span>
+          </div>
+          <!-- <div class="info-row">
+            <span class="label">Referral Code</span>
+            <span class="value">{{ user()?.referralCode || 'N/A' }}</span>
+          </div> -->
+          <div class="info-row">
+            <span class="label">Role</span>
+            <span class="value badge">{{ user()?.role | titlecase }}</span>
+          </div>
+        </div>
+
+        <div class="actions">
+          <button class="btn btn-primary" (click)="toggleEditMode()">
+            <i class="fas fa-edit"></i> Edit Profile
+          </button>
+          <button class="btn btn-secondary" (click)="togglePasswordMode()">
+            <i class="fas fa-lock"></i> Change Password
+          </button>
+          <button class="btn btn-danger" (click)="logout()">
+            <i class="fas fa-sign-out-alt"></i> Logout
+          </button>
+        </div>
+      </div>
+    }
+
+    <!-- Edit Profile Tab -->
+    @if (isEditMode()) {
+      <div class="tab-content">
+        <form [formGroup]="editForm" (ngSubmit)="saveProfile()">
+          <div class="form-group">
+            <label for="name">Full Name</label>
+            <input 
+              type="text" 
+              id="name" 
+              formControlName="name" 
+              class="form-input"
+              placeholder="Enter your full name"
+            />
+            @if (editForm.get('name')?.hasError('required') && editForm.get('name')?.touched) {
+              <span class="error-text">Name is required</span>
+            }
+            @if (editForm.get('name')?.hasError('minlength') && editForm.get('name')?.touched) {
+              <span class="error-text">Name must be at least 2 characters</span>
+            }
+          </div>
+
+          <div class="form-group">
+            <label for="mobile_number">Mobile Number</label>
+            <input 
+              type="text" 
+              id="mobile_number" 
+              formControlName="mobile_number" 
+              class="form-input"
+              placeholder="Enter your mobile number"
+            />
+            @if (editForm.get('mobile_number')?.hasError('required') && editForm.get('mobile_number')?.touched) {
+              <span class="error-text">Mobile number is required</span>
+            }
+            @if (editForm.get('mobile_number')?.hasError('maxLength') && editForm.get('mobile_number')?.touched) {
+              <span class="error-text">Please enter a valid mobile number</span>
+            }
+          </div>
+
+          <div class="form-group">
+            <label for="email">Email Address</label>
+            <input 
+              type="email" 
+              id="email" 
+              formControlName="email" 
+              class="form-input"
+              placeholder="Enter your email"
+            />
+            @if (editForm.get('email')?.hasError('required') && editForm.get('email')?.touched) {
+              <span class="error-text">Email is required</span>
+            }
+            @if (editForm.get('email')?.hasError('email') && editForm.get('email')?.touched) {
+              <span class="error-text">Please enter a valid email</span>
+            }
+          </div>
+
+          <div class="form-actions">
+            <button type="submit" class="btn btn-primary" [disabled]="editForm.invalid || isLoading()">
+              <i class="fas fa-save"></i> 
+              {{ isLoading() ? 'Saving...' : 'Save Changes' }}
+            </button>
+            <button type="button" class="btn btn-secondary" (click)="toggleEditMode()">
+              <i class="fas fa-times"></i> Cancel
+            </button>
+          </div>
+        </form>
+      </div>
+    }
+
+    <!-- Change Password Tab -->
+    @if (isChangePasswordMode()) {
+      <div class="tab-content">
+        <form [formGroup]="passwordForm" (ngSubmit)="changePassword()">
+          <div class="form-group">
+            <label for="currentPassword">Current Password</label>
+            <input 
+              type="password" 
+              id="currentPassword" 
+              formControlName="currentPassword" 
+              class="form-input"
+              placeholder="Enter your current password"
+            />
+            @if (passwordForm.get('currentPassword')?.hasError('required') && passwordForm.get('currentPassword')?.touched) {
+              <span class="error-text">Current password is required</span>
+            }
+            @if (passwordForm.get('currentPassword')?.hasError('minlength') && passwordForm.get('currentPassword')?.touched) {
+              <span class="error-text">Password must be at least 6 characters</span>
+            }
+          </div>
+
+          <div class="form-group">
+            <label for="newPassword">New Password</label>
+            <input 
+              type="password" 
+              id="newPassword" 
+              formControlName="newPassword" 
+              class="form-input"
+              placeholder="Enter your new password"
+            />
+            @if (passwordForm.get('newPassword')?.hasError('required') && passwordForm.get('newPassword')?.touched) {
+              <span class="error-text">New password is required</span>
+            }
+            @if (passwordForm.get('newPassword')?.hasError('minlength') && passwordForm.get('newPassword')?.touched) {
+              <span class="error-text">Password must be at least 6 characters</span>
+            }
+            @if (passwordForm.get('newPassword')?.hasError('passwordSame') && passwordForm.get('newPassword')?.touched) {
+              <span class="error-text">New password must be different from current password</span>
+            }
+          </div>
+
+          <div class="form-group">
+            <label for="confirmPassword">Confirm Password</label>
+            <input 
+              type="password" 
+              id="confirmPassword" 
+              formControlName="confirmPassword" 
+              class="form-input"
+              placeholder="Confirm your new password"
+            />
+            @if (passwordForm.get('confirmPassword')?.hasError('required') && passwordForm.get('confirmPassword')?.touched) {
+              <span class="error-text">Password confirmation is required</span>
+            }
+            @if (passwordForm.get('confirmPassword')?.hasError('passwordMismatch') && passwordForm.get('confirmPassword')?.touched) {
+              <span class="error-text">Confirm password must match the new password</span>
+            }
+          </div>
+
+          <div class="password-info">
+            <i class="fas fa-info-circle"></i>
+            <p>After changing your password, you will be logged out and need to login again with your new credentials.</p>
+          </div>
+
+          <div class="form-actions">
+            <button type="submit" class="btn btn-primary" [disabled]="passwordForm.invalid || isLoading()">
+              <i class="fas fa-key"></i> 
+              {{ isLoading() ? 'Changing Password...' : 'Change Password' }}
+            </button>
+            <button type="button" class="btn btn-secondary" (click)="togglePasswordMode()">
+              <i class="fas fa-times"></i> Cancel
+            </button>
+          </div>
+        </form>
+      </div>
+    }
+  </div>
+</section>

@@ -1,0 +1,13 @@
+<section class="admin container">
+  <h2>Admin Console</h2>
+  <p>Full access granted for demo purposes.</p>
+  <div class="admin-grid grid-cols-3 gap-10">
+    @for (module of modules; track module.title) {
+      <article>
+        <h3>{{ module.title }}</h3>
+        <p>{{ module.description }}</p>
+        <a [routerLink]="module.link">Manage</a>
+      </article>
+    }
+  </div>
+</section>

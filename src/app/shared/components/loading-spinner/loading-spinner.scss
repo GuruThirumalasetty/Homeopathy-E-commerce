@@ -1,0 +1,53 @@
+.loading-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.2);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+}
+
+.spinner-container {
+  text-align: center;
+}
+
+.homeopathy-spinner {
+  // width: 100px;
+  // height: 100px;
+  font-size: 40px;
+  margin: auto;
+  margin-left: -10px;
+}
+
+.dot {
+  animation: blink 1.5s infinite;
+}
+
+.dot:nth-child(1) {
+  animation-delay: 0s;
+}
+
+.dot:nth-child(2) {
+  animation-delay: 0.5s;
+}
+
+.dot:nth-child(3) {
+  animation-delay: 1s;
+}
+
+@keyframes blink {
+  0%, 50% { opacity: 0; }
+  51%, 100% { opacity: 1; }
+}
+
+.loading-text {
+  margin-top: 20px;
+  font-size: 18px;
+  color: #228B22;
+  font-weight: bold;
+  font-family: 'Arial', sans-serif;
+}

@@ -1,0 +1,151 @@
+<section class="container role-mapping">
+  <h2>{{ isEdit() ? 'Edit User Role Mapping' : 'Create User with Role Mapping' }}</h2>
+
+  @if (user()) {
+    <div class="user-details">
+      <h3>User Details</h3>
+      <div class="details-grid grid-cols-3 gap-10">
+        <div class="detail-item">
+          <strong>Name:</strong> {{ user()!.name }}
+        </div>
+        @if (user()!.username) {
+          <div class="detail-item">
+            <strong>Username:</strong> {{ user()!.username }}
+          </div>
+        }
+        <div class="detail-item">
+          <strong>Email:</strong> {{ user()!.email }}
+        </div>
+        <div class="detail-item">
+          <strong>Status:</strong> {{ (user()!.status || 'active') | titlecase }}
+        </div>
+        @if (user()!.mobile_number) {
+          <div class="detail-item">
+            <strong>Mobile:</strong> {{ user()!.mobile_number }}
+          </div>
+        }
+        @if (user()!.created_on) {
+          <div class="detail-item">
+            <strong>Created On:</strong> {{ user()!.created_on | date:'medium' }}
+          </div>
+        }
+      </div>
+    </div>
+  }
+
+  <form [formGroup]="form" (ngSubmit)="save()">
+    @if (!isEdit()) {
+      <div class="form-group">
+        <label for="username">Username *</label>
+        <input id="username" type="text" formControlName="username" class="form-control">
+        @if (form.get('username')?.invalid && form.get('username')?.touched) {
+          <div class="error">
+            @if (form.get('username')?.errors?.['required']) {
+              Username is required.
+            }
+            @if (form.get('username')?.errors?.['minlength']) {
+              Username must be at least 3 characters.
+            }
+          </div>
+        }
+      </div>
+
+      <div class="form-group">
+        <label for="password">Password *</label>
+        <input id="password" type="password" formControlName="password" class="form-control">
+        @if (form.get('password')?.invalid && form.get('password')?.touched) {
+          <div class="error">
+            @if (form.get('password')?.errors?.['required']) {
+              Password is required.
+            }
+            @if (form.get('password')?.errors?.['invalidPassword']) {
+              Password must be at least 8 characters and include uppercase, lowercase, numbers, and special characters.
+            }
+          </div>
+        }
+      </div>
+
+      <div class="form-group">
+        <label for="confirmPassword">Confirm Password *</label>
+        <input id="confirmPassword" type="password" formControlName="confirmPassword" class="form-control">
+        @if (form.get('confirmPassword')?.invalid && form.get('confirmPassword')?.touched) {
+          <div class="error">
+            @if (form.get('confirmPassword')?.errors?.['required']) {
+              Confirm password is required.
+            }
+          </div>
+        }
+        @if (form.errors?.['passwordMismatch'] && form.get('confirmPassword')?.touched) {
+          <div class="error">
+            Passwords do not match.
+          </div>
+        }
+      </div>
+    }
+
+    <div class="form-group">
+      <label>Roles *</label>
+      @if (form.errors?.['noRoleSelected']) {
+        <div class="error">
+          At least one role must be selected.
+        </div>
+      }
+      <div class="roles-expansion">
+        @for (role of roles(); track role.id) {
+          <div class="role-panel">
+            <div class="role-header" (click)="toggleRoleExpansion(role.id)">
+              <label class="role-checkbox">
+                <input type="checkbox"
+                       [checked]="roleSelections()[role.id.toString()]"
+                       (change)="onRoleChange(role.id.toString(), $event.target.checked)"
+                       (click)="$event.stopPropagation()">
+                {{ role.name }}
+              </label>
+              <i class="fas" [class.fa-chevron-down]="expandedRoles[role.id]" [class.fa-chevron-right]="!expandedRoles[role.id]"></i>
+            </div>
+            @if (expandedRoles[role.id]) {
+              <div class="role-content">
+                <h4>Permissions for {{ role.name }}</h4>
+                @if (role.fullPermissions && role.fullPermissions.length > 0) {
+                  <table class="permissions-table">
+                    <thead>
+                      <tr>
+                        <!-- <th>Module</th> -->
+                        <th>Permission</th>
+                        <th>Create</th>
+                        <th>Read</th>
+                        <th>Update</th>
+                        <th>Delete</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      @for (perm of role.fullPermissions; track perm.id) {
+                        <tr>
+                          <!-- <td>{{ perm.module }}</td> -->
+                          <td>{{ perm.permission_name }}</td>
+                          <td><input type="checkbox" [checked]="checked_permission(perm, 'create', role.permissions)" disabled></td>
+                          <td><input type="checkbox" [checked]="checked_permission(perm, 'view', role.permissions)" disabled></td>
+                          <td><input type="checkbox" [checked]="checked_permission(perm, 'update', role.permissions)" disabled></td>
+                          <td><input type="checkbox" [checked]="checked_permission(perm, 'delete', role.permissions)" disabled></td>
+                        </tr>
+                      }
+                    </tbody>
+                  </table>
+                } @else {
+                  <p>No permissions assigned to this role.</p>
+                }
+              </div>
+            }
+          </div>
+        }
+      </div>
+    </div>
+
+    <div class="form-actions">
+      <button type="submit" class="btn btn-primary" [disabled]="form.invalid || selectedPermissions().length == 0">
+        {{ isEdit() ? 'Update Roles' : 'Create User' }}
+      </button>
+      <button type="button" class="btn btn-secondary" (click)="cancel()">Cancel</button>
+    </div>
+  </form>
+</section>

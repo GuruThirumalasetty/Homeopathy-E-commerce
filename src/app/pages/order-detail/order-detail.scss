@@ -1,0 +1,574 @@
+.order-detail-page {
+  min-height: 100vh;
+  background-color: #f8f9fa;
+  padding: 2rem 0;
+
+  .container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 1rem;
+  }
+
+  .header {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 2rem;
+
+    .back-btn {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.75rem 1.5rem;
+      background-color: #6c757d;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 1rem;
+      transition: background-color 0.3s ease;
+
+      &:hover {
+        background-color: #5a6268;
+      }
+
+      i {
+        font-size: 0.9rem;
+      }
+    }
+
+    h1 {
+      color: #343a40;
+      font-size: 2.5rem;
+      margin: 0;
+    }
+  }
+  .product-link {
+    cursor : pointer !important;
+  }
+.rating-row {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.rating-row .star {
+  color: #fbbf24;
+  font-size: 1.125rem;
+}
+
+.rating-row .star.empty {
+  color: #e5e7eb;
+}
+
+.rating-row span {
+  color: #6b7280;
+  font-size: 0.875rem;
+}
+
+  .error-message {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 1.5rem;
+    background-color: #f8d7da;
+    color: #721c24;
+    border: 1px solid #f5c6cb;
+    border-radius: 8px;
+    font-size: 1.1rem;
+
+    i {
+      font-size: 1.25rem;
+    }
+  }
+
+  .order-content {
+    display: grid;
+    gap: 2rem;
+  }
+
+  .order-header-card {
+    background: white;
+    border-radius: 12px;
+    padding: 2rem;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+
+    .order-info {
+      h2 {
+        color: #343a40;
+        margin: 0 0 0.5rem 0;
+        font-size: 1.8rem;
+      }
+
+      .order-date {
+        color: #6c757d;
+        margin: 0 0 1rem 0;
+        font-size: 1.1rem;
+      }
+
+      .status-badge {
+        padding: 0.5rem 1rem;
+        border-radius: 20px;
+        font-weight: 600;
+        font-size: 0.9rem;
+        text-transform: uppercase;
+
+        &.badge-pending {
+          background-color: #fff3cd;
+          color: #856404;
+        }
+
+        &.badge-processing {
+          background-color: #cce5ff;
+          color: #004085;
+        }
+
+        &.badge-shipped {
+          background-color: #d1ecf1;
+          color: #0c5460;
+        }
+
+        &.badge-delivered {
+          background-color: #d4edda;
+          color: #155724;
+        }
+      }
+    }
+  }
+
+  .info-card {
+    background: white;
+    border-radius: 12px;
+    padding: 2rem;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+
+    h3 {
+      color: #343a40;
+      margin: 0 0 1.5rem 0;
+      font-size: 1.4rem;
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+
+      i {
+        color: #007bff;
+        font-size: 1.2rem;
+      }
+    }
+
+    .card-content {
+      p {
+        margin: 0.5rem 0;
+        color: #495057;
+        font-size: 1rem;
+
+        strong {
+          color: #343a40;
+        }
+      }
+    }
+
+    .transaction-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1rem;
+
+      @media (max-width: 768px) {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .payment-status {
+      &.status-success {
+        color: #28a745;
+        font-weight: 600;
+      }
+
+      &.status-failed {
+        color: #dc3545;
+        font-weight: 600;
+      }
+
+      &.status-pending {
+        color: #ffc107;
+        font-weight: 600;
+      }
+    }
+
+    .items-list {
+      .item-row {
+        display: flex;
+        gap: 1rem;
+        padding: 1rem 0;
+        border-bottom: 1px solid #e9ecef;
+
+        &:last-child {
+          border-bottom: none;
+        }
+
+        .item-image {
+          width: 80px;
+          height: 80px;
+          object-fit: cover;
+          border-radius: 8px;
+          flex-shrink: 0;
+        }
+
+        .subscription-icon {
+          width: 80px;
+          height: 80px;
+          background: linear-gradient(135deg, #667eea 0%, #764ba2);
+          border-radius: 8px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          color: white;
+          font-size: 2rem;
+          flex-shrink: 0;
+        }
+
+        .item-details {
+          flex: 1;
+
+          h4 {
+            margin: 0 0 0.5rem 0;
+            color: #343a40;
+            font-size: 1.1rem;
+          }
+
+          .item-description {
+            color: #6c757d;
+            margin: 0 0 0.75rem 0;
+            font-size: 0.9rem;
+          }
+
+          .item-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+
+            .quantity {
+              color: #6c757d;
+              font-size: 0.9rem;
+            }
+
+            .price {
+              color: #28a745;
+              font-weight: 600;
+              font-size: 1rem;
+            }
+          }
+        }
+      }
+    }
+
+    .summary-table {
+      .summary-row {
+        display: flex;
+        justify-content: space-between;
+        padding: 0.75rem 0;
+        border-bottom: 1px solid #e9ecef;
+
+        &:last-child {
+          border-bottom: none;
+        }
+
+        &.total {
+          border-top: 2px solid #dee2e6;
+          font-size: 1.1rem;
+          margin-top: 0.5rem;
+          padding-top: 1rem;
+        }
+
+        &.refund-row {
+          color: #dc3545;
+
+          .refund-amount {
+            color: #dc3545;
+            font-weight: 600;
+          }
+        }
+
+        &.net-total {
+          background: linear-gradient(135deg, #667eea, #764ba2);
+          color: white;
+          border-radius: 8px;
+          padding: 1rem;
+          margin-top: 1rem;
+
+          span {
+            color: white;
+          }
+        }
+      }
+    }
+  }
+
+  // Transaction Sections
+  .transactions-section {
+    background: white;
+    border-radius: 12px;
+    padding: 2rem;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+
+    h3 {
+      color: #343a40;
+      margin: 0 0 2rem 0;
+      font-size: 1.4rem;
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+
+      i {
+        color: #007bff;
+        font-size: 1.2rem;
+      }
+    }
+
+    .transaction-group {
+      margin-bottom: 2rem;
+
+      &.success-group {
+        .group-header h4 {
+          color: #28a745;
+        }
+      }
+
+      &.refund-group {
+        .group-header h4 {
+          color: #dc3545;
+        }
+      }
+
+      .group-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 1rem;
+        padding-bottom: 0.5rem;
+        border-bottom: 2px solid #e9ecef;
+
+        h4 {
+          margin: 0;
+          font-size: 1.2rem;
+          display: flex;
+          align-items: center;
+          gap: 0.5rem;
+
+          i {
+            font-size: 1rem;
+          }
+        }
+
+        .transaction-count {
+          background: #e9ecef;
+          color: #495057;
+          padding: 0.25rem 0.75rem;
+          border-radius: 20px;
+          font-size: 0.875rem;
+          font-weight: 600;
+        }
+      }
+
+      .transactions-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 1rem;
+      }
+
+      .transaction-card {
+        background: #f8f9fa;
+        border-radius: 12px;
+        padding: 1.5rem;
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        transition: all 0.3s ease;
+        border-left: 4px solid transparent;
+
+        &:hover {
+          transform: translateY(-2px);
+          box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        &.success-card {
+          border-left-color: #28a745;
+          background: linear-gradient(135deg, rgba(40, 167, 69, 0.05), rgba(40, 167, 69, 0.02));
+        }
+
+        &.refund-card {
+          border-left-color: #dc3545;
+          background: linear-gradient(135deg, rgba(220, 53, 69, 0.05), rgba(220, 53, 69, 0.02));
+        }
+
+        .transaction-icon {
+          width: 50px;
+          height: 50px;
+          border-radius: 10px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          font-size: 1.25rem;
+          flex-shrink: 0;
+
+          background: linear-gradient(135deg, #667eea, #764ba2);
+          color: white;
+        }
+
+        .transaction-content {
+          flex: 1;
+
+          .transaction-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.75rem;
+
+            .transaction-id {
+              font-weight: 600;
+              color: #343a40;
+              font-size: 0.9rem;
+            }
+
+            .transaction-status {
+              font-size: 0.75rem;
+              font-weight: 600;
+              text-transform: uppercase;
+              padding: 0.25rem 0.5rem;
+              border-radius: 12px;
+
+              &.success {
+                background: #d4edda;
+                color: #155724;
+              }
+
+              &.refunded {
+                background: #f8d7da;
+                color: #721c24;
+              }
+
+              i {
+                margin-right: 0.25rem;
+              }
+            }
+          }
+
+          .transaction-details {
+            display: flex;
+            gap: 1rem;
+            font-size: 0.875rem;
+            color: #6c757d;
+
+            span {
+              display: flex;
+              align-items: center;
+              gap: 0.25rem;
+
+              i {
+                font-size: 0.75rem;
+              }
+            }
+          }
+        }
+
+        .transaction-amount {
+          .amount {
+            font-size: 1.25rem;
+            font-weight: 700;
+
+            &.paid-amount {
+              color: #28a745;
+            }
+
+            &.refund-amount {
+              color: #dc3545;
+            }
+          }
+        }
+      }
+    }
+
+    .transaction-summary-card {
+      background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+      border-radius: 12px;
+      padding: 1.5rem;
+      margin-top: 2rem;
+
+      .summary-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 1.5rem;
+
+        .summary-item {
+          text-align: center;
+
+          .summary-label {
+            display: block;
+            font-size: 0.875rem;
+            color: #6c757d;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+          }
+
+          .summary-value {
+            font-size: 1.5rem;
+            font-weight: 700;
+
+            &.paid {
+              color: #28a745;
+            }
+
+            &.refunded {
+              color: #dc3545;
+            }
+
+            &.net {
+              color: #007bff;
+            }
+          }
+
+          &.total {
+            .summary-label {
+              font-size: 1rem;
+              color: #343a40;
+              font-weight: 600;
+            }
+
+            .summary-value {
+              font-size: 2rem;
+              background: linear-gradient(135deg, #667eea, #764ba2);
+              -webkit-background-clip: text;
+              -webkit-text-fill-color: transparent;
+              background-clip: text;
+            }
+          }
+        }
+      }
+    }
+  }
+}
+
+// Responsive design
+@media (max-width: 768px) {
+  .order-detail-page {
+    padding: 1rem 0;
+
+    .container {
+      padding: 0 0.5rem;
+    }
+
+    .header {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 1rem;
+
+      h1 {
+        font-size: 2rem;
+      }
+    }
+
+    .info-card {
+      padding: 1.5rem;
+    }
+  }
+}

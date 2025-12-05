@@ -1,0 +1,108 @@
+<!-- <section class="container order-tracking">
+  <h2>Track your order</h2>
+  <input type="text" class="form-input" placeholder="Enter order id" [ngModel]="query()" (ngModelChange)="query.set($event)" />
+
+  @if (match(); as order) {
+    <article class="tracking-card">
+      <h3>{{ order.id }}</h3>
+      <p>Status: <strong>{{ order.status }}</strong></p>
+      <p>Placed on {{ order.createdAt | date:'medium' }}</p>
+      <p>Total {{ order.total | currency:'INR':'symbol':'1.2-2' }}</p>
+    </article>
+  } @else if (query()) {
+    <p class="empty-state">No matching order found.</p>
+  }
+</section> -->
+<section class="orders-page">
+  <div class="orders-header">
+    <h1>My Orders</h1>
+    <p class="subtitle">Track and manage your purchases</p>
+  </div>
+
+  @if (orders().length === 0) {
+    <div class="empty-state">
+      <i class="fas fa-inbox"></i>
+      <h3>No Orders Yet</h3>
+      <p>You haven't placed any orders yet. Start shopping now!</p>
+      <a routerLink="/products" class="btn btn-primary">
+        <i class="fas fa-shopping-bag"></i>
+        Browse Products
+      </a>
+    </div>
+  } @else {
+    <div class="orders-list">
+      @for (order of orders(); track order.id) {
+        <article class="order-card" [class]="'status-' + order.status">
+          <div class="order-header">
+            <div>
+              <h3 class="order-id">Order #{{ order.id }}</h3>
+              <p class="order-date">{{ order.createdAt | date:'medium' }}</p>
+            </div>
+            <span class="status-badge" [class]="'badge-' + order.status">
+              {{ order.status | titlecase }}
+            </span>
+          </div>
+
+          <div class="order-timeline">
+            <div class="timeline-step" [class.active]="['pending', 'processing', 'shipped', 'delivered'].indexOf(order.status) >= 0">
+              <div class="timeline-dot"></div>
+              <span>Order Placed</span>
+            </div>
+            <div class="timeline-step" [class.active]="['processing', 'shipped', 'delivered'].indexOf(order.status) >= 0">
+              <div class="timeline-dot"></div>
+              <span>Processing</span>
+            </div>
+            <div class="timeline-step" [class.active]="['shipped', 'delivered'].indexOf(order.status) >= 0">
+              <div class="timeline-dot"></div>
+              <span>Shipped</span>
+            </div>
+            <div class="timeline-step" [class.active]="order.status === 'delivered'">
+              <div class="timeline-dot"></div>
+              <span>Delivered</span>
+            </div>
+          </div>
+
+          <div class="order-items">
+            <h4>Items</h4>
+            <ul>
+              @for (item of order.items; track item.id) {
+                <li class="item-row">
+                  <img [src]="item.image" [alt]="item.title" class="item-image" [routerLink]="['/product', item.id]" />
+                  <div class="item-details">
+                    <span class="item-name">{{ item.quantity }}× {{ item.title }}</span>
+                    <span class="item-price">{{ item.price * item.quantity | currency:'INR':'symbol':'1.2-2' }}</span>
+                  </div>
+                </li>
+              }
+            </ul>
+          </div>
+
+          <div class="order-charges">
+            <div class="charge-row">
+              <span>Subtotal</span>
+              <span>{{ order.subtotal || order.total | currency:'INR':'symbol':'1.2-2' }}</span>
+            </div>
+            <div class="charge-row">
+              <span>Tax</span>
+              <span>{{ order.tax || 0 | currency:'INR':'symbol':'1.2-2' }}</span>
+            </div>
+            <div class="charge-row">
+              <span>Shipping</span>
+              <span>{{ order.shipping || 0 | currency:'INR':'symbol':'1.2-2' }}</span>
+            </div>
+            <div class="charge-row total">
+              <span>Order Total</span>
+              <span>{{ order.total | currency:'INR':'symbol':'1.2-2' }}</span>
+            </div>
+          </div>
+          @if (order.status === 'delivered' && order.deliveryDate) {
+            <p class="delivered-date">
+              <i class="fas fa-check-circle"></i>
+              Delivered on {{ order.deliveryDate | date:'mediumDate' }}
+            </p>
+          }
+        </article>
+      }
+    </div>
+  }
+</section>

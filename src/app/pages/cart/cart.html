@@ -1,0 +1,121 @@
+<section class="cart-page container">
+  <div class="cart-layout">
+    <div>
+      <h2>Your Cart</h2>
+      <div id="cart-items">
+        @if (items().length === 0) {
+          <p class="empty-state">Your cart is empty</p>
+        } @else {
+          @for (item of items(); track item.type !== 'subscription' ? item.id : item.subscriptionId) {
+            <article class="cart-item" [class.highlighted]="item.type === 'subscription' && item.subscriptionId === highlightedSubscriptionId()">
+              @if (item.type !== 'subscription') {
+                <img [src]="item.image" [alt]="item.title" class="cart-item-image" />
+              } @else {
+                <div class="subscription-icon">
+                  <i class="fas fa-crown"></i>
+                </div>
+              }
+              <div class="cart-item-details">
+                <h3>{{ item.type !== 'subscription' ? item.title : item.name }} <span *ngIf="item.planType">({{item.planType | titlecase}})</span></h3>
+                <p class="cart-item-meta">
+                  @if (item.type !== 'subscription') {
+                    {{ item.productType === 'book' ? 'Book' : 'Video Course' }}
+                  } @else {
+                    Subscription Plan ({{ item.duration }})
+                  }
+                </p>
+                @if (item.type !== 'subscription') {
+                  <div class="quantity-controls">
+                    <button (click)="updateQuantity(item.id!, item.quantity - 1)">-</button>
+                    <input type="number" [value]="item.quantity" min="1" max="10" (change)="updateQuantity(item.id!, $any($event.target).valueAsNumber)" />
+                    <button (click)="updateQuantity(item.id!, item.quantity + 1)">+</button>
+                  </div>
+                }
+                <div class="cart-item-pricing">
+                  @if (item.type !== 'subscription') {
+                    <div class="pricing-breakdown">
+                      <div class="pricing-row">
+                        <span>Actual Amount:</span>
+                        <span>{{ item.itemPrice || item.price | currency:'INR':'symbol':'1.2-2' }}</span>
+                      </div>
+                      @if (item.discount && item.discount > 0) {
+                        <div class="pricing-row">
+                          <span>Discount ({{ item.discount }}{{ item.discountType === 'percentage' ? '%' : '₹' }}):</span>
+                          <span>-{{ item.discountAmount || 0 | currency:'INR':'symbol':'1.2-2' }}</span>
+                        </div>
+                        <div class="pricing-row">
+                          <span>Discounted Amount:</span>
+                          <span>{{ item.purchasePrice || item.price | currency:'INR':'symbol':'1.2-2' }}</span>
+                        </div>
+                      }
+                      @if (item.tax && item.tax > 0) {
+                        <div class="pricing-row">
+                          <span>Tax ({{ item.tax }}%):</span>
+                          <span>+{{ item.taxAmount || 0 | currency:'INR':'symbol':'1.2-2' }}</span>
+                        </div>
+                      }
+                      <div class="pricing-row total-row">
+                        <span>Final Price per Item:</span>
+                        <span>{{ item.finalPrice || item.purchasePrice || item.price | currency:'INR':'symbol':'1.2-2' }}</span>
+                      </div>
+                    </div>
+                  } @else {
+                    <div class="pricing-breakdown">
+                      <div class="pricing-row">
+                        <span>Plan Price:</span>
+                        <span>{{ item.itemPrice || item.price | currency:'INR':'symbol':'1.2-2' }}</span>
+                      </div>
+                      @if (item.discount && item.discount > 0) {
+                        <div class="pricing-row">
+                          <span>Discount ({{ item.discount }}{{ item.discountType === 'percentage' ? '%' : '₹' }}):</span>
+                          <span>-{{ item.discountAmount || 0 | currency:'INR':'symbol':'1.2-2' }}</span>
+                        </div>
+                        <div class="pricing-row total-row">
+                          <span>Final Price:</span>
+                          <span>{{ item.finalPrice || item.purchasePrice || item.price | currency:'INR':'symbol':'1.2-2' }}</span>
+                        </div>
+                      } @else {
+                        <div class="pricing-row total-row">
+                          <span>Price:</span>
+                          <span>{{ item.finalPrice || item.purchasePrice || item.price | currency:'INR':'symbol':'1.2-2' }}</span>
+                        </div>
+                      }
+                    </div>
+                  }
+                  <div class="line-total">Line Total: {{ ((item.finalPrice || item.purchasePrice || item.price!) * item.quantity) | currency:'INR':'symbol':'1.2-2' }}</div>
+                </div>
+              </div>
+              <button class="remove-item" (click)="remove(item.type !== 'subscription' ? item.id! : item.subscriptionId!)">
+                <i class="fas fa-trash"></i> Remove
+              </button>
+            </article>
+          }
+        }
+      </div>
+    </div>
+
+    <aside class="order-summary">
+      <h3>Order Summary</h3>
+      <div class="summary-row">
+        <span>Subtotal</span>
+        <strong>{{ subtotal() | currency:'INR':'symbol':'1.2-2' }}</strong>
+      </div>
+      <!-- @if (totalDiscount() > 0) {
+        <div class="summary-row discount-row">
+          <span>Total Discount</span>
+          <strong>-{{ totalDiscount() | currency:'INR':'symbol':'1.2-2' }}</strong>
+        </div>
+      } -->
+      <div class="summary-row">
+        <span>Shipping</span>
+        <strong>{{ shipping() | currency:'INR':'symbol':'1.2-2' }}</strong>
+      </div>
+      <div class="summary-row total">
+        <span>Total</span>
+        <strong>{{ total() | currency:'INR':'symbol':'1.2-2' }}</strong>
+      </div>
+      <button class="btn btn-primary" (click)="proceedToCheckout()">Proceed to Checkout</button>
+      <a routerLink="/products" class="btn btn-outline">Continue Shopping</a>
+    </aside>
+  </div>
+</section>

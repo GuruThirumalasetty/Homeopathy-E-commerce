@@ -1,0 +1,618 @@
+<div class="event-form-container">
+  <form [formGroup]="eventForm" (ngSubmit)="onSubmit()" class="event-form">
+    <!-- Header Section -->
+    <!-- <div class="form-section">
+      <h3 class="section-title">
+        <i class="fas fa-info-circle"></i>
+        {{ isEditMode ? 'Edit Event' : 'Create New Event' }}
+      </h3>
+      <div class="form-alert" *ngIf="validationErrors().general?.length">
+        <div class="alert alert-danger" *ngFor="let error of validationErrors().general">
+          {{ error }}
+        </div>
+      </div>
+    </div> -->
+
+    <!-- Basic Information -->
+    <div class="form-section">
+      <h4 class="section-subtitle">Basic Information</h4>
+      
+      <div class="form-row">
+        <div class="form-group full-width">
+          <label for="eventName" class="form-label required">Event Name</label>
+          <input 
+            type="text" 
+            id="eventName"
+            class="form-control" 
+            formControlName="eventName"
+            placeholder="Enter event name (max 100 characters)"
+            [class.is-invalid]="isFieldInvalid('eventName')">
+          <div class="invalid-feedback" *ngIf="isFieldInvalid('eventName')">
+            {{ getFieldError('eventName') }}
+          </div>
+        </div>
+      </div>
+
+      <!-- Event Location -->
+      <div formGroupName="eventLocation">
+        <h5 class="subsection-title">Event Location</h5>
+        
+        <div class="form-row">
+          <div class="form-group full-width">
+            <label for="venueName" class="form-label required">Venue Name</label>
+            <input 
+              type="text" 
+              id="venueName"
+              class="form-control" 
+              formControlName="venueName"
+              placeholder="Enter venue name"
+              [class.is-invalid]="isFieldInvalid('eventLocation.venueName')">
+            <div class="invalid-feedback" *ngIf="isFieldInvalid('eventLocation.venueName')">
+              {{ getFieldError('eventLocation.venueName') }}
+            </div>
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group half-width">
+            <label for="address" class="form-label required">Address</label>
+            <input 
+              type="text" 
+              id="address"
+              class="form-control" 
+              formControlName="address"
+              placeholder="Enter street address"
+              [class.is-invalid]="isFieldInvalid('eventLocation.address')">
+            <div class="invalid-feedback" *ngIf="isFieldInvalid('eventLocation.address')">
+              {{ getFieldError('eventLocation.address') }}
+            </div>
+          </div>
+          
+          <div class="form-group half-width">
+            <label for="city" class="form-label required">City</label>
+            <input 
+              type="text" 
+              id="city"
+              class="form-control" 
+              formControlName="city"
+              placeholder="Enter city"
+              [class.is-invalid]="isFieldInvalid('eventLocation.city')">
+            <div class="invalid-feedback" *ngIf="isFieldInvalid('eventLocation.city')">
+              {{ getFieldError('eventLocation.city') }}
+            </div>
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group third-width">
+            <label for="state" class="form-label required">State</label>
+            <input 
+              type="text" 
+              id="state"
+              class="form-control" 
+              formControlName="state"
+              placeholder="State/Province"
+              [class.is-invalid]="isFieldInvalid('eventLocation.state')">
+            <div class="invalid-feedback" *ngIf="isFieldInvalid('eventLocation.state')">
+              {{ getFieldError('eventLocation.state') }}
+            </div>
+          </div>
+          
+          <div class="form-group third-width">
+            <label for="zipCode" class="form-label required">ZIP/Postal Code</label>
+            <input 
+              type="text" 
+              id="zipCode"
+              class="form-control" 
+              formControlName="zipCode"
+              placeholder="ZIP/Postal code"
+              [class.is-invalid]="isFieldInvalid('eventLocation.zipCode')">
+            <div class="invalid-feedback" *ngIf="isFieldInvalid('eventLocation.zipCode')">
+              {{ getFieldError('eventLocation.zipCode') }}
+            </div>
+          </div>
+          
+          <div class="form-group third-width">
+            <label for="country" class="form-label required">Country</label>
+            <select 
+              id="country"
+              class="form-control" 
+              formControlName="country"
+              [class.is-invalid]="isFieldInvalid('eventLocation.country')">
+              <option value="">Select Country</option>
+              <option value="United States">United States</option>
+              <option value="Canada">Canada</option>
+              <option value="United Kingdom">United Kingdom</option>
+              <option value="Australia">Australia</option>
+              <option value="Germany">Germany</option>
+              <option value="France">France</option>
+              <option value="Japan">Japan</option>
+              <option value="India">India</option>
+              <option value="China">China</option>
+              <option value="Other">Other</option>
+            </select>
+            <div class="invalid-feedback" *ngIf="isFieldInvalid('eventLocation.country')">
+              {{ getFieldError('eventLocation.country') }}
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Date & Time -->
+    <div class="form-section">
+      <h4 class="section-subtitle">Date & Time</h4>
+      
+      <div class="form-row">
+        <div class="form-group half-width">
+          <label for="eventStartTime" class="form-label required">Start Date & Time</label>
+          <input 
+            type="datetime-local" 
+            id="eventStartTime"
+            class="form-control" 
+            formControlName="eventStartTime"
+            [class.is-invalid]="isFieldInvalid('eventStartTime')">
+          <div class="invalid-feedback" *ngIf="isFieldInvalid('eventStartTime')">
+            {{ getFieldError('eventStartTime') }}
+          </div>
+        </div>
+        
+        <div class="form-group half-width">
+          <label for="eventEndTime" class="form-label required">End Date & Time</label>
+          <input 
+            type="datetime-local" 
+            id="eventEndTime"
+            class="form-control" 
+            formControlName="eventEndTime"
+            [class.is-invalid]="isFieldInvalid('eventEndTime')">
+          <div class="invalid-feedback" *ngIf="isFieldInvalid('eventEndTime')">
+            {{ getFieldError('eventEndTime') }}
+          </div>
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group half-width">
+          <label for="timeZone" class="form-label required">Time Zone</label>
+          <select 
+            id="timeZone"
+            class="form-control" 
+            formControlName="timeZone"
+            (change)="onTimezoneChange()"
+            [class.is-invalid]="isFieldInvalid('timeZone')">
+            <option *ngFor="let tz of timezones" [value]="tz.value">{{ tz.label }}</option>
+          </select>
+          <div class="invalid-feedback" *ngIf="isFieldInvalid('timeZone')">
+            {{ getFieldError('timeZone') }}
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Event Details -->
+    <div class="form-section">
+      <h4 class="section-subtitle">Event Details</h4>
+      
+      <div formGroupName="eventDetails">
+      <!-- Meal Arrangements -->
+      <div formGroupName="mealArrangements">
+        <h5 class="subsection-title">Meal Arrangements</h5>
+        
+        <div class="form-row">
+          <div class="form-group third-width">
+            <div class="checkbox-group">
+              <input 
+                type="checkbox" 
+                id="lunch"
+                formControlName="lunch">
+              <label for="lunch" class="checkbox-label">Lunch Provided</label>
+            </div>
+          </div>
+          
+          <div class="form-group third-width">
+            <div class="checkbox-group">
+              <input 
+                type="checkbox" 
+                id="refreshments"
+                formControlName="refreshments">
+              <label for="refreshments" class="checkbox-label">Refreshments Available</label>
+            </div>
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group full-width">
+            <label for="dietaryRestrictions" class="form-label">Dietary Restrictions</label>
+            <select 
+              id="dietaryRestrictions"
+              class="form-control" 
+              multiple
+              (change)="onDietaryRestrictionsChange($event)">
+              <option value="Vegetarian">Vegetarian</option>
+              <option value="Vegan">Vegan</option>
+              <option value="Gluten-Free">Gluten-Free</option>
+              <option value="Dairy-Free">Dairy-Free</option>
+              <option value="Nut-Allergies">Nut Allergies</option>
+              <option value="Shellfish-Allergies">Shellfish Allergies</option>
+              <option value="Halal">Halal</option>
+              <option value="Kosher">Kosher</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group full-width">
+            <label for="specialDietaryNeeds" class="form-label">Special Dietary Needs</label>
+            <textarea 
+              id="specialDietaryNeeds"
+              class="form-control" 
+              formControlName="specialDietaryNeeds"
+              rows="3"
+              placeholder="Describe any additional dietary requirements or restrictions"></textarea>
+          </div>
+        </div>
+      </div>
+
+      <!-- Parking Information -->
+      <div class="form-row">
+        <div class="form-group full-width">
+          <label for="parkingInformation" class="form-label">Parking Information</label>
+          <textarea 
+            id="parkingInformation"
+            class="form-control" 
+            formControlName="parkingInformation"
+            rows="2"
+            placeholder="Information about parking availability, costs, and location"></textarea>
+        </div>
+      </div>
+
+      <!-- Equipment Needs -->
+      <div class="form-row">
+        <div class="form-group full-width">
+          <label class="form-label">Equipment Needs</label>
+          <div formArrayName="equipmentNeeds" class="array-list">
+            <div class="array-item" *ngFor="let control of equipmentNeeds.controls; let i = index">
+              <input 
+                type="text" 
+                class="form-control" 
+                [value]="equipmentNeeds.at(i).value"
+                (input)="equipmentNeeds.at(i).setValue($any($event.target).value)"
+                placeholder="Enter equipment needed">
+              <button type="button" class="btn btn-sm btn-outline-danger" (click)="removeEquipmentNeed(i)">
+                <i class="fas fa-times"></i>
+              </button>
+            </div>
+            <button type="button" class="btn btn-outline-primary btn-sm" (click)="addEquipmentNeed()">
+              <i class="fas fa-plus"></i> Add Equipment
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Special Requirements -->
+      <div class="form-row">
+        <div class="form-group full-width">
+          <label class="form-label">Special Requirements</label>
+          <div formArrayName="specialRequirements" class="array-list">
+            <div class="array-item" *ngFor="let control of specialRequirements.controls; let i = index">
+              <input 
+                type="text" 
+                class="form-control" 
+                [value]="specialRequirements.at(i).value"
+                (input)="specialRequirements.at(i).setValue($any($event.target).value)"
+                placeholder="Enter special requirement">
+              <button type="button" class="btn btn-sm btn-outline-danger" (click)="removeSpecialRequirement(i)">
+                <i class="fas fa-times"></i>
+              </button>
+            </div>
+            <button type="button" class="btn btn-outline-primary btn-sm" (click)="addSpecialRequirement()">
+              <i class="fas fa-plus"></i> Add Requirement
+            </button>
+          </div>
+        </div>
+      </div>
+      </div>
+    </div>
+
+    <!-- Organizer Details -->
+    <div class="form-section">
+      <h4 class="section-subtitle">Organizer Details</h4>
+      
+      <div formGroupName="conductorDetails">
+        <!-- Primary Organizer -->
+        <div formGroupName="primaryOrganizer">
+          <h5 class="subsection-title">Primary Organizer</h5>
+          
+          <div class="form-row">
+            <div class="form-group half-width">
+              <label for="organizerName" class="form-label required">Name</label>
+              <input 
+                type="text" 
+                id="organizerName"
+                class="form-control" 
+                formControlName="name"
+                placeholder="Enter organizer name"
+                [class.is-invalid]="isFieldInvalid('conductorDetails.primaryOrganizer.name')">
+              <div class="invalid-feedback" *ngIf="isFieldInvalid('conductorDetails.primaryOrganizer.name')">
+                {{ getFieldError('conductorDetails.primaryOrganizer.name') }}
+              </div>
+            </div>
+            
+            <div class="form-group half-width">
+              <label for="organizerTitle" class="form-label required">Title</label>
+              <input 
+                type="text" 
+                id="organizerTitle"
+                class="form-control" 
+                formControlName="title"
+                placeholder="Enter title/position"
+                [class.is-invalid]="isFieldInvalid('conductorDetails.primaryOrganizer.title')">
+              <div class="invalid-feedback" *ngIf="isFieldInvalid('conductorDetails.primaryOrganizer.title')">
+                {{ getFieldError('conductorDetails.primaryOrganizer.title') }}
+              </div>
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group half-width">
+              <label for="organizerEmail" class="form-label required">Email</label>
+              <input 
+                type="email" 
+                id="organizerEmail"
+                class="form-control" 
+                formControlName="email"
+                placeholder="Enter email address"
+                [class.is-invalid]="isFieldInvalid('conductorDetails.primaryOrganizer.email')">
+              <div class="invalid-feedback" *ngIf="isFieldInvalid('conductorDetails.primaryOrganizer.email')">
+                {{ getFieldError('conductorDetails.primaryOrganizer.email') }}
+              </div>
+            </div>
+            
+            <div class="form-group half-width">
+              <label for="organizerPhone" class="form-label required">Phone</label>
+              <input 
+                type="tel" 
+                id="organizerPhone"
+                class="form-control" 
+                formControlName="phone"
+                placeholder="Enter phone number"
+                [class.is-invalid]="isFieldInvalid('conductorDetails.primaryOrganizer.phone')">
+              <div class="invalid-feedback" *ngIf="isFieldInvalid('conductorDetails.primaryOrganizer.phone')">
+                {{ getFieldError('conductorDetails.primaryOrganizer.phone') }}
+              </div>
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group full-width">
+              <label for="organizerDepartment" class="form-label required">Department/Division</label>
+              <input 
+                type="text" 
+                id="organizerDepartment"
+                class="form-control" 
+                formControlName="department"
+                placeholder="Enter department or division"
+                [class.is-invalid]="isFieldInvalid('conductorDetails.primaryOrganizer.department')">
+              <div class="invalid-feedback" *ngIf="isFieldInvalid('conductorDetails.primaryOrganizer.department')">
+                {{ getFieldError('conductorDetails.primaryOrganizer.department') }}
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Backup Coordinator -->
+        <div formGroupName="backupCoordinator">
+          <h5 class="subsection-title">Backup Coordinator (Optional)</h5>
+          
+          <div class="form-row">
+            <div class="form-group half-width">
+              <label for="backupName" class="form-label">Name</label>
+              <input 
+                type="text" 
+                id="backupName"
+                class="form-control" 
+                formControlName="name"
+                placeholder="Enter backup coordinator name">
+            </div>
+            
+            <div class="form-group half-width">
+              <label for="backupTitle" class="form-label">Title</label>
+              <input 
+                type="text" 
+                id="backupTitle"
+                class="form-control" 
+                formControlName="title"
+                placeholder="Enter title/position">
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group half-width">
+              <label for="backupEmail" class="form-label">Email</label>
+              <input 
+                type="email" 
+                id="backupEmail"
+                class="form-control" 
+                formControlName="email"
+                placeholder="Enter email address">
+            </div>
+            
+            <div class="form-group half-width">
+              <label for="backupPhone" class="form-label">Phone</label>
+              <input 
+                type="tel" 
+                id="backupPhone"
+                class="form-control" 
+                formControlName="phone"
+                placeholder="Enter phone number">
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Speakers -->
+    <div class="form-section">
+      <h4 class="section-subtitle">Speakers</h4>
+      
+      <div formArrayName="speakers">
+        <div *ngFor="let speaker of speakers.controls; let i = index" class="speaker-block" [formGroupName]="i">
+          <div class="speaker-header">
+            <h5>Speaker {{ i + 1 }}</h5>
+            <button type="button" class="btn btn-sm btn-outline-danger" (click)="removeSpeaker(i)" *ngIf="speakers.length > 1">
+              <i class="fas fa-trash"></i>
+              Remove
+            </button>
+          </div>
+          
+          <div class="form-row">
+            <div class="form-group half-width">
+              <label class="form-label required">Name</label>
+              <input 
+                type="text" 
+                class="form-control" 
+                formControlName="name"
+                placeholder="Enter speaker name"
+                [class.is-invalid]="isFieldInvalid('speakers.' + i + '.name')">
+              <div class="invalid-feedback" *ngIf="isFieldInvalid('speakers.' + i + '.name')">
+                {{ getFieldError('speakers.' + i + '.name') }}
+              </div>
+            </div>
+            
+            <div class="form-group half-width">
+              <label class="form-label required">Session Topic</label>
+              <input 
+                type="text" 
+                class="form-control" 
+                formControlName="sessionTopic"
+                placeholder="Enter session topic"
+                [class.is-invalid]="isFieldInvalid('speakers.' + i + '.sessionTopic')">
+              <div class="invalid-feedback" *ngIf="isFieldInvalid('speakers.' + i + '.sessionTopic')">
+                {{ getFieldError('speakers.' + i + '.sessionTopic') }}
+              </div>
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group third-width">
+              <label class="form-label required">Duration (minutes)</label>
+              <input 
+                type="number" 
+                class="form-control" 
+                formControlName="sessionDuration"
+                min="1"
+                max="480"
+                [class.is-invalid]="isFieldInvalid('speakers.' + i + '.sessionDuration')">
+              <div class="invalid-feedback" *ngIf="isFieldInvalid('speakers.' + i + '.sessionDuration')">
+                {{ getFieldError('speakers.' + i + '.sessionDuration') }}
+              </div>
+            </div>
+            
+            <div class="form-group third-width">
+              <label class="form-label">Email</label>
+              <input 
+                type="email" 
+                class="form-control" 
+                formControlName="email"
+                placeholder="Enter email">
+            </div>
+            
+            <div class="form-group third-width">
+              <label class="form-label">Phone</label>
+              <input 
+                type="tel" 
+                class="form-control" 
+                formControlName="phone"
+                placeholder="Enter phone number">
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group half-width">
+              <label class="form-label">Bio</label>
+              <textarea 
+                class="form-control" 
+                formControlName="bio"
+                rows="3"
+                placeholder="Enter speaker bio"></textarea>
+            </div>
+            
+            <div class="form-group half-width">
+              <label class="form-label">Credentials</label>
+              <textarea 
+                class="form-control" 
+                formControlName="credentials"
+                rows="3"
+                placeholder="Enter speaker credentials"></textarea>
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group half-width">
+              <label class="form-label">AV Requirements</label>
+              <input 
+                type="text" 
+                class="form-control" 
+                formControlName="avRequirements"
+                placeholder="Enter AV requirements">
+            </div>
+            
+            <div class="form-group half-width">
+              <label class="form-label">Seating Requirements</label>
+              <input 
+                type="text" 
+                class="form-control" 
+                formControlName="seatingRequirements"
+                placeholder="Enter seating requirements">
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <button type="button" class="btn btn-outline-primary" (click)="addSpeaker()">
+        <i class="fas fa-plus"></i>
+        Add Speaker
+      </button>
+    </div>
+
+    <!-- Capacity -->
+    <div class="form-section">
+      <h4 class="section-subtitle">Capacity</h4>
+      
+      <div formGroupName="capacity">
+        <div class="form-row">
+          <div class="form-group half-width">
+            <label for="maxCapacity" class="form-label required">Maximum Attendee Limit</label>
+            <input 
+              type="number" 
+              id="maxCapacity"
+              class="form-control" 
+              formControlName="maximumAttendeeLimit"
+              min="1"
+              max="1000"
+              [class.is-invalid]="isFieldInvalid('capacity.maximumAttendeeLimit')">
+            <div class="invalid-feedback" *ngIf="isFieldInvalid('capacity.maximumAttendeeLimit')">
+              {{ getFieldError('capacity.maximumAttendeeLimit') }}
+            </div>
+            <small class="form-text text-muted" *ngIf="event && event.capacity && event.capacity.currentRegistrationCount">
+              Current registrations: {{ event.capacity.currentRegistrationCount }}
+            </small>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Form Actions -->
+    <div class="form-actions">
+      <button type="button" class="btn btn-secondary" (click)="onClose()" [disabled]="loading()">
+        <i class="fas fa-times"></i>
+        Cancel
+      </button>
+      
+      <button type="submit" class="btn btn-primary" [disabled]="loading()">
+        <i class="fas" [class.fa-spinner]="loading()" [class.fa-spin]="loading()" [class.fa-save]="!loading()"></i>
+        {{ loading() ? 'Saving...' : (isEditMode ? 'Update Event' : 'Create Event') }}
+      </button>
+    </div>
+  </form>
+</div>

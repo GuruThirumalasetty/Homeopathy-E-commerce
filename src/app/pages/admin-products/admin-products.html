@@ -1,0 +1,206 @@
+<section class="admin-products container">
+  <div class="admin-header">
+    <h2>Manage Products</h2>
+    <button class="btn btn-primary" (click)="showForm.set(true)" [class.hidden]="showForm()">
+      <i class="fas fa-plus"></i> Add New Product
+    </button>
+  </div>
+
+  @if (showForm() || editingProductId() !== null) {
+  <div class="product-form-card">
+    <div class="form-header">
+      <h3>{{ editingProductId() !== null ? 'Edit Product' : 'Add New Product' }}</h3>
+      <button class="btn-icon" (click)="cancelEdit()" type="button">
+        <i class="fas fa-times"></i>
+      </button>
+    </div>
+    <form [formGroup]="productForm">
+      <div class="grid-cols-3 gap-10">
+        <label>
+          <span>Title <span class="required">*</span></span>
+          <input type="text" formControlName="title" placeholder="Product title" />
+          @if (productForm.controls.title.touched && productForm.controls.title.invalid) {
+          <span class="error">Title is required</span>
+          }
+        </label>
+
+        <label>
+          <span>Type <span class="required">*</span></span>
+          <select formControlName="type">
+            <option value="book">Book</option>
+            <option value="video">Video Course</option>
+          </select>
+        </label>
+        <!-- </div> -->
+
+        <!-- <div class="form-grid"> -->
+        <label>
+          @if (productForm.controls.type.value === 'book') {
+          Author
+          } @else {
+          Instructor
+          }
+          <input type="text" [formControlName]="productForm.controls.type.value === 'book' ? 'author' : 'instructor'"
+            [placeholder]="productForm.controls.type.value === 'book' ? 'Author name' : 'Instructor name'" />
+        </label>
+
+        <label>
+          <span>Category <span class="required">*</span></span>
+          <select formControlName="categoryId">
+            <option value="">Select category</option>
+            @for (category of categories(); track category.id) {
+            <option [value]="category.id">{{ category.name }}</option>
+            }
+          </select>
+          @if (productForm.controls.categoryId.touched && productForm.controls.categoryId.invalid) {
+          <span class="error">Category is required</span>
+          }
+        </label>
+        <!-- </div> -->
+
+        <!-- <div class="form-grid"> -->
+        <label>
+          <span>Quantity <span class="required">*</span></span>
+          <input type="number" formControlName="stock_quantity" min="1" step="0.01" placeholder="0.00" />
+          @if (productForm.controls.stock_quantity.touched && productForm.controls.stock_quantity.invalid) {
+          <span class="error">Valid quantity is required</span>
+          }
+        </label>
+
+        <label>
+          <span>Price (₹) <span class="required">*</span></span>
+          <input type="number" formControlName="price" min="1" step="0.01" placeholder="0.00" />
+          @if (productForm.controls.price.touched && productForm.controls.price.invalid) {
+          <span class="error">Valid price is required</span>
+          }
+        </label>
+
+        <label>
+          <span>Discount Type</span>
+          <select formControlName="discountType">
+            <option value="percentage">Percentage (%)</option>
+            <option value="fixed">Fixed Amount (₹)</option>
+          </select>
+        </label>
+
+        <label>
+          <span>Discount {{ productForm.controls.discountType.value === 'percentage' ? '(%)' : '(₹)' }}</span>
+          <input type="number" formControlName="discount" step="0.01" placeholder="0.00" />
+          @if (productForm.controls.discount.touched && productForm.controls.discount.invalid) {
+          <span class="error">Valid discount is required</span>
+          }
+        </label>
+
+        @if(productForm.controls.type.value === 'book'){
+          <label>
+            <span>Shipping Charges (₹)</span>
+            <input type="number" formControlName="shipping_charges" step="0.01" placeholder="0.00" />
+          </label>
+
+          <label>
+            <span>Tax (%)</span>
+            <input type="number" formControlName="tax" step="0.01" placeholder="0.00" />
+          </label>
+        }
+
+        <label>
+          <span>Rating</span>
+          <input type="number" formControlName="rating" min="0" max="5" step="0.1" placeholder="4.5" />
+        </label>
+        <!-- </div> -->
+
+        <label>
+          <span>Description</span>
+          <textarea formControlName="description" rows="3" placeholder="Product description"></textarea>
+        </label>
+      </div>
+      <div class="grid-cols-2 gap-10">
+        <label>
+          <span>Image</span>
+          <input type="file" accept="image/png, image/jpeg" (change)="handleImageFile($event)" />
+          <div class="image-preview" *ngIf="uploadedImageDataUrl">
+            <img [src]="uploadedImageDataUrl" alt="Preview" />
+          </div>
+        </label>
+
+        @if (productForm.controls.type.value === 'video') {
+        <label>
+          <span>Video File</span>
+          <input type="file" accept="video/mp4" (change)="handleVideoFile($event)" />
+          @if (uploadedVideoFileName) {
+          <div class="file-info">
+            <i class="fas fa-file-video"></i> {{ uploadedVideoFileName }}
+          </div>
+          }
+        </label>
+        }
+      </div>
+    </form>
+    <div class="form-actions">
+      <button class="btn btn-secondary" type="button" (click)="cancelEdit()">Cancel</button>
+      <button class="btn btn-primary" type="submit" [disabled]="productForm.invalid" (click)="submit()">
+        {{ editingProductId() !== null ? 'Update Product' : 'Add Product' }}
+      </button>
+    </div>
+  </div>
+  }
+
+  <div class="products-table-wrapper">
+    <table class="products-table">
+      <thead>
+        <tr>
+          <th>Image</th>
+          <th>Title</th>
+          <th>Type</th>
+          <th>Category</th>
+          <th>Price</th>
+          <th>Discount</th>
+          <th>Rating</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        @if (products().length === 0) {
+        <tr>
+          <td colspan="7" class="empty-state">No products found. Add your first product!</td>
+        </tr>
+        } @else {
+        @for (product of products(); track product.id) {
+        <tr>
+          <td>
+            <img [src]="product.image" [alt]="product.title" class="product-thumb" />
+          </td>
+          <td class="product-title">{{ product.title }}</td>
+          <td>
+            <span class="badge" [class.badge-book]="product.type === 'book'"
+              [class.badge-video]="product.type === 'video'">
+              {{ product.type === 'book' ? 'Book' : 'Video' }}
+            </span>
+          </td>
+          <td class="text-capitalize">{{ product.categoryName || product.category }}</td>
+          <td class="price">{{ product.price | currency:'INR':'symbol':'1.2-2' }}</td>
+          <td class="discount">{{ product.discount || 0 }}{{ product.discountType === 'percentage' ? '%' : '₹' }}</td>
+          <td>
+            <span class="rating">
+              <i class="fas fa-star"></i> {{ product.rating }}
+            </span>
+          </td>
+          <td>
+            <div class="action-buttons">
+              <button class="btn-icon btn-edit" (click)="editProduct(product)" title="Edit"
+                [disabled]="productIdsInCart().has(product.id)">
+                <i class="fas fa-edit"></i>
+              </button>
+              <button class="btn-icon btn-delete" (click)="deleteProduct(product.id)" title="Delete"
+                [disabled]="productIdsInCart().has(product.id)">
+                <i class="fas fa-trash"></i>
+              </button>
+            </div>
+          </td>
+        </tr>
+        }
+        }
+      </tbody>
+    </table>
+  </div>
+</section>

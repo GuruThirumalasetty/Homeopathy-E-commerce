@@ -1,0 +1,101 @@
+<section class="auth-page">
+  <div class="auth-container">
+    <div class="auth-card">
+      <div class="auth-header">
+        <h1>Create Account</h1>
+        <p>Sign up to start shopping</p>
+      </div>
+
+      <form [formGroup]="signupForm" (ngSubmit)="submit()" class="auth-form">
+        <div class="form-group">
+          <label for="name">Full Name</label>
+          <input
+            id="name"
+            type="text"
+            formControlName="name"
+            placeholder="Jane Doe"
+            [class.error]="signupForm.controls.name.touched && signupForm.controls.name.invalid"
+          />
+          @if (signupForm.controls.name.touched && signupForm.controls.name.invalid) {
+            <span class="error-message">Name is required</span>
+          }
+        </div>
+
+        <div class="form-group">
+          <label for="email">Email Address</label>
+          <input
+            id="email"
+            type="email"
+            formControlName="email"
+            placeholder="you@example.com"
+            [class.error]="signupForm.controls.email.touched && signupForm.controls.email.invalid"
+          />
+          @if (signupForm.controls.email.touched && signupForm.controls.email.invalid) {
+            <span class="error-message">
+              @if (signupForm.controls.email.errors?.['required']) {
+                Email is required
+              } @else if (signupForm.controls.email.errors?.['email']) {
+                Please enter a valid email
+              }
+            </span>
+          }
+        </div>
+
+        <div class="form-group">
+          <label for="email">Mobile Number</label>
+          <input
+            id="mobile_number"
+            type="text"
+            formControlName="mobile_number"
+            placeholder="9876543210"
+            [class.error]="signupForm.controls.mobile_number.touched && signupForm.controls.mobile_number.invalid"
+          />
+          @if (signupForm.controls.mobile_number.touched && signupForm.controls.mobile_number.invalid) {
+            <span class="error-message">
+              @if (signupForm.controls.mobile_number.errors?.['required']) {
+                Mobile number is required
+              } @else if (signupForm.controls.mobile_number.errors?.['maxlength']) {
+                Please enter a valid mobile numbers
+              }
+            </span>
+          }
+        </div>
+
+        <div class="form-group">
+          <label for="password">Password</label>
+          <input
+            id="password"
+            type="password"
+            formControlName="password"
+            placeholder="••••••••"
+            [class.error]="signupForm.controls.password.touched && signupForm.controls.password.invalid"
+          />
+          @if (signupForm.controls.password.touched && signupForm.controls.password.invalid) {
+            <span class="error-message">
+              @if (signupForm.controls.password.errors?.['required']) {
+                Password is required
+              } @else if (signupForm.controls.password.errors?.['minlength']) {
+                Password must be at least 6 characters
+              }
+            </span>
+          }
+        </div>
+
+        <button type="submit" class="btn btn-primary btn-block" [disabled]="isLoading()">
+          @if (isLoading()) {
+            <i class="fas fa-spinner fa-spin"></i> Creating account...
+          } @else {
+            Create Account
+          }
+        </button>
+      </form>
+
+      <div class="auth-footer">
+        <p>
+          Already have an account?
+          <a routerLink="/login" class="link">Sign in here</a>
+        </p>
+      </div>
+    </div>
+  </div>
+</section>

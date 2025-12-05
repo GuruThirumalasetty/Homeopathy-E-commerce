@@ -1,0 +1,156 @@
+<section class="role-create-section" *ngIf="!isLoading">
+  <div class="container">
+    <div class="form-header">
+      <h2><i class="fas fa-user-{{ isEditMode ? 'edit' : 'plus' }}"></i> {{ isEditMode ? 'Edit Role' : 'Create New Role' }}</h2>
+      <a (click)="cancel()" class="btn btn-outline">
+        <i class="fas fa-arrow-left"></i> Back to Roles
+      </a>
+    </div>
+
+    <form [formGroup]="roleForm" (ngSubmit)="onSubmit()" class="role-form">
+      <div class="form-grid">
+        <div class="form-group">
+          <label for="name">Role Name *</label>
+          <input
+            type="text"
+            id="name"
+            formControlName="name"
+            class="form-input"
+            placeholder="Enter role name"
+            [class.error]="roleForm.get('name')?.invalid && roleForm.get('name')?.touched"
+          />
+          @if (roleForm.get('name')?.invalid && roleForm.get('name')?.touched) {
+            <div class="error-message">
+              @if (roleForm.get('name')?.errors?.['required']) {
+                Role name is required
+              } @else if (roleForm.get('name')?.errors?.['minlength']) {
+                Role name must be at least 2 characters
+              }
+            </div>
+          }
+        </div>
+
+        <div class="form-group">
+          <label for="description">Description *</label>
+          <textarea
+            id="description"
+            formControlName="description"
+            class="form-textarea"
+            placeholder="Enter role description"
+            rows="4"
+            [class.error]="roleForm.get('description')?.invalid && roleForm.get('description')?.touched"
+          ></textarea>
+          @if (roleForm.get('description')?.invalid && roleForm.get('description')?.touched) {
+            <div class="error-message">
+              @if (roleForm.get('description')?.errors?.['required']) {
+                Description is required
+              } @else if (roleForm.get('description')?.errors?.['minlength']) {
+                Description must be at least 10 characters
+              }
+            </div>
+          }
+        </div>
+      </div>
+
+      <div class="permissions-section">
+        <h3><i class="fas fa-shield-alt"></i> Permissions</h3>
+        <p class="section-description">Select the actions for each permission</p>
+
+        @if (permissions.length === 0) {
+          <div class="loading-state">
+            <i class="fas fa-spinner fa-spin"></i>
+            Loading permissions...
+          </div>
+        } @else {
+          <div class="permissions-table">
+            <div class="table-header">
+              <div class="permission-column">Permission</div>
+              <div class="action-column">Create</div>
+              <div class="action-column">View</div>
+              <div class="action-column">Update</div>
+              <div class="action-column">Delete</div>
+            </div>
+            @for (permission of permissions; track permission.permission_id) {
+              <div class="table-row">
+                <div class="permission-column">
+                  <div class="permission-name">{{ permission.permission_name }}</div>
+                  <!-- <div class="permission-module">{{ permission.module }}</div> -->
+                </div>
+                <div class="action-column">
+                  <label class="action-checkbox">
+                    <input
+                      type="checkbox"
+                      [checked]="getPermissionAction(permission.permission_id, 'create')"
+                      (change)="togglePermissionAction(permission.permission_id, 'create')"
+                    />
+                    <span class="checkmark"></span>
+                  </label>
+                </div>
+                <div class="action-column">
+                  <label class="action-checkbox">
+                    <input
+                      type="checkbox"
+                      [checked]="getPermissionAction(permission.permission_id, 'view')"
+                      (change)="togglePermissionAction(permission.permission_id, 'view')"
+                    />
+                    <span class="checkmark"></span>
+                  </label>
+                </div>
+                <div class="action-column">
+                  <label class="action-checkbox">
+                    <input
+                      type="checkbox"
+                      [checked]="getPermissionAction(permission.permission_id, 'update')"
+                      (change)="togglePermissionAction(permission.permission_id, 'update')"
+                    />
+                    <span class="checkmark"></span>
+                  </label>
+                </div>
+                <div class="action-column">
+                  <label class="action-checkbox">
+                    <input
+                      type="checkbox"
+                      [checked]="getPermissionAction(permission.permission_id, 'delete')"
+                      (change)="togglePermissionAction(permission.permission_id, 'delete')"
+                    />
+                    <span class="checkmark"></span>
+                  </label>
+                </div>
+              </div>
+            }
+          </div>
+        }
+
+        <!-- @if (getSelectedPermissionsCount() === 0) {
+          <div class="warning-message">
+            <i class="fas fa-exclamation-triangle"></i>
+            Please select at least one permission action
+          </div>
+        } @else {
+          <div class="selected-count">
+            <i class="fas fa-check-circle"></i>
+            {{ getSelectedPermissionsCount() }} permission(s) with actions selected
+          </div>
+        } -->
+      </div>
+
+      <div class="form-actions">
+        <button type="button" class="btn btn-outline" (click)="cancel()">
+          <i class="fas fa-times"></i> Cancel
+        </button>
+        <button type="submit" class="btn btn-primary" [disabled]="roleForm.invalid || getSelectedPermissionsCount() === 0">
+          <i class="fas fa-save"></i> {{ isEditMode ? 'Update Role' : 'Create Role' }}
+        </button>
+      </div>
+    </form>
+  </div>
+</section>
+
+<section class="role-create-section" *ngIf="isLoading">
+  <div class="container">
+    <div class="loading-state">
+      <i class="fas fa-spinner fa-spin"></i>
+      Loading role data...
+    </div>
+  </div>
+</section>

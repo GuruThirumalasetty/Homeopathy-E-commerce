@@ -1,0 +1,116 @@
+<section class="container admin-table">
+  <h2>Users</h2>
+
+  <button class="btn btn-primary" (click)="startCreate()" [disabled]="isCreating() || editingUser()">
+    <i class="fas fa-plus"></i> Create New User
+  </button>
+
+  @if (isCreating() || editingUser()) {
+    <div class="user-form">
+      <h3>{{ isCreating() ? 'Create User' : 'Edit User' }}</h3>
+      <form [formGroup]="userForm" (ngSubmit)="saveUser()">
+        <div class="grid-cols-2 gap-10">
+          <div class="form-group">
+            <label for="name">Name *</label>
+            <input id="name" type="text" formControlName="name" class="form-control">
+            @if (userForm.get('name')?.invalid && userForm.get('name')?.touched) {
+              <div class="error">
+                @if (userForm.get('name')?.errors?.['required']) {
+                  Name is required.
+                }
+                @if (userForm.get('name')?.errors?.['minlength']) {
+                  Name must be at least 2 characters.
+                }
+              </div>
+            }
+          </div>
+
+          <div class="form-group">
+            <label for="email">Email *</label>
+            <input id="email" type="email" formControlName="email" class="form-control">
+            @if (userForm.get('email')?.invalid && userForm.get('email')?.touched) {
+              <div class="error">
+                @if (userForm.get('email')?.errors?.['required']) {
+                  Email is required.
+                }
+                @if (userForm.get('email')?.errors?.['email']) {
+                  Please enter a valid email.
+                }
+              </div>
+            }
+          </div>
+
+          <div class="form-group">
+            <label for="mobile">Mobile Number</label>
+            <input id="mobile" type="text" formControlName="mobile_number" class="form-control">
+          </div>
+
+          <div class="form-group">
+            <label for="role">Role *</label>
+            <select id="role" formControlName="role" class="form-control">
+              @for (role of roles; track role) {
+                <option [value]="role">{{ role | titlecase }}</option>
+              }
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="status">Status *</label>
+            <select id="status" formControlName="status" class="form-control">
+              @for (status of statuses; track status) {
+                <option [value]="status">{{ status | titlecase }}</option>
+              }
+            </select>
+          </div>
+        </div>
+
+        <div class="form-actions">
+          <button type="submit" class="btn btn-primary" [disabled]="userForm.invalid">
+            {{ isCreating() ? 'Create' : 'Update' }} User
+          </button>
+          <button type="button" class="btn btn-secondary" (click)="cancelEdit()">Cancel</button>
+        </div>
+      </form>
+    </div>
+  }
+
+  <table>
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Email</th>
+        <th>Role</th>
+        <th>Status</th>
+        <th>Roles Assigned</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      @for (user of users(); track user.id) {
+        <tr>
+          <td>{{ user.name }}</td>
+          <td>{{ user.email }}</td>
+          <td>{{ user.role | titlecase }}</td>
+          <td>{{ (user.status || 'active') | titlecase }}</td>
+          <td>
+            <span [class]="hasRolesAssigned(user) ? 'role-assigned' : 'role-not-assigned'">
+              <i [class]="hasRolesAssigned(user) ? 'fas fa-check-circle' : 'fas fa-times-circle'"></i>
+              {{ hasRolesAssigned(user) ? 'Assigned' : 'Not Assigned' }}
+            </span>
+          </td>
+          <td>
+            <button class="btn btn-sm btn-edit" (click)="startEdit(user)" [disabled]="isCreating() || editingUser()">
+              <i class="fas fa-edit"></i>
+            </button>
+            <button class="btn btn-sm btn-role-mapping" (click)="navigateToRoleMapping(user)" [disabled]="isCreating() || editingUser()">
+              <i class="fas fa-user-tag"></i> 
+            </button>
+            <button class="btn btn-sm btn-delete" (click)="deleteUser(user)">
+              <i class="fas fa-trash"></i>
+            </button>
+          </td>
+        </tr>
+      }
+    </tbody>
+  </table>
+</section>

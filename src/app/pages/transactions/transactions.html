@@ -1,0 +1,33 @@
+<section class="container admin-table">
+  <h2>{{ user()?.role === 'admin' ? 'All Transactions' : 'My Transactions' }}</h2>
+  <table>
+    <thead>
+      <tr>
+        <th>ID</th>
+        <th>Order</th>
+        <th>User</th>
+        <th>Amount</th>
+        <th>Status</th>
+        <th>Method</th>
+      </tr>
+    </thead>
+    <tbody>
+      @for (tx of enrichedTransactions(); track tx.id) {
+        <tr>
+          <td>{{ tx.id }}</td>
+          <td><a [routerLink]="['/order', tx.orderId]" class="link">#{{ tx.orderId }}</a></td>
+          <td>
+            @if (tx.user) {
+              <a [routerLink]="['/admin/user', tx.user.id]" class="link">{{ tx.user.name }}</a>
+            } @else {
+              Unknown
+            }
+          </td>
+          <td>{{ tx.amount | currency:'INR':'symbol':'1.2-2' }}</td>
+          <td>{{ tx.status }}</td>
+          <td>{{ tx.method }}</td>
+        </tr>
+      }
+    </tbody>
+  </table>
+</section>

@@ -1,0 +1,113 @@
+<header class="header">
+  <nav class="nav">
+    <div class="nav-brand">
+      <h1>Homeopathy</h1>
+    </div>
+    <!-- <ul class="nav-menu">
+      <li><a routerLink="/home">Home</a></li>
+      <li><a routerLink="/products">Products</a></li>
+      <li><a routerLink="/about">About</a></li>
+      <li><a routerLink="/contact">Contact</a></li>
+    </ul> -->
+    <div class="nav-auth">
+      <button class="btn btn-outline" routerLink="/login">Sign In</button>
+      <button class="btn btn-primary" routerLink="/signup">Sign Up</button>
+    </div>
+  </nav>
+</header>
+
+<section class="hero">
+  <div class="hero-content">
+    <h1>Discover Natural Healing with Homeopathy</h1>
+    <p>Homeopathy offers gentle, effective remedies derived from nature to support your body's innate healing abilities. Experience holistic wellness with our carefully selected range of homeopathic products.</p>
+    <div class="hero-buttons">
+      <button class="btn btn-primary" routerLink="/products">Shop Now</button>
+      <button class="btn btn-outline" (click)="scrollToProducts()">Learn More</button>
+    </div>
+  </div>
+  <div class="hero-image">
+    <img src="https://images.unsplash.com/photo-1559757148-5c350d0d3c56?w=600" alt="Natural herbs and homeopathic remedies" />
+  </div>
+</section>
+
+<section id="products" class="featured-products">
+  <div class="container">
+    <h2>Featured Remedies</h2>
+    <p>Discover our top-selling homeopathic remedies</p>
+    <div class="products-grid">
+      <div class="product-card">
+        <img src="https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?w=400" alt="Arnica Montana" />
+        <h3>Arnica Montana</h3>
+        <p>For bruises, pain, and inflammation</p>
+        <div class="product-footer">
+          <span class="price">₹299</span>
+          <!-- <button class="btn btn-primary">Add to Cart</button> -->
+        </div>
+      </div>
+      <div class="product-card">
+        <img src="https://images.unsplash.com/photo-1556228720-195a672e8a03?w=400" alt="Belladonna" />
+        <h3>Belladonna</h3>
+        <p>For fever, headache, and sudden illnesses</p>
+        <div class="product-footer">
+          <span class="price">₹249</span>
+          <!-- <button class="btn btn-primary">Add to Cart</button> -->
+        </div>
+      </div>
+      <div class="product-card">
+        <img src="https://images.unsplash.com/photo-1559757148-5c350d0d3c56?w=400" alt="Chamomilla" />
+        <h3>Chamomilla</h3>
+        <p>For teething pain and irritability</p>
+        <div class="product-footer">
+          <span class="price">₹199</span>
+          <!-- <button class="btn btn-primary">Add to Cart</button> -->
+        </div>
+      </div>
+      <div class="product-card">
+        <img src="https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?w=400" alt="Nux Vomica" />
+        <h3>Nux Vomica</h3>
+        <p>For digestive issues and stress</p>
+        <div class="product-footer">
+          <span class="price">₹279</span>
+          <!-- <button class="btn btn-primary">Add to Cart</button> -->
+        </div>
+      </div>
+    </div>
+    <div class="cta-section">
+      <button class="btn btn-primary btn-large" routerLink="/products">Browse Full Catalog</button>
+    </div>
+  </div>
+</section>
+
+<section class="testimonials">
+  <div class="container">
+    <h2>What Our Customers Say</h2>
+    <div class="testimonials-grid">
+      <div class="testimonial-card">
+        <p>"Homeopathy has transformed my health. The remedies are gentle and effective."</p>
+        <cite>- Sarah Johnson</cite>
+      </div>
+      <div class="testimonial-card">
+        <p>"I love the natural approach. No more harsh chemicals for my family."</p>
+        <cite>- Michael Chen</cite>
+      </div>
+      <div class="testimonial-card">
+        <p>"Excellent quality products and fast shipping. Highly recommended!"</p>
+        <cite>- Emily Davis</cite>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="cta-final">
+  <div class="container">
+    <h2>Start Your Natural Healing Journey Today</h2>
+    <p>Join thousands of satisfied customers who trust homeopathy for their wellness needs.</p>
+    <button class="btn btn-primary btn-large" routerLink="/signup">Get Started</button>
+  </div>
+</section>
+
+<footer class="footer">
+  <div class="container">
+    <p>&copy; 2024 Homeopathy Store. All rights reserved.</p>
+  </div>
+</footer>

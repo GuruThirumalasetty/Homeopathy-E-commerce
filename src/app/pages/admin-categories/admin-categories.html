@@ -1,0 +1,112 @@
+<section class="admin-categories container">
+  @if (!isAdmin) {
+    <div class="access-denied">
+      <h2>Access Denied</h2>
+      <p>You don't have permission to access this page.</p>
+    </div>
+  } @else {
+    <div class="admin-header">
+      <h2>Manage Categories</h2>
+      <button class="btn btn-primary" (click)="showAddForm()">
+        <i class="fas fa-plus"></i> Add New Category
+      </button>
+    </div>
+
+    @if (showForm()) {
+      <div class="category-form-card">
+        <div class="form-header">
+          <h3>{{ editingCategory() !== null ? 'Edit Category' : 'Add New Category' }}</h3>
+        </div>
+        <form [formGroup]="categoryForm" (ngSubmit)="onSubmit()">
+          <div class="form-grid">
+            <label>
+              <span>Name <span class="required">*</span></span>
+              <input type="text" formControlName="name" placeholder="Category name" />
+              @if (categoryForm.controls['name'].touched && categoryForm.controls['name'].invalid) {
+                <span class="error">Name is required (min 2 characters)</span>
+              }
+            </label>
+
+            <label>
+              <span>Code <span class="required">*</span></span>
+              <input type="text" formControlName="code" placeholder="Category code" maxlength="10" />
+              @if (categoryForm.controls['code'].touched && categoryForm.controls['code'].invalid) {
+                <span class="error">Code is required (2-10 characters)</span>
+              }
+            </label>
+
+            <!-- <label>
+              <span>Description <span class="required">*</span></span>
+              <textarea formControlName="description" placeholder="Category description" rows="3"></textarea>
+              @if (categoryForm.controls['description'].touched && categoryForm.controls['description'].invalid) {
+                <span class="error">Description is required</span>
+              }
+            </label>
+
+            <label>
+              <span>Status <span class="required">*</span></span>
+              <select formControlName="status">
+                <option value="Active">Active</option>
+                <option value="Inactive">Inactive</option>
+              </select>
+              @if (categoryForm.controls['status'].touched && categoryForm.controls['status'].invalid) {
+                <span class="error">Status is required</span>
+              }
+            </label> -->
+          </div>
+
+          <div class="form-actions">
+            <button class="btn btn-secondary" type="button" (click)="resetForm()">Cancel</button>
+            <button class="btn btn-primary" type="submit" [disabled]="categoryForm.invalid || loading()">
+              {{ editingCategory() !== null ? 'Update Category' : 'Add Category' }}
+            </button>
+          </div>
+        </form>
+      </div>
+    }
+
+    <div class="categories-table-wrapper">
+      <table class="categories-table">
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th>Code</th>
+            <!-- <th>Description</th>
+            <th>Status</th> -->
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          @if (categories().length === 0) {
+            <tr>
+              <td colspan="5" class="empty-state">No categories found. Add your first category!</td>
+            </tr>
+          } @else {
+            @for (category of categories(); track category.id) {
+              <tr>
+                <td class="category-name">{{ category.name }}</td>
+                <td>
+                  <span class="badge badge-code">{{ category.code }}</span>
+                </td>
+                <!-- <td>{{ category.description || '' }}</td>
+                <td>
+                  <span class="badge" [class.badge-active]="category.status === 'Active'" [class.badge-inactive]="category.status === 'Inactive'">{{ category.status || 'Active' }}</span>
+                </td> -->
+                <td>
+                  <div class="action-buttons">
+                    <button class="btn-icon btn-edit" (click)="editCategory(category)" title="Edit">
+                      <i class="fas fa-edit"></i>
+                    </button>
+                    <button class="btn-icon btn-delete" (click)="deleteCategory(category)" title="Delete">
+                      <i class="fas fa-trash"></i>
+                    </button>
+                  </div>
+                </td>
+              </tr>
+            }
+          }
+        </tbody>
+      </table>
+    </div>
+  }
+</section>
