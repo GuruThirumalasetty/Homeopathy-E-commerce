@@ -27,7 +27,9 @@
             <select formControlName="type" class="form-control">
               <option value="book">Book</option>
               <option value="video">Video</option>
-              <option value="perceptions on homeopathy">Perceptions on Homeopathy</option>
+              @if(show_pof_type && editingSubscriptionId()){
+                <option value="perceptions on homeopathy">Perceptions on Homeopathy</option>
+              }
             </select>
           </div>
 

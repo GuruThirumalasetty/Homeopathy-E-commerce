@@ -7,14 +7,53 @@
   color: white;
 }
 .poh-hero {
-  width: 100%;
-  margin: 0;
-  padding: 2rem 1.5rem;
-  // background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  background-image: url('/public/Perceptions_on_Homeopathy_bg.jpeg');
-  color: black;
+  position: relative;
+  background: none; /* move bg to pseudo-element */
+  height: 270px;
+  display: flex;
+  align-items: center;
+}
+.poh-hero-content{
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-around;
+}
+.poh-heading{
+  margin: auto;
+}
+.poh-hero::before {
+  content: "";
+  // position: absolute;
+  top: 0;
+  left: 0;
+  width: 500px;  /* same as your bg image width */
+  height: 100%;
+  background-image: url('/Perceptions_on_Homeopathy_bg.jpeg');
+  background-repeat: no-repeat;
+  background-size: 356px auto;
+  background-position: 28px -40px;
+
+  /* fade right edge */
+  mask-image: linear-gradient(to right, black 62%, transparent 100%);
 }
 
+// .poh-subscribe-prices{
+//   display: flex;
+//   flex-direction: column !important;
+//   gap: 10px !important;
+//   margin: 5px 0;
+// }
+.poh-plan-price{
+  display: flex;
+  flex-direction: row;
+}
+.poh-subscribe-btn{
+  margin: 15px 0;
+  width: 50% !important;
+  background: #8ab3a1 !important;
+  color: #313131 !important;
+}
 .hero .container {
   width: 100%;
   // max-width: 1200px;
@@ -1051,6 +1090,21 @@
 
 // Responsive Design
 @media (max-width: 768px) {
+  .poh-hero {
+    height: auto;
+    padding: 2rem 0;
+  }
+
+  .poh-hero-content {
+    flex-direction: column;
+    text-align: center;
+  }
+
+  .poh-heading {
+    font-size: 2rem;
+    margin-bottom: 1.5rem;
+  }
+
   .hero {
     padding: 2rem 0;
   }

@@ -198,6 +198,7 @@ export class HomeComponent {
            };
           this.api.addCartItem(payload).subscribe({
             next: () => {
+              this.notifications.notify('Item added to cart', 'success');
               this.refreshCart(currentUser.id);
             },
             error: () => {
@@ -270,7 +271,6 @@ export class HomeComponent {
           }
         });
         this.appState.setCartItems(cartItems);
-        this.notifications.notify('Item added to cart', 'success');
       },
       error: () => {
         this.notifications.notify('Item added locally but failed to refresh cart', 'error');

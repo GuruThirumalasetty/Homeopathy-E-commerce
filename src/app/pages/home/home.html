@@ -17,13 +17,13 @@
 @else {
   <section class="poh-hero">
     <div class="container">
-      <div class="hero-content">
-        <h1>{{perception_on_homeopathy_plan().name}}</h1>
+      <div class="hero-content grid-cols-2 gap-15">
+        <h1 class="poh-heading">{{perception_on_homeopathy_plan().name}}</h1>
         <div class="plan-header">
-          <div class="plan-price">
+          <div class="plan-price poh-plan-price">
             @if (hasSubscriptionDiscount(perception_on_homeopathy_plan())) {
-            <div class="subscription-pricing">
-              <div class="subscribe-proces">
+            <div class="subscription-pricing gap-10">
+              <div class="subscribe-proces poh-subscribe-proces">
                 <div class="original-price">
                   <span class="currency">₹</span>
                   <span class="amount">{{ perception_on_homeopathy_plan().price | number:'1.2-2' }}</span>
@@ -46,6 +46,9 @@
             <span class="period">/{{ perception_on_homeopathy_plan().duration }}</span>
             }
           </div>
+          <button class="btn btn-primary poh-subscribe-btn subscribe-btn" (click)="subscribe(perception_on_homeopathy_plan())">
+            Subscribe Now
+          </button>
         </div>
       </div>
     </div>
