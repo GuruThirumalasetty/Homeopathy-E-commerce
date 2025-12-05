@@ -1,0 +1,111 @@
+<div class="admin-customers-container">
+  <section class="search-section">
+    <div>
+      <!-- Header Section -->
+      <header class="page-header">
+        <h1 class="page-title">
+          <i class="fas fa-users"></i>
+          Registered Users
+        </h1>
+      </header>
+    </div>
+    <div>
+      <!-- Search Section -->
+      <form [formGroup]="searchForm">
+        <div class="search-input-container">
+          <i class="fas fa-search search-icon"></i>
+          <input 
+            type="text" 
+            placeholder="Search customers by name, email, or ID..."
+            class="search-input"
+            formControlName="search">
+        </div>
+      </form>
+    </div>
+    <div>
+      <!-- Loading State -->
+      @if (isLoading()) {
+        <section class="loading-container">
+          <div class="loading-spinner">
+            <div class="spinner"></div>
+            <p>Loading customers...</p>
+          </div>
+        </section>
+      }
+
+      <!-- Customer Table -->
+      @if (!isLoading()) {
+        <section class="table-container">
+          @if (filteredCustomers().length === 0) {
+            <!-- Empty State -->
+            <div class="empty-state">
+              <div class="empty-icon">
+                <i class="fas fa-users"></i>
+              </div>
+              <h3>No customers found</h3>
+              <p>
+                @if (allCustomers().length === 0) {
+                  No customers have been registered yet.
+                } @else {
+                  No customers match your search criteria.
+                }
+              </p>
+            </div>
+          } @else {
+            <!-- Simple Customer Table -->
+            <div class="table-wrapper">
+              <table class="customers-table">
+                <thead>
+                  <tr>
+                    <th>Customer ID</th>
+                    <th>Full Name</th>
+                    <th>Email</th>
+                    <th>Mobile</th>
+                    <th>Registration Date</th>
+                    <th>Status</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  @for (customer of filteredCustomers(); track customer.id) {
+                    <tr class="customer-row">
+                      <td>
+                        <span class="id-badge">{{ customer.id }}</span>
+                      </td>
+                      <td>
+                        <a  [routerLink]="['/admin/user', customer.id]" class="email-link">{{customer.name}} </a>
+                      </td>
+                      <td>
+                        <div class="customer-name">
+                          <span class="name">{{ customer.email }}</span>
+                        </div>
+                      </td>
+                      <td>
+                        <span class="mobile">{{ customer.mobile_number || 'N/A' }}</span>
+                      </td>
+                      <td>
+                        <span class="date">{{ formatDate(customer.registrationDate || customer.created_on) }}</span>
+                      </td>
+                      <td>
+                        <span 
+                          class="status-badge"
+                          [class.status-active]="(customer.status || 'active') === 'active'"
+                          [class.status-inactive]="(customer.status || 'active') === 'inactive'">
+                          {{ (customer.status || 'active') | titlecase }}
+                        </span>
+                      </td>
+                    </tr>
+                  }
+                </tbody>
+              </table>
+            </div>
+
+            <!-- Customer Count -->
+            <div class="customer-count">
+              Showing {{ filteredCustomers().length }} of {{ allCustomers().length }} customers
+            </div>
+          }
+        </section>
+      }
+    </div>
+  </section>
+</div>

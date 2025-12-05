@@ -142,6 +142,12 @@ export const routes: Routes = [
     loadComponent: () => import('./pages/admin-users/admin-users').then(m => m.AdminUsersComponent)
   },
   {
+    path: 'admin/customers',
+    title: 'Homeopathy | Admin Customers',
+    canActivate: [authGuard],
+    loadComponent: () => import('./pages/admin-customers/admin-customers').then(m => m.AdminCustomersComponent)
+  },
+  {
     path: 'admin/categories',
     title: 'Homeopathy | Admin Categories',
     canActivate: [authGuard],
