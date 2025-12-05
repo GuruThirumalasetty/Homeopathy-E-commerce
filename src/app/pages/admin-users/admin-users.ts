@@ -40,7 +40,7 @@ export class AdminUsersComponent {
 
   private loadUsers(): void {
     this.api.getUsers().subscribe({
-      next: (list) => this.users.set(list || []),
+      next: (list) => this.users.set(list.filter(x=>x.role != 'customer') || []),
       error: () => {
         this.notifications.notify('Failed to load users', 'error');
         this.users.set([]);

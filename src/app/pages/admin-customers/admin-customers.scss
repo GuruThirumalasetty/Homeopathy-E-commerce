@@ -1,0 +1,300 @@
+.admin-customers-container {
+  padding: 1.5rem;
+  background-color: #f8f9fa;
+  min-height: 100vh;
+
+  // Header Styles
+  .page-header {
+    background: white;
+    border-radius: 8px;
+    padding: 0;
+    margin-bottom: 1rem;
+    // box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    // border: 1px solid #e9ecef;
+
+    .page-title {
+      margin: 0;
+      font-size: 1.5rem;
+      font-weight: 600;
+      color: #2c3e50;
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+
+      i {
+        color: #3498db;
+      }
+    }
+  }
+
+  // Search Section
+  .search-section {
+    background: white;
+    border-radius: 8px;
+    padding: 1.5rem;
+    margin-bottom: 1rem;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    border: 1px solid #e9ecef;
+
+    .search-input-container {
+      position: relative;
+      width: auto;
+      margin-bottom: 1rem;
+
+      .search-icon {
+        position: absolute;
+        left: 0.75rem;
+        top: 50%;
+        transform: translateY(-50%);
+        color: #6c757d;
+        font-size: 0.875rem;
+      }
+
+      .search-input {
+        width: 100%;
+        padding: 0.75rem 0.75rem 0.75rem 2.5rem;
+        border: 2px solid #e9ecef;
+        border-radius: 8px;
+        font-size: 0.875rem;
+        transition: border-color 0.2s ease;
+
+        &:focus {
+          outline: none;
+          border-color: #3498db;
+          box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1);
+        }
+
+        &::placeholder {
+          color: #6c757d;
+        }
+      }
+    }
+  }
+
+  // Loading State
+  .loading-container {
+    text-align: center;
+    padding: 3rem;
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+
+    .loading-spinner {
+      .spinner {
+        width: 2rem;
+        height: 2rem;
+        border: 3px solid #e9ecef;
+        border-top: 3px solid #3498db;
+        border-radius: 50%;
+        animation: spin 1s linear infinite;
+        margin: 0 auto 1rem;
+      }
+
+      p {
+        color: #6c757d;
+        margin: 0;
+      }
+    }
+  }
+
+  // Table Container
+  .table-container {
+    .empty-state {
+      background: white;
+      border-radius: 8px;
+      padding: 3rem 2rem;
+      text-align: center;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      border: 1px solid #e9ecef;
+
+      .empty-icon {
+        i {
+          font-size: 3rem;
+          color: #dee2e6;
+          margin-bottom: 1rem;
+        }
+      }
+
+      h3 {
+        color: #495057;
+        margin-bottom: 0.5rem;
+        font-size: 1.25rem;
+      }
+
+      p {
+        color: #6c757d;
+        margin: 0;
+      }
+    }
+
+    .table-wrapper {
+      background: white;
+      border-radius: 8px;
+      overflow: hidden;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      border: 1px solid #e9ecef;
+
+      .customers-table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 0.875rem;
+
+        thead {
+          background: #f8f9fa;
+
+          th {
+            padding: 1rem;
+            text-align: left;
+            font-weight: 600;
+            color: #495057;
+            border-bottom: 2px solid #e9ecef;
+            font-size: 0.875rem;
+          }
+        }
+
+        tbody {
+          .customer-row {
+            border-bottom: 1px solid #f1f3f4;
+            transition: background-color 0.2s ease;
+
+            &:hover {
+              background: #f8f9fa;
+            }
+
+            td {
+              padding: 1rem;
+              vertical-align: middle;
+
+              .id-badge {
+                background: #e9ecef;
+                padding: 0.25rem 0.5rem;
+                border-radius: 4px;
+                font-family: 'Courier New', monospace;
+                font-size: 0.8rem;
+                font-weight: 600;
+              }
+
+              .customer-name {
+                .name {
+                  font-weight: 500;
+                  color: #2c3e50;
+                }
+              }
+
+              .email-link {
+                color: #3498db;
+                text-decoration: none;
+                font-weight: 500;
+
+                &:hover {
+                  text-decoration: underline;
+                }
+              }
+
+              .mobile {
+                color: #495057;
+              }
+
+              .date {
+                color: #6c757d;
+                font-size: 0.875rem;
+              }
+
+              .status-badge {
+                padding: 0.25rem 0.75rem;
+                border-radius: 12px;
+                font-size: 0.75rem;
+                font-weight: 600;
+                text-transform: uppercase;
+
+                &.status-active {
+                  background: #d4edda;
+                  color: #155724;
+                }
+
+                &.status-inactive {
+                  background: #f8d7da;
+                  color: #721c24;
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+
+    .customer-count {
+      background: white;
+      padding: 1rem;
+      text-align: center;
+      color: #6c757d;
+      font-size: 0.875rem;
+      border-radius: 8px;
+      margin-top: 1rem;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      border: 1px solid #e9ecef;
+    }
+  }
+}
+
+// Animations
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+// Responsive Design
+@media (max-width: 768px) {
+  .admin-customers-container {
+    padding: 1rem;
+
+    .page-header,
+    .search-section {
+      padding: 1rem;
+      margin-bottom: 1rem;
+    }
+
+    .customers-table {
+      thead {
+        th {
+          padding: 0.75rem 0.5rem;
+          font-size: 0.8rem;
+        }
+      }
+
+      tbody {
+        .customer-row {
+          td {
+            padding: 0.75rem 0.5rem;
+          }
+        }
+      }
+    }
+
+    .search-input-container {
+      max-width: none !important;
+    }
+  }
+}
+
+@media (max-width: 480px) {
+  .admin-customers-container {
+    .customers-table {
+      thead {
+        th {
+          padding: 0.5rem 0.25rem;
+          font-size: 0.75rem;
+        }
+      }
+
+      tbody {
+        .customer-row {
+          td {
+            padding: 0.5rem 0.25rem;
+            font-size: 0.8rem;
+          }
+        }
+      }
+    }
+  }
+}
