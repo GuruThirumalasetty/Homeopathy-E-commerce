@@ -1,15 +1,15 @@
 @if (product(); as product) {
   <section class="product-detail">
     <div class="product-preview">
-      <img [src]="product.image" [alt]="product.title" class="preview-image" />
+      <img [src]="product.files_list ? product.files_list[0]?.file_path : ''" [alt]="product.name" class="preview-image" />
 
-      @if (product.type === 'book' && product.previewPages?.length) {
+      @if (product.type === 'book' && product.files_list?.length > 1) {
         <div class="book-preview-pages">
           <h3>Book Preview</h3>
           <div class="preview-grid">
-            @for (page of product.previewPages; track page; let index = $index) {
+            @for (page of product.files_list; track page; let index = $index) {
               <figure class="preview-page">
-                <img [src]="page" [alt]="'Preview page ' + (index + 1)" />
+                <img [src]="page.file_path" [alt]="'Preview page ' + (index + 1)" />
                 <figcaption>Page {{ index + 1 }}</figcaption>
               </figure>
             }
@@ -33,8 +33,8 @@
 
     <div class="product-details">
       <span class="pill">{{ product.type === 'book' ? 'Book' : 'Video Course' }}</span>
-      <h1>{{ product.title }}</h1>
-      <p class="product-meta">by {{ product.author || product.instructor }}</p>
+      <h1>{{ product.name }}</h1>
+      <p class="product-meta">by {{ product.contributor_name }}</p>
 
       <div class="rating-row">
         <i class="fas fa-star star" *ngFor="let star of [1,2,3,4,5]; let i = index" [class.empty]="product.rating < i + 1"></i>
@@ -53,7 +53,7 @@
             <div class="discount-info">
               <span class="discount-badge">
                 Save {{ getDiscountAmount() | currency:'INR':'symbol':'1.2-2' }}
-                ({{ product.discountType === 'percentage' ? product.discount + '%' : '₹' + product.discount }} off)
+                ({{ product.discount_type === 'percentage' ? product.discount + '%' : '₹' + product.discount }} off)
               </span>
             </div>
           </div>
@@ -72,7 +72,7 @@
               </div>
               @if (product.discount && product.discount > 0) {
                 <div class="pricing-row">
-                  <span>Discount ({{ product.discountType === 'percentage' ? product.discount + '%' : '₹' + product.discount }}):</span>
+                  <span>Discount ({{ product.discount_type === 'percentage' ? product.discount + '%' : '₹' + product.discount }}):</span>
                   <span>-{{ getDiscountAmount() | currency:'INR':'symbol':'1.2-2' }}</span>
                 </div>
                 <div class="pricing-row">

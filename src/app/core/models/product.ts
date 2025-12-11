@@ -2,24 +2,28 @@ export type ProductType = 'book' | 'video';
 
 export interface Product {
   id: number;
-  title: string;
-  author?: string;
+  name: string;
+  code?: string;
+  contributor_name?: string;
   instructor?: string;
   price: number;
   discount?: number;
-  discountType?: 'percentage' | 'fixed';
+  discount_type?: 'percentage' | 'fixed';
   shipping_charges ?: number;
   tax ?: number;
   image: string;
+  images?: any;
   rating: number;
   type: ProductType;
-  category: string; // deprecated, use categoryId and categoryName
-  categoryId?: string;
-  categoryName?: string;
+  // category: string; // deprecated, use categoryId and categoryName
+  category_id?: number;
+  category_name?: string;
   description: string;
   quantity ?: any;
   stock_quantity ?: any;
+  status?: number;
   previewPages?: string[];
+  files_list ?: any;
   videoUrl?: string;
 }
 
@@ -38,22 +42,23 @@ export interface CartItem {
 
   // Product fields (when type !== 'subscription')
   id?: number;
-  title?: string;
-  author?: string;
+  name?: string;
+  code?: string;
+  contributor_name?: string;
   instructor?: string;
   price?: number;
   discount?: number;
-  discountType?: 'percentage' | 'fixed';
+  discount_type?: 'percentage' | 'fixed';
   image?: string;
   rating?: number;
   productType?: ProductType;
   category?: string;
   description?: string;
   stock_quantity?: number;
+  files_list?: any;
 
   // Subscription fields (when type === 'subscription')
   subscriptionId?: number;
-  name?: string;
   duration?: 'monthly' | 'yearly';
   benefits?: string[];
   limitations?: string[];

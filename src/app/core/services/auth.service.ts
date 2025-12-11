@@ -6,6 +6,10 @@ import { ApiService } from './api.service';
 import { Observable, of } from 'rxjs';
 import { map, switchMap, catchError } from 'rxjs/operators';
 
+function _window() : any {
+  return window;
+}
+
 const AUTH_STORAGE_KEY = 'bookstore-auth';
 
 @Injectable({ providedIn: 'root' })
@@ -26,6 +30,10 @@ export class AuthService {
   constructor(private readonly router: Router) {
     this.init();
   }
+  
+  get nativeWindow() : any {
+    return _window();
+  }
 
   // Restore persisted user on service init
   private init(): void {
@@ -44,10 +52,7 @@ export class AuthService {
         return false;
       }
       const user: User = {
-        id: found.id,
-        name: found.name,
-        email: found.email,
-        role: found.role,
+        ...found,
         referralCode: `USER${found.id}`
       };
       this.userSignal.set(user);
@@ -113,7 +118,7 @@ export class AuthService {
 
   private persistUser(user: User): void {
     try {
-      const data = JSON.stringify({ id: user.id, name: user.name, email: user.email, role: user.role, referralCode: user.referralCode });
+      const data = JSON.stringify({ ...user });
       localStorage.setItem(AUTH_STORAGE_KEY, data);
     } catch {
       // ignore storage errors
@@ -126,7 +131,7 @@ export class AuthService {
       if (!raw) return null;
       const parsed = JSON.parse(raw);
       if (!parsed || !parsed.id) return null;
-      const user: User = { id: String(parsed.id), name: parsed.name, email: parsed.email, role: parsed.role, referralCode: parsed.referralCode };
+      const user: User = { ...parsed, id: String(parsed.id)  };
       return user;
     } catch {
       return null;

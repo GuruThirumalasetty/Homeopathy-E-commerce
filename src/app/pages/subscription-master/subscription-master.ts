@@ -52,7 +52,7 @@ export class SubscriptionMasterComponent implements OnInit {
     description: new FormControl('', { nonNullable: true, validators: [Validators.required] }),
     price: new FormControl(0, { nonNullable: true, validators: [Validators.required, Validators.min(0)] }),
     discount: new FormControl(0, { validators: [Validators.min(0)] }),
-    discountType: new FormControl<'percentage' | 'fixed'>('percentage', { nonNullable: true }),
+    discount_type: new FormControl<'percentage' | 'fixed'>('percentage', { nonNullable: true }),
     duration: new FormControl<'monthly' | 'yearly'>('monthly', { nonNullable: true, validators: [Validators.required] }),
     benefits: new FormArray<FormControl<string>>([]),
     limitations: new FormArray<FormControl<string>>([]),
@@ -100,7 +100,7 @@ export class SubscriptionMasterComponent implements OnInit {
       description: formValue.description ?? '',
       price: Number(formValue.price),
       discount: Number(formValue.discount) || 0,
-      discountType: formValue.discountType ?? 'percentage',
+      discount_type: formValue.discount_type ?? 'percentage',
       duration: formValue.duration ?? 'monthly',
       benefits: this.benefits.value.filter((b: string) => b.trim()),
       limitations: this.limitations.value.filter((l: string) => l.trim()),
@@ -161,7 +161,7 @@ export class SubscriptionMasterComponent implements OnInit {
       description: subscription.description,
       price: subscription.price,
       discount: subscription.discount || 0,
-      discountType: subscription.discountType || 'percentage',
+      discount_type: subscription.discount_type || 'percentage',
       duration: subscription.duration,
       popular: subscription.popular || false,
       type: subscription.type || 'book',
@@ -192,7 +192,7 @@ export class SubscriptionMasterComponent implements OnInit {
       description: '',
       price: 0,
       discount: 0,
-      discountType: 'percentage',
+      discount_type: 'percentage',
       duration: 'monthly',
       popular: false
     });
@@ -211,10 +211,10 @@ export class SubscriptionMasterComponent implements OnInit {
 
   // Helper methods for displaying pricing
   protected getDiscountedPrice(subscription: Subscription): number {
-    const { price, discount, discountType } = subscription;
+    const { price, discount, discount_type } = subscription;
     if (!discount || discount === 0) return price;
 
-    if (discountType === 'percentage') {
+    if (discount_type === 'percentage') {
       return price - (price * discount / 100);
     } else {
       return Math.max(0, price - discount);
@@ -222,10 +222,10 @@ export class SubscriptionMasterComponent implements OnInit {
   }
 
   protected getDiscountAmount(subscription: Subscription): number {
-    const { price, discount, discountType } = subscription;
+    const { price, discount, discount_type } = subscription;
     if (!discount || discount === 0) return 0;
 
-    if (discountType === 'percentage') {
+    if (discount_type === 'percentage') {
       return price * discount / 100;
     } else {
       return discount;
@@ -237,11 +237,11 @@ export class SubscriptionMasterComponent implements OnInit {
     const formValue = this.subscriptionForm.value;
     const price = formValue.price || 0;
     const discount = formValue.discount || 0;
-    const discountType = formValue.discountType || 'percentage';
+    const discount_type = formValue.discount_type || 'percentage';
 
     if (!discount || discount === 0) return price;
 
-    if (discountType === 'percentage') {
+    if (discount_type === 'percentage') {
       return price - (price * discount / 100);
     } else {
       return Math.max(0, price - discount);
@@ -252,11 +252,11 @@ export class SubscriptionMasterComponent implements OnInit {
     const formValue = this.subscriptionForm.value;
     const price = formValue.price || 0;
     const discount = formValue.discount || 0;
-    const discountType = formValue.discountType || 'percentage';
+    const discount_type = formValue.discount_type || 'percentage';
 
     if (!discount || discount === 0) return 0;
 
-    if (discountType === 'percentage') {
+    if (discount_type === 'percentage') {
       return price * discount / 100;
     } else {
       return discount;

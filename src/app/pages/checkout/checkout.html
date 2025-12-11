@@ -129,10 +129,10 @@
       @for (item of items(); track item.type !== 'subscription' ? item.id : item.subscriptionId) {
         <div class="summary-item">
           <div>
-            <p>{{ item.type !== 'subscription' ? item.title : item.name }}</p>
+            <p>{{ item.name }}</p>
             <span>{{ item.quantity }} × {{ item.purchasePrice || item.price || 0 | currency:'INR':'symbol':'1.2-2' }} each </span>
             @if (item.discount && item.discount > 0) {
-              <span class="discount-summary">{{ item.discount }}{{ item.discountType === 'percentage' ? '%' : '₹' }} off</span>
+              <span class="discount-summary">{{ item.discount }}{{ item.discount_type === 'percentage' ? '%' : '₹' }} off</span>
             }
           </div>
           <strong>{{ (item.finalPrice || item.purchasePrice || item.price || 0) * item.quantity | currency:'INR':'symbol':'1.2-2' }}</strong>
@@ -152,7 +152,7 @@
         <span>Total</span>
         <strong>{{ total() | currency:'INR':'symbol':'1.2-2' }}</strong>
       </div>
-      <button class="btn btn-primary" type="button" (click)="placeOrder()" [disabled]="!isValid()">
+      <button class="btn btn-primary" type="button" (click)="payNow()" [disabled]="!isValid()">
         Place Order
       </button>
     </aside>

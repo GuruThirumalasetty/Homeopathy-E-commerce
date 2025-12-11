@@ -5,13 +5,14 @@ import { RouterLink } from '@angular/router';
 import { ApiService } from '../../core/services/api.service';
 import { AuthService } from '../../core/services/auth.service';
 import { NotificationService } from '../../core/services/notification.service';
+import { common_response } from '../../core/models/common_response';
 
 interface Category {
   id: string;
   name: string;
   code: string;
-  // description?: string;
-  // status?: string;
+  description?: string;
+  status?: number;
 }
 
 @Component({
@@ -31,12 +32,14 @@ export class AdminCategoriesComponent {
   protected readonly loading = signal(false);
   protected readonly editingCategory = signal<Category | null>(null);
   protected readonly showForm = signal(false);
+  protected readonly user = signal(this.auth.user());
 
   protected readonly categoryForm: FormGroup = this.fb.group({
+    id : [0],
     name: ['', [Validators.required, Validators.minLength(2)]],
     code: ['', [Validators.required, Validators.minLength(2), Validators.maxLength(10)]],
-    // description: ['', [Validators.required]],
-    // status: ['Active', [Validators.required]]
+    description: [''],
+    status: [1]
   });
 
   constructor() {
@@ -46,9 +49,16 @@ export class AdminCategoriesComponent {
   protected loadCategories(): void {
     this.loading.set(true);
     this.api.getCategories().subscribe({
-      next: (categories) => {
-        this.categories.set(categories || []);
+      next: (result : common_response) => {
         this.loading.set(false);
+        if(result.status_code == 200){
+          let categories = result.data || [];
+          this.categories.set(categories || []);
+        }
+        else{
+          this.categories.set([]);
+          this.notification.notify(result.message);
+        }
       },
       error: () => {
         this.notification.notify('Failed to load categories', 'error');
@@ -62,21 +72,29 @@ export class AdminCategoriesComponent {
 
     const formValue = this.categoryForm.value;
     const categoryData = {
+      id : formValue.id || 0,
       name: formValue.name.trim(),
       code: formValue.code.trim().toUpperCase(),
-      // description: formValue.description.trim(),
-      // status: formValue.status
+      description: formValue.description.trim(),
+      status: formValue.status || 1,
+      created_by : +this.user()!.id || 0,
+      updated_by : +this.user()!.id || 0,
     };
 
     this.loading.set(true);
 
     if (this.editingCategory()) {
       // Update
-      this.api.updateCategory(this.editingCategory()!.id, categoryData).subscribe({
-        next: () => {
-          this.notification.notify('Category updated successfully', 'success');
-          this.loadCategories();
-          this.resetForm();
+      this.api.updateCategory(categoryData).subscribe({
+        next: (responce: common_response) => {
+          if(responce.status_code == 200){
+            this.notification.notify(responce.message, 'success');
+            this.loadCategories();
+            this.resetForm();
+          }
+          else{
+            this.notification.notify(responce.message);
+          }
         },
         error: () => {
           this.notification.notify('Failed to update category', 'error');
@@ -86,10 +104,15 @@ export class AdminCategoriesComponent {
     } else {
       // Create
       this.api.createCategory(categoryData).subscribe({
-        next: () => {
-          this.notification.notify('Category created successfully', 'success');
-          this.loadCategories();
-          this.resetForm();
+        next: (responce: common_response) => {
+          if(responce.status_code == 200){
+            this.notification.notify(responce.message, 'success');
+            this.loadCategories();
+            this.resetForm();
+          }
+          else{
+            this.notification.notify(responce.message);
+          }
         },
         error: () => {
           this.notification.notify('Failed to create category', 'error');
@@ -101,7 +124,7 @@ export class AdminCategoriesComponent {
 
   protected showAddForm(): void {
     this.showForm.set(true);
-    this.categoryForm.reset({ status: 'Active' });
+    this.categoryForm.reset({ status: 1 });
     this.editingCategory.set(null);
     this.loading.set(false);
   }
@@ -110,10 +133,11 @@ export class AdminCategoriesComponent {
     this.showForm.set(true);
     this.editingCategory.set(category);
     this.categoryForm.patchValue({
+      id: category.id,
       name: category.name,
       code: category.code,
-      // description: category.description || '',
-      // status: category.status || 'Active'
+      description: category.description || '',
+      status: category.status || 1
     });
   }
 
@@ -121,7 +145,7 @@ export class AdminCategoriesComponent {
     if (!confirm(`Are you sure you want to delete "${category.name}"?`)) return;
 
     this.loading.set(true);
-    this.api.deleteCategory(category.id).subscribe({
+    this.api.deleteCategory(category).subscribe({
       next: () => {
         this.notification.notify('Category deleted successfully', 'success');
         this.loadCategories();
@@ -134,7 +158,7 @@ export class AdminCategoriesComponent {
   }
 
   protected resetForm(): void {
-    this.categoryForm.reset({ status: 'Active' });
+    this.categoryForm.reset({ status: 1 });
     this.editingCategory.set(null);
     this.showForm.set(false);
     this.loading.set(false);

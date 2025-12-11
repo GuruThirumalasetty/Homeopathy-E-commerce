@@ -9,14 +9,14 @@
           @for (item of items(); track item.type !== 'subscription' ? item.id : item.subscriptionId) {
             <article class="cart-item" [class.highlighted]="item.type === 'subscription' && item.subscriptionId === highlightedSubscriptionId()">
               @if (item.type !== 'subscription') {
-                <img [src]="item.image" [alt]="item.title" class="cart-item-image" />
+                <img [src]="item.files_list ? item.files_list[0]?.file_path : ''" [alt]="item.name" class="cart-item-image" />
               } @else {
                 <div class="subscription-icon">
                   <i class="fas fa-crown"></i>
                 </div>
               }
               <div class="cart-item-details">
-                <h3>{{ item.type !== 'subscription' ? item.title : item.name }} <span *ngIf="item.planType">({{item.planType | titlecase}})</span></h3>
+                <h3>{{ item.name }} <span *ngIf="item.planType">({{item.planType | titlecase}})</span></h3>
                 <p class="cart-item-meta">
                   @if (item.type !== 'subscription') {
                     {{ item.productType === 'book' ? 'Book' : 'Video Course' }}
@@ -40,7 +40,7 @@
                       </div>
                       @if (item.discount && item.discount > 0) {
                         <div class="pricing-row">
-                          <span>Discount ({{ item.discount }}{{ item.discountType === 'percentage' ? '%' : '₹' }}):</span>
+                          <span>Discount ({{ item.discount }}{{ item.discount_type === 'percentage' ? '%' : '₹' }}):</span>
                           <span>-{{ item.discountAmount || 0 | currency:'INR':'symbol':'1.2-2' }}</span>
                         </div>
                         <div class="pricing-row">
@@ -67,7 +67,7 @@
                       </div>
                       @if (item.discount && item.discount > 0) {
                         <div class="pricing-row">
-                          <span>Discount ({{ item.discount }}{{ item.discountType === 'percentage' ? '%' : '₹' }}):</span>
+                          <span>Discount ({{ item.discount }}{{ item.discount_type === 'percentage' ? '%' : '₹' }}):</span>
                           <span>-{{ item.discountAmount || 0 | currency:'INR':'symbol':'1.2-2' }}</span>
                         </div>
                         <div class="pricing-row total-row">

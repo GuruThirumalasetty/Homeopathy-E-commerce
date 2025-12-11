@@ -98,7 +98,7 @@ export class CartComponent {
               name: it.name,
               price: it.price,
               discount: it.discount || 0,
-              discountType: it.discountType || 'percentage',
+              discount_type: it.discount_type || 'percentage',
               duration: it.duration,
               itemPrice: it.itemPrice || it.price,
               discountAmount: it.discountAmount || 0,
@@ -109,21 +109,21 @@ export class CartComponent {
             };
           } else {
             const quantity = it.quantity || 1;
-            const discountAmount = calculateDiscountAmount(it.price, it.discount || 0, it.discountType || 'percentage');
-            const purchasePrice = calculatePurchasePrice(it.price, it.discount || 0, it.discountType || 'percentage');
+            const discountAmount = calculateDiscountAmount(it.price, it.discount || 0, it.discount_type || 'percentage');
+            const purchasePrice = calculatePurchasePrice(it.price, it.discount || 0, it.discount_type || 'percentage');
             const shipping_charges = it.shipping_charges || 0;
             const tax = it.tax || 0;
-            const taxAmount = calculateTaxAmount(it.price, it.discount || 0, it.discountType || 'percentage', shipping_charges, tax, quantity);
-            const finalPrice = calculateFinalPrice(it.price, it.discount || 0, it.discountType || 'percentage', shipping_charges, tax, quantity);
+            const taxAmount = calculateTaxAmount(it.price, it.discount || 0, it.discount_type || 'percentage', shipping_charges, tax, quantity);
+            const finalPrice = calculateFinalPrice(it.price, it.discount || 0, it.discount_type || 'percentage', shipping_charges, tax, quantity);
             return {
               id: it.productId,
               serverId: it.id,
-              title: it.title,
-              author: it.author,
-              instructor: it.instructor,
+              name: it.name,
+              code: it.code,
+              contributor_name: it.contributor_name,
               price: it.price,
               discount: it.discount || 0,
-              discountType: it.discountType || 'percentage',
+              discount_type: it.discount_type || 'percentage',
               shipping_charges,
               tax,
               itemPrice: it.itemPrice || it.price,
@@ -137,7 +137,8 @@ export class CartComponent {
               productType: it.type, // This is the product type (book/video)
               category: it.category,
               description: it.description,
-              quantity
+              quantity,
+              files_list : it.files_list || []
             };
           }
         });

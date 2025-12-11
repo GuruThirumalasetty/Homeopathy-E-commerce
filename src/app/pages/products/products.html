@@ -85,10 +85,10 @@
           } @else {
             @for (product of filteredProducts(); track product.id) {
               <article class="product-card" [routerLink]="['/product', product.id]">
-                <img [src]="product.image" [alt]="product.title" class="product-image" />
+                <img [src]="product.files_list ? product.files_list[0]?.file_path : ''" [alt]="product.name" class="product-image" />
                 <div class="product-info">
-                  <h3 class="product-title">{{ product.title }}</h3>
-                  <p class="product-author">by {{ product.author || product.instructor }}</p>
+                  <h3 class="product-title">{{ product.name }}</h3>
+                  <p class="product-author">by {{ product.contributor_name }}</p>
                   <div class="product-rating">
                     <i class="fas fa-star star" *ngFor="let star of [1,2,3,4,5]; let i = index" [class.empty]="product.rating < i + 1"></i>
                     <span>{{ product.rating }}</span>
@@ -97,8 +97,8 @@
                     <div class="product-price">
                       @if (product.discount && product.discount > 0) {
                         <span class="original-price">{{ product.price | currency:'INR':'symbol':'1.2-2' }}</span>
-                        <span class="discounted-price">{{ calculatePurchasePrice(product.price, product.discount, product.discountType || 'percentage') | currency:'INR':'symbol':'1.2-2' }}</span>
-                        <span class="discount-info">{{ product.discount }}{{ product.discountType === 'percentage' ? '%' : '₹' }} off</span>
+                        <span class="discounted-price">{{ calculatePurchasePrice(product.price, product.discount, product.discount_type || 'percentage') | currency:'INR':'symbol':'1.2-2' }}</span>
+                        <span class="discount-info">{{ product.discount }}{{ product.discount_type === 'percentage' ? '%' : '₹' }} off</span>
                       } @else {
                         <span>{{ product.price | currency:'INR':'symbol':'1.2-2' }}</span>
                       }
@@ -110,7 +110,7 @@
                           @if (product.tax) {
                             <span class="tax-info">+ Tax: {{ product.tax }}%</span>
                           }
-                          <span class="final-price">Total: {{ calculateFinalPrice(product.price, product.discount || 0, product.discountType || 'percentage', product.shipping_charges || 0, product.tax || 0) | currency:'INR':'symbol':'1.2-2' }}</span>
+                          <span class="final-price">Total: {{ calculateFinalPrice(product.price, product.discount || 0, product.discount_type || 'percentage', product.shipping_charges || 0, product.tax || 0) | currency:'INR':'symbol':'1.2-2' }}</span>
                         </div>
                       }
                     </div>

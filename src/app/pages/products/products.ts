@@ -10,6 +10,7 @@ import { Router } from '@angular/router';
 import { Product, CartItem } from '../../core/models/product';
 import { NotificationService } from '../../core/services/notification.service';
 import { calculateDiscountAmount, calculatePurchasePrice, calculateFinalPrice, calculateTaxAmount, formatPrice } from '../../core/utils/discount-utils';
+import { common_response } from '../../core/models/common_response';
 
 @Component({
   selector: 'app-products',
@@ -54,7 +55,7 @@ export class ProductsComponent {
         return false;
       }
       if (search) {
-        const haystack = `${product.title} ${product.author ?? ''} ${product.instructor ?? ''}`.toLowerCase();
+        const haystack = `${product.name} ${product.contributor_name ?? ''}`.toLowerCase();
         if (!haystack.includes(search)) {
           return false;
         }
@@ -68,9 +69,9 @@ export class ProductsComponent {
       if (ratings.length > 0 && product.rating < Math.max(...ratings)) {
         return false;
       }
-      if (categories.length > 0 && !categories.includes(product.category)) {
-        return false;
-      }
+      // if (categories.length > 0 && !categories.includes(product.category)) {
+      //   return false;
+      // }
       return true;
     });
   });
@@ -106,8 +107,15 @@ export class ProductsComponent {
 
     // Fetch products from API
     this.api.getProducts().subscribe({
-      next: (products) => {
-        this.products.set(products as Product[]);
+      next: (response : common_response) => {
+        if(response.status_code == 200){
+          let products = response.data || [];
+          this.products.set(products);
+        }
+        else{
+          this.notifications.notify(response.message);
+          this.products.set([]);
+        }
       },
       error: () => {
         this.notifications.notify('Failed to load products from server', 'error');
@@ -117,9 +125,16 @@ export class ProductsComponent {
   
   private loadCategories(): void {
     this.api.getCategories().subscribe({
-      next: (categories) => {
-        let category_names = categories.map(category => category.name);
-        this.categories_master.set(category_names || []);
+      next: (result : common_response) => {
+        if(result.status_code == 200){
+          let categories = result.data || [];
+          let category_names = categories.map((category : any) => category.name);
+          this.categories_master.set(category_names || []);
+        }
+        else{
+          this.categories_master.set([]);
+          this.notifications.notify(result.message);
+        }
       },
       error: () => {
         this.notifications.notify('Failed to load categories', 'error');
@@ -151,12 +166,12 @@ export class ProductsComponent {
     this.setType(null);
   }
 
-  protected calculatePurchasePrice(price: number, discount: number, discountType: 'percentage' | 'fixed' = 'percentage'): number {
-    return calculatePurchasePrice(price, discount, discountType);
+  protected calculatePurchasePrice(price: number, discount: number, discount_type: 'percentage' | 'fixed' = 'percentage'): number {
+    return calculatePurchasePrice(price, discount, discount_type);
   }
 
-  protected calculateFinalPrice(price: number, discount: number, discountType: 'percentage' | 'fixed', shipping_charges: number = 0, tax: number = 0, quantity: number = 1): number {
-    return calculateFinalPrice(price, discount, discountType, shipping_charges, tax, quantity);
+  protected calculateFinalPrice(price: number, discount: number, discount_type: 'percentage' | 'fixed', shipping_charges: number = 0, tax: number = 0, quantity: number = 1): number {
+    return calculateFinalPrice(price, discount, discount_type, shipping_charges, tax, quantity);
   }
 
   addToCart(product: Product): void {
@@ -183,20 +198,21 @@ export class ProductsComponent {
           });
         } else {
           // Add new cart item
-          const discountAmount = calculateDiscountAmount(product.price, product.discount || 0, product.discountType || 'percentage');
-          const purchasePrice = calculatePurchasePrice(product.price, product.discount || 0, product.discountType || 'percentage');
+          const discountAmount = calculateDiscountAmount(product.price, product.discount || 0, product.discount_type || 'percentage');
+          const purchasePrice = calculatePurchasePrice(product.price, product.discount || 0, product.discount_type || 'percentage');
           const shipping_charges = product.shipping_charges || 0;
           const tax = product.tax || 0;
-          const taxAmount = calculateTaxAmount(product.price, product.discount || 0, product.discountType || 'percentage', shipping_charges, tax);
-          const finalPrice = calculateFinalPrice(product.price, product.discount || 0, product.discountType || 'percentage', shipping_charges, tax);
+          const taxAmount = calculateTaxAmount(product.price, product.discount || 0, product.discount_type || 'percentage', shipping_charges, tax);
+          const finalPrice = calculateFinalPrice(product.price, product.discount || 0, product.discount_type || 'percentage', shipping_charges, tax);
           const payload = {
             userId: currentUser.id,
             productId: product.id,
             quantity: 1,
-            title: product.title,
+            name: product.name,
+            code: product.code,
             price: product.price,
             discount: product.discount || 0,
-            discountType: product.discountType || 'percentage',
+            discount_type: product.discount_type || 'percentage',
             shipping_charges,
             tax,
             itemPrice: product.price,
@@ -207,10 +223,11 @@ export class ProductsComponent {
             image: product.image,
             rating: product.rating,
             type: product.type,
-            category: product.category,
-            author: product.author,
-            instructor: product.instructor,
-            description: product.description
+            // category: product.category,
+            contributor_name: product.contributor_name,
+            // instructor: product.instructor,
+            description: product.description,
+             files_list : product.files_list || []
           };
           this.api.addCartItem(payload).subscribe({
             next: () => {
@@ -233,21 +250,22 @@ export class ProductsComponent {
       next: (items) => {
         const cartItems = (items || []).map((it: any): CartItem => {
           const quantity = it.quantity || 1;
-          const discountAmount = calculateDiscountAmount(it.price, it.discount || 0, it.discountType || 'percentage');
-          const purchasePrice = calculatePurchasePrice(it.price, it.discount || 0, it.discountType || 'percentage');
+          const discountAmount = calculateDiscountAmount(it.price, it.discount || 0, it.discount_type || 'percentage');
+          const purchasePrice = calculatePurchasePrice(it.price, it.discount || 0, it.discount_type || 'percentage');
           const shipping_charges = it.shipping_charges || 0;
           const tax = it.tax || 0;
-          const taxAmount = calculateTaxAmount(it.price, it.discount || 0, it.discountType || 'percentage', shipping_charges, tax, quantity);
-          const finalPrice = calculateFinalPrice(it.price, it.discount || 0, it.discountType || 'percentage', shipping_charges, tax, quantity);
+          const taxAmount = calculateTaxAmount(it.price, it.discount || 0, it.discount_type || 'percentage', shipping_charges, tax, quantity);
+          const finalPrice = calculateFinalPrice(it.price, it.discount || 0, it.discount_type || 'percentage', shipping_charges, tax, quantity);
           return {
             id: it.productId,
             serverId: it.id,
-            title: it.title,
-            author: it.author,
-            instructor: it.instructor,
+            name: it.name,
+            code: it.code,
+            contributor_name: it.contributor_name,
+            // instructor: it.instructor,
             price: it.price,
             discount: it.discount || 0,
-            discountType: it.discountType || 'percentage',
+            discount_type: it.discount_type || 'percentage',
             shipping_charges,
             tax,
             itemPrice: it.itemPrice || it.price,

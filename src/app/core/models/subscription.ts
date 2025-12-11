@@ -4,7 +4,7 @@ export interface Subscription {
   type : string;
   price: number;
   discount?: number;
-  discountType?: 'percentage' | 'fixed';
+  discount_type?: 'percentage' | 'fixed';
   duration: 'monthly' | 'yearly';
   benefits: string[];
   limitations: string[];

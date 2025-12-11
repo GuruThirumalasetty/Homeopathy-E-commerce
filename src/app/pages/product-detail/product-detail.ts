@@ -36,7 +36,16 @@ export class ProductDetailComponent {
         return;
       }
       this.api.getProductById(id).subscribe({
-        next: (p: any) => this.productSignal.set(p),
+        next: (response: any) => {
+          if(response && response.status_code == 200){
+            let product = response.data ? response.data[0] : [];
+            this.productSignal.set(product);
+          }
+          else{
+            this.notifications.notify(response.message);
+            this.productSignal.set(undefined);
+          }
+        },
         error: () => {
           this.notifications.notify('Failed to load product details from server', 'error');
           this.router.navigate(['/products']);
@@ -59,10 +68,10 @@ export class ProductDetailComponent {
     const product = this.product();
     if (!product) return 0;
 
-    const { price, discount, discountType } = product;
+    const { price, discount, discount_type } = product;
     if (!discount || discount === 0) return price;
 
-    if (discountType === 'percentage') {
+    if (discount_type === 'percentage') {
       return price - (price * discount / 100);
     } else {
       return Math.max(0, price - discount);
@@ -73,10 +82,10 @@ export class ProductDetailComponent {
     const product = this.product();
     if (!product) return 0;
 
-    const { price, discount, discountType } = product;
+    const { price, discount, discount_type } = product;
     if (!discount || discount === 0) return 0;
 
-    if (discountType === 'percentage') {
+    if (discount_type === 'percentage') {
       return price * discount / 100;
     } else {
       return discount;
@@ -94,7 +103,7 @@ export class ProductDetailComponent {
     return calculateTaxAmount(
       product.price,
       product.discount || 0,
-      product.discountType || 'percentage',
+      product.discount_type || 'percentage',
       product.shipping_charges || 0,
       product.tax || 0,
       1
@@ -107,7 +116,7 @@ export class ProductDetailComponent {
     return calculateFinalPrice(
       product.price,
       product.discount || 0,
-      product.discountType || 'percentage',
+      product.discount_type || 'percentage',
       product.shipping_charges || 0,
       product.tax || 0,
       1
@@ -143,20 +152,21 @@ export class ProductDetailComponent {
           });
         } else {
           // Add new cart item
-          const discountAmount = calculateDiscountAmount(product.price, product.discount || 0, product.discountType || 'percentage');
-          const purchasePrice = calculatePurchasePrice(product.price, product.discount || 0, product.discountType || 'percentage');
+          const discountAmount = calculateDiscountAmount(product.price, product.discount || 0, product.discount_type || 'percentage');
+          const purchasePrice = calculatePurchasePrice(product.price, product.discount || 0, product.discount_type || 'percentage');
           const shipping_charges = product.shipping_charges || 0;
           const tax = product.tax || 0;
-          const taxAmount = calculateTaxAmount(product.price, product.discount || 0, product.discountType || 'percentage', shipping_charges, tax);
-          const finalPrice = calculateFinalPrice(product.price, product.discount || 0, product.discountType || 'percentage', shipping_charges, tax);
+          const taxAmount = calculateTaxAmount(product.price, product.discount || 0, product.discount_type || 'percentage', shipping_charges, tax);
+          const finalPrice = calculateFinalPrice(product.price, product.discount || 0, product.discount_type || 'percentage', shipping_charges, tax);
           const payload = {
             userId: currentUser.id,
             productId: product.id,
             quantity: 1,
-            title: product.title,
+            title: product.name,
+            code: product.code,
             price: product.price,
             discount: product.discount || 0,
-            discountType: product.discountType || 'percentage',
+            discount_type: product.discount_type || 'percentage',
             shipping_charges,
             tax,
             itemPrice: product.price, // original price
@@ -168,10 +178,9 @@ export class ProductDetailComponent {
             rating: product.rating,
             type: 'product', // specify this is a product item
             productType: product.type,
-            category: product.category,
-            author: product.author,
-            instructor: product.instructor,
-            description: product.description
+            contributor_name: product.contributor_name,
+            description: product.description,
+             files_list : product.files_list || []
           };
           this.api.addCartItem(payload).subscribe({
             next: () => {
@@ -199,7 +208,7 @@ export class ProductDetailComponent {
               name: it.name,
               price: it.price,
               discount: it.discount || 0,
-              discountType: it.discountType || 'percentage',
+              discount_type: it.discount_type || 'percentage',
               duration: it.duration,
               itemPrice: it.itemPrice || it.price,
               discountAmount: it.discountAmount || 0,
@@ -210,21 +219,20 @@ export class ProductDetailComponent {
             };
           } else {
             const quantity = it.quantity || 1;
-            const discountAmount = calculateDiscountAmount(it.price, it.discount || 0, it.discountType || 'percentage');
-            const purchasePrice = calculatePurchasePrice(it.price, it.discount || 0, it.discountType || 'percentage');
+            const discountAmount = calculateDiscountAmount(it.price, it.discount || 0, it.discount_type || 'percentage');
+            const purchasePrice = calculatePurchasePrice(it.price, it.discount || 0, it.discount_type || 'percentage');
             const shipping_charges = it.shipping_charges || 0;
             const tax = it.tax || 0;
-            const taxAmount = calculateTaxAmount(it.price, it.discount || 0, it.discountType || 'percentage', shipping_charges, tax, quantity);
-            const finalPrice = calculateFinalPrice(it.price, it.discount || 0, it.discountType || 'percentage', shipping_charges, tax, quantity);
+            const taxAmount = calculateTaxAmount(it.price, it.discount || 0, it.discount_type || 'percentage', shipping_charges, tax, quantity);
+            const finalPrice = calculateFinalPrice(it.price, it.discount || 0, it.discount_type || 'percentage', shipping_charges, tax, quantity);
             return {
               id: it.productId,
               serverId: it.id,
               title: it.title,
-              author: it.author,
-              instructor: it.instructor,
+              contributor_name: it.contributor_name,
               price: it.price,
               discount: it.discount || 0,
-              discountType: it.discountType || 'percentage',
+              discount_type: it.discount_type || 'percentage',
               shipping_charges,
               tax,
               itemPrice: it.itemPrice || it.price,

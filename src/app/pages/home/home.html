@@ -18,7 +18,10 @@
   <section class="poh-hero">
     <div class="container">
       <div class="hero-content grid-cols-2 gap-15">
-        <h1 class="poh-heading">{{perception_on_homeopathy_plan().name}}</h1>
+        <h1 class="poh-heading">
+        <!-- <i class="fas fa-crown crown-icon"></i> -->
+          {{perception_on_homeopathy_plan().name}}
+        </h1>
         <div class="plan-header">
           <div class="plan-price poh-plan-price">
             @if (hasSubscriptionDiscount(perception_on_homeopathy_plan())) {
@@ -37,7 +40,7 @@
               </div>
               <div class="discount-info">
                 Save ₹{{ getSubscriptionDiscountAmount(perception_on_homeopathy_plan()) | number:'1.2-2' }}
-                ({{ perception_on_homeopathy_plan().discountType === 'percentage' ? perception_on_homeopathy_plan().discount + '%' : '₹' + perception_on_homeopathy_plan().discount }} off)
+                ({{ perception_on_homeopathy_plan().discount_type === 'percentage' ? perception_on_homeopathy_plan().discount + '%' : '₹' + perception_on_homeopathy_plan().discount }} off)
               </div>
             </div>
             } @else {
@@ -66,9 +69,9 @@
     <div class="products-grid grid-cols-4 gap-15">
       @for (book of featuredBooks(); track book.id) {
       <article class="product-card" [routerLink]="['/product', book.id]">
-        <img [src]="book.image" [alt]="book.title" class="product-image" />
+        <img [src]="book.files_list ? book.files_list[0]?.file_path : ''" [alt]="book.name" class="product-image" />
         <div class="product-info">
-          <h3 class="product-title">{{ book.title }}</h3>
+          <h3 class="product-title">{{ book.name }}</h3>
           <p class="product-author">Book</p>
           <div class="product-rating">
             <i class="fas fa-star star" *ngFor="let star of [1,2,3,4,5]; let i = index"
@@ -136,7 +139,7 @@
                   </div>
                   <div class="discount-info">
                     Save ₹{{ getSubscriptionDiscountAmount(plan) | number:'1.2-2' }}
-                    ({{ plan.discountType === 'percentage' ? plan.discount + '%' : '₹' + plan.discount }} off)
+                    ({{ plan.discount_type === 'percentage' ? plan.discount + '%' : '₹' + plan.discount }} off)
                   </div>
                 </div>
                 } @else {
@@ -189,12 +192,12 @@
     <div class="products-grid grid-cols-4 gap-15">
       @for (video of featuredVideos(); track video.id) {
       <article class="product-card video-card" [routerLink]="['/product', video.id]">
-        <img [src]="video.image" [alt]="video.title" class="product-image" />
+        <img [src]="video.files_list ? video.files_list[0]?.file_path : ''" [alt]="video.name" class="product-image" />
         <div class="play-overlay">
           <i class="fas fa-play"></i>
         </div>
         <div class="product-info">
-          <h3 class="product-title">{{ video.title }}</h3>
+          <h3 class="product-title">{{ video.name }}</h3>
           <p class="product-author">Video</p>
           <div class="product-rating">
             <i class="fas fa-star star" *ngFor="let star of [1,2,3,4,5]; let i = index"
@@ -251,7 +254,7 @@
                 
                 <div class="discount-info">
                   Save ₹{{ getSubscriptionDiscountAmount(plan) | number:'1.2-2' }}
-                  ({{ plan.discountType === 'percentage' ? plan.discount + '%' : '₹' + plan.discount }} off)
+                  ({{ plan.discount_type === 'percentage' ? plan.discount + '%' : '₹' + plan.discount }} off)
                 </div>
               </div>
               } @else {

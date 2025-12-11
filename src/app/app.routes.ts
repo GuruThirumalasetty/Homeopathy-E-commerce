@@ -220,6 +220,12 @@ export const routes: Routes = [
     loadComponent: () => import('./pages/event-admin-dashboard/event-admin-dashboard').then(m => m.EventAdminDashboardComponent)
   },
   {
+    path: 'enhanced-checkout',
+    title: 'Homeopathy | Checkout',
+    canActivate: [authGuard],
+    loadComponent: () => import('./pages/checkout/enhanced-checkout').then(m => m.EnhancedCheckoutComponent)
+  },
+  {
     path: '**',
     redirectTo: '/login',
     pathMatch: 'full'

@@ -23,26 +23,41 @@
           <label>
             <span>Address Name <span class="required">*</span></span>
             <input type="text" formControlName="name" placeholder="e.g., Home, Office" />
+            @if (addressForm.controls['name'].touched && addressForm.controls['name'].invalid) {
+              <span class="error">Name is required</span>
+            }
           </label>
           <label>
-            <span>Phone</span>
+            <span>Phone <span class="required">*</span></span>
             <input type="tel" formControlName="phone" placeholder="Phone number" />
+            @if (addressForm.controls['phone'].touched && addressForm.controls['phone'].invalid) {
+              <span class="error">Phone number is required</span>
+            }
           </label>
         </div>
 
         <label>
           <span>Street Address <span class="required">*</span></span>
           <input type="text" formControlName="street" placeholder="Street address" />
+            @if (addressForm.controls['street'].touched && addressForm.controls['street'].invalid) {
+              <span class="error">Street address is required</span>
+            }
         </label>
 
         <div class="form-grid">
           <label>
             <span>City <span class="required">*</span></span>
             <input type="text" formControlName="city" placeholder="City" />
+            @if (addressForm.controls['city'].touched && addressForm.controls['city'].invalid) {
+              <span class="error">City is required</span>
+            }
           </label>
           <label>
             <span>State <span class="required">*</span></span>
             <input type="text" formControlName="state" placeholder="State" />
+            @if (addressForm.controls['state'].touched && addressForm.controls['state'].invalid) {
+              <span class="error">State is required</span>
+            }
           </label>
         </div>
 
@@ -50,10 +65,16 @@
           <label>
             <span>ZIP Code <span class="required">*</span></span>
             <input type="text" formControlName="zipCode" placeholder="ZIP/Postal code" />
+            @if (addressForm.controls['zipCode'].touched && addressForm.controls['zipCode'].invalid) {
+              <span class="error">ZIP code is required</span>
+            }
           </label>
           <label>
             <span>Country <span class="required">*</span></span>
             <input type="text" formControlName="country" placeholder="Country" />
+            @if (addressForm.controls['country'].touched && addressForm.controls['country'].invalid) {
+              <span class="error">Country is required</span>
+            }
           </label>
         </div>
 
@@ -111,9 +132,9 @@
       <i class="fas fa-map-marker-alt"></i>
       <h3>No Addresses Yet</h3>
       <p>Add your first delivery address to get started.</p>
-      <button class="btn btn-primary" (click)="addAddress()">
+      <!-- <button class="btn btn-primary" (click)="addAddress()">
         <i class="fas fa-plus"></i> Add Address
-      </button>
+      </button> -->
     </div>
   }
 </section>
