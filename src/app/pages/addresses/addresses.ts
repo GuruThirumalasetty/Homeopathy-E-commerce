@@ -19,6 +19,7 @@ export class AddressesComponent {
 
   addresses = signal<Address[]>([]);
   showForm = signal(false);
+  user = signal(this.auth.user());
   editingAddress = signal<Address | null>(null);
 
   addressForm: FormGroup = this.fb.group({
@@ -28,7 +29,7 @@ export class AddressesComponent {
     state: ['', Validators.required],
     zipCode: ['', Validators.required],
     country: ['India', Validators.required],
-    phone: [''],
+    phone: [this.user()!.mobile_number || '', Validators.required],
     isDefault: [false]
   });
 
@@ -48,7 +49,7 @@ export class AddressesComponent {
 
   addAddress() {
     this.editingAddress.set(null);
-    this.addressForm.reset({ country: 'India', isDefault: false });
+    this.addressForm.reset({ phone: this.user()!.mobile_number ,country: 'India', isDefault: false });
     this.showForm.set(true);
   }
 

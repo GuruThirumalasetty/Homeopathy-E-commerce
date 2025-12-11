@@ -13,10 +13,10 @@ export class NotificationService {
   private readonly messagesSignal = signal<NotificationMessage[]>([]);
   readonly messages = this.messagesSignal.asReadonly();
 
-  notify(message: string, type: NotificationType = 'info'): void {
+  notify(message: string | undefined = '', type: NotificationType = 'info'): void {
     const notification: NotificationMessage = {
       id: Date.now(),
-      message,
+      message : message || '',
       type
     };
     this.messagesSignal.update(list => [...list, notification]);

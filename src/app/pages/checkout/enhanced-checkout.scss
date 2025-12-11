@@ -1,0 +1,815 @@
+.enhanced-checkout-container {
+  padding: 2rem;
+  background-color: #f8f9fa;
+  min-height: 100vh;
+
+  // Progress Indicator
+  .checkout-progress {
+    margin-bottom: 2rem;
+    
+    .progress-steps {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      max-width: 600px;
+      margin: 0 auto;
+
+      .progress-step {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        position: relative;
+
+        .step-circle {
+          width: 3rem;
+          height: 3rem;
+          border-radius: 50%;
+          background: #e9ecef;
+          color: #6c757d;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          font-weight: 600;
+          font-size: 1.1rem;
+          margin-bottom: 0.5rem;
+          transition: all 0.3s ease;
+
+          i {
+            font-size: 1.2rem;
+          }
+        }
+
+        .step-title {
+          font-size: 0.875rem;
+          color: #6c757d;
+          text-align: center;
+          font-weight: 500;
+        }
+
+        &.active {
+          .step-circle {
+            background: #3498db;
+            color: white;
+            transform: scale(1.1);
+          }
+
+          .step-title {
+            color: #3498db;
+            font-weight: 600;
+          }
+        }
+
+        &.completed {
+          .step-circle {
+            background: #27ae60;
+            color: white;
+          }
+
+          .step-title {
+            color: #27ae60;
+          }
+        }
+      }
+
+      .progress-line {
+        width: 4rem;
+        height: 2px;
+        background: #e9ecef;
+        margin: 0 1rem 1.5rem 1rem;
+        transition: background 0.3s ease;
+
+        &.completed {
+          background: #27ae60;
+        }
+      }
+    }
+  }
+
+  // Checkout Steps
+  .checkout-step {
+    display: grid;
+    grid-template-columns: 1fr 400px;
+    gap: 2rem;
+    max-width: 1200px;
+    margin: 0 auto;
+
+    .step-content {
+      background: white;
+      border-radius: 12px;
+      padding: 2rem;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+
+      h3 {
+        margin-bottom: 1.5rem;
+        color: #2c3e50;
+        font-size: 1.25rem;
+        font-weight: 600;
+      }
+    }
+  }
+
+  // Customer Details Form
+  .customer-form {
+    .form-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1rem;
+      margin-bottom: 1rem;
+    }
+
+    .form-group {
+      display: flex;
+      flex-direction: column;
+
+      label {
+        font-weight: 500;
+        margin-bottom: 0.5rem;
+        color: #495057;
+        font-size: 0.875rem;
+      }
+
+      .form-control {
+        padding: 0.75rem;
+        border: 2px solid #e9ecef;
+        border-radius: 8px;
+        font-size: 0.875rem;
+        transition: border-color 0.2s ease;
+
+        &:focus {
+          outline: none;
+          border-color: #3498db;
+          box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1);
+        }
+
+        &.ng-invalid.ng-touched {
+          border-color: #e74c3c;
+        }
+      }
+
+      .error-message {
+        color: #e74c3c;
+        font-size: 0.75rem;
+        margin-top: 0.25rem;
+      }
+    }
+  }
+
+  // Address Selection
+  .address-selection {
+    margin-top: 2rem;
+
+    .no-addresses {
+      text-align: center;
+      padding: 2rem;
+      color: #6c757d;
+
+      p {
+        margin-bottom: 1rem;
+      }
+    }
+
+    .address-list {
+      .address-option {
+        display: flex;
+        align-items: flex-start;
+        padding: 1rem;
+        border: 2px solid #e9ecef;
+        border-radius: 8px;
+        margin-bottom: 1rem;
+        cursor: pointer;
+        transition: all 0.2s ease;
+
+        &:hover {
+          border-color: #3498db;
+          background: #f8f9fa;
+        }
+
+        &.selected {
+          border-color: #3498db;
+          background: #e3f2fd;
+        }
+
+        .address-radio {
+          margin-right: 1rem;
+          margin-top: 0.25rem;
+
+          input[type="radio"] {
+            width: 1.2rem;
+            height: 1.2rem;
+            accent-color: #3498db;
+          }
+        }
+
+        .address-content {
+          flex: 1;
+
+          .address-header {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-bottom: 0.5rem;
+
+            strong {
+              color: #2c3e50;
+            }
+
+            .default-badge {
+              background: #27ae60;
+              color: white;
+              padding: 0.2rem 0.5rem;
+              border-radius: 12px;
+              font-size: 0.75rem;
+              font-weight: 600;
+            }
+          }
+
+          .address-details {
+            color: #495057;
+            font-size: 0.875rem;
+            line-height: 1.4;
+          }
+
+          .address-country,
+          .address-phone {
+            color: #6c757d;
+            font-size: 0.875rem;
+            margin-top: 0.25rem;
+          }
+        }
+      }
+    }
+
+    .manage-addresses {
+      color: #3498db;
+      text-decoration: none;
+      font-size: 0.875rem;
+      font-weight: 500;
+
+      &:hover {
+        text-decoration: underline;
+      }
+    }
+  }
+
+  // Payment Section
+  .payment-section {
+    .payment-status {
+      display: flex;
+      align-items: center;
+      padding: 1rem;
+      border-radius: 8px;
+      margin-bottom: 1.5rem;
+      border: 2px solid #e9ecef;
+
+      .status-icon {
+        margin-right: 1rem;
+        font-size: 1.5rem;
+
+        i {
+          color: #6c757d;
+        }
+      }
+
+      .status-text {
+        strong {
+          display: block;
+          margin-bottom: 0.25rem;
+          color: #2c3e50;
+        }
+
+        p {
+          margin: 0;
+          color: #6c757d;
+          font-size: 0.875rem;
+        }
+      }
+
+      &.status-idle {
+        background: #f8f9fa;
+        border-color: #dee2e6;
+      }
+
+      &.status-initiated {
+        background: #fff3cd;
+        border-color: #ffeaa7;
+
+        .status-icon i {
+          color: #f39c12;
+        }
+      }
+
+      &.status-processing {
+        background: #e3f2fd;
+        border-color: #bbdefb;
+
+        .status-icon i {
+          color: #2196f3;
+        }
+      }
+
+      &.status-success {
+        background: #d4edda;
+        border-color: #c3e6cb;
+
+        .status-icon i {
+          color: #27ae60;
+        }
+      }
+
+      &.status-failed {
+        background: #f8d7da;
+        border-color: #f5c6cb;
+
+        .status-icon i {
+          color: #e74c3c;
+        }
+      }
+    }
+
+    .payment-actions {
+      display: flex;
+      gap: 1rem;
+      align-items: center;
+      margin-bottom: 2rem;
+
+      .btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0.75rem 1.5rem;
+        border: none;
+        border-radius: 8px;
+        font-weight: 500;
+        text-decoration: none;
+        cursor: pointer;
+        transition: all 0.2s ease;
+
+        &:disabled {
+          opacity: 0.6;
+          cursor: not-allowed;
+        }
+
+        &.btn-primary {
+          background: #3498db;
+          color: white;
+
+          &:hover:not(:disabled) {
+            background: #2980b9;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(52, 152, 219, 0.3);
+          }
+        }
+
+        &.btn-secondary {
+          background: #6c757d;
+          color: white;
+
+          &:hover:not(:disabled) {
+            background: #5a6268;
+          }
+        }
+
+        &.btn-warning {
+          background: #f39c12;
+          color: white;
+
+          &:hover:not(:disabled) {
+            background: #e67e22;
+          }
+        }
+
+        &.btn-link {
+          background: transparent;
+          color: #6c757d;
+          text-decoration: underline;
+
+          &:hover {
+            color: #495057;
+          }
+        }
+      }
+    }
+
+    // Test Cards Section
+    .test-cards-section {
+      border-top: 1px solid #e9ecef;
+      padding-top: 1.5rem;
+
+      h4 {
+        color: #2c3e50;
+        margin-bottom: 0.5rem;
+      }
+
+      .test-info {
+        color: #6c757d;
+        font-size: 0.875rem;
+        margin-bottom: 1rem;
+      }
+
+      .test-cards-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 1rem;
+
+        .test-card {
+          border: 2px solid #e9ecef;
+          border-radius: 8px;
+          padding: 1rem;
+          transition: border-color 0.2s ease;
+
+          &:hover {
+            border-color: #3498db;
+          }
+
+          .test-card-header {
+            margin-bottom: 0.5rem;
+
+            strong {
+              color: #2c3e50;
+              font-size: 0.875rem;
+            }
+          }
+
+          .test-card-details {
+            margin-bottom: 1rem;
+
+            p {
+              color: #6c757d;
+              font-size: 0.875rem;
+              margin-bottom: 0.5rem;
+            }
+
+            .card-number,
+            .card-details {
+              font-size: 0.8rem;
+              color: #495057;
+              margin-bottom: 0.25rem;
+
+              strong {
+                margin-right: 0.5rem;
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+
+  // Order Summary Sidebar
+  .order-summary-sidebar {
+    background: white;
+    border-radius: 12px;
+    padding: 1.5rem;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    height: fit-content;
+    position: sticky;
+    top: 2rem;
+
+    h3 {
+      margin-bottom: 1.5rem;
+      color: #2c3e50;
+      font-size: 1.1rem;
+      font-weight: 600;
+    }
+
+    .summary-items {
+      max-height: 300px;
+      overflow-y: auto;
+      margin-bottom: 1rem;
+
+      .summary-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        padding: 0.75rem 0;
+        border-bottom: 1px solid #f1f3f4;
+
+        &:last-child {
+          border-bottom: none;
+        }
+
+        .item-info {
+          flex: 1;
+          margin-right: 1rem;
+
+          .item-title {
+            font-weight: 500;
+            color: #2c3e50;
+            margin-bottom: 0.25rem;
+            font-size: 0.875rem;
+          }
+
+          .item-quantity {
+            color: #6c757d;
+            font-size: 0.8rem;
+          }
+
+          .discount-badge {
+            background: #e74c3c;
+            color: white;
+            padding: 0.1rem 0.4rem;
+            border-radius: 12px;
+            font-size: 0.7rem;
+            font-weight: 600;
+            margin-left: 0.5rem;
+          }
+        }
+
+        .item-total {
+          font-weight: 600;
+          color: #2c3e50;
+          font-size: 0.875rem;
+        }
+      }
+    }
+
+    .summary-totals {
+      border-top: 2px solid #e9ecef;
+      padding-top: 1rem;
+      margin-bottom: 1.5rem;
+
+      .total-row {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 0.5rem;
+        font-size: 0.875rem;
+
+        &.discount {
+          color: #27ae60;
+
+          .discount-amount {
+            color: #27ae60;
+          }
+        }
+
+        &.grand-total {
+          border-top: 1px solid #dee2e6;
+          padding-top: 0.5rem;
+          margin-top: 0.5rem;
+          font-size: 1rem;
+          font-weight: 600;
+          color: #2c3e50;
+        }
+      }
+    }
+
+    .btn-continue {
+      width: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      padding: 1rem;
+      background: #3498db;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s ease;
+
+      &:hover:not(:disabled) {
+        background: #2980b9;
+        transform: translateY(-1px);
+        box-shadow: 0 4px 12px rgba(52, 152, 219, 0.3);
+      }
+
+      &:disabled {
+        opacity: 0.6;
+        cursor: not-allowed;
+        transform: none;
+        box-shadow: none;
+      }
+    }
+
+    .customer-summary {
+      margin-top: 1.5rem;
+      padding-top: 1.5rem;
+      border-top: 1px solid #e9ecef;
+
+      h4 {
+        margin-bottom: 0.75rem;
+        color: #2c3e50;
+        font-size: 0.9rem;
+      }
+
+      .customer-info {
+        p {
+          margin-bottom: 0.25rem;
+          font-size: 0.875rem;
+          color: #495057;
+        }
+
+        .delivery-address {
+          margin-top: 0.75rem;
+          padding: 0.75rem;
+          background: #f8f9fa;
+          border-radius: 6px;
+
+          strong {
+            display: block;
+            margin-bottom: 0.25rem;
+            font-size: 0.875rem;
+            color: #2c3e50;
+          }
+
+          p {
+            margin-bottom: 0.1rem;
+            font-size: 0.8rem;
+            color: #6c757d;
+          }
+        }
+      }
+    }
+  }
+
+  // Success Step
+  .success-step {
+    .success-content {
+      background: white;
+      border-radius: 12px;
+      padding: 3rem;
+      text-align: center;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+      max-width: 600px;
+      margin: 0 auto;
+
+      .success-icon {
+        margin-bottom: 1.5rem;
+
+        i {
+          font-size: 4rem;
+          color: #27ae60;
+        }
+      }
+
+      h2 {
+        color: #2c3e50;
+        margin-bottom: 1rem;
+        font-size: 1.5rem;
+      }
+
+      p {
+        color: #6c757d;
+        margin-bottom: 2rem;
+        font-size: 1rem;
+      }
+
+      .order-details {
+        background: #f8f9fa;
+        border-radius: 8px;
+        padding: 1.5rem;
+        margin-bottom: 2rem;
+        text-align: left;
+
+        .detail-row {
+          display: flex;
+          justify-content: space-between;
+          margin-bottom: 0.75rem;
+          font-size: 0.875rem;
+
+          &:last-child {
+            margin-bottom: 0;
+          }
+
+          span:first-child {
+            color: #6c757d;
+          }
+
+          strong {
+            color: #2c3e50;
+          }
+        }
+      }
+
+      .success-actions {
+        display: flex;
+        gap: 1rem;
+        justify-content: center;
+
+        .btn {
+          display: inline-flex;
+          align-items: center;
+          gap: 0.5rem;
+          padding: 0.75rem 1.5rem;
+          border-radius: 8px;
+          text-decoration: none;
+          font-weight: 500;
+          transition: all 0.2s ease;
+
+          &.btn-primary {
+            background: #3498db;
+            color: white;
+
+            &:hover {
+              background: #2980b9;
+              transform: translateY(-1px);
+            }
+          }
+
+          &.btn-secondary {
+            background: #6c757d;
+            color: white;
+
+            &:hover {
+              background: #5a6268;
+            }
+          }
+        }
+      }
+    }
+  }
+}
+
+// Responsive Design
+@media (max-width: 768px) {
+  .enhanced-checkout-container {
+    padding: 1rem;
+
+    .checkout-step {
+      grid-template-columns: 1fr;
+      gap: 1rem;
+
+      .step-content {
+        padding: 1.5rem;
+      }
+    }
+
+    .order-summary-sidebar {
+      position: static;
+      order: -1;
+    }
+
+    .checkout-progress {
+      .progress-steps {
+        .progress-step {
+          .step-circle {
+            width: 2.5rem;
+            height: 2.5rem;
+            font-size: 1rem;
+          }
+
+          .step-title {
+            font-size: 0.75rem;
+          }
+        }
+
+        .progress-line {
+          width: 2rem;
+          margin: 0 0.5rem 1.25rem 0.5rem;
+        }
+      }
+    }
+
+    .customer-form {
+      .form-row {
+        grid-template-columns: 1fr;
+        gap: 0.75rem;
+      }
+    }
+
+    .payment-actions {
+      flex-direction: column;
+      align-items: stretch;
+
+      .btn {
+        width: 100%;
+        justify-content: center;
+      }
+    }
+
+    .test-cards-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .success-actions {
+      flex-direction: column;
+      align-items: stretch;
+
+      .btn {
+        width: 100%;
+        justify-content: center;
+      }
+    }
+  }
+}
+
+@media (max-width: 480px) {
+  .enhanced-checkout-container {
+    .checkout-progress {
+      .progress-steps {
+        .step-title {
+          font-size: 0.7rem;
+        }
+      }
+    }
+
+    .step-content {
+      padding: 1rem !important;
+    }
+
+    .order-summary-sidebar {
+      padding: 1rem;
+    }
+  }
+}

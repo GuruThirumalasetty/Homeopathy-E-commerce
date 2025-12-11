@@ -134,6 +134,31 @@ export class CheckoutComponent {
     });
   }
 
+  payNow() {
+    const razorPayOptions = {
+      description: 'Razorpay testing Demo',
+      corrency: 'INR',
+      amount: this.total() * 100,
+      name: 'GVR Info Systems',
+      key: 'rzp_test_RXcOaqiKNtlfib',
+      image: '/Manus_Homeopathy_Logo.png',
+      prefill: {
+        ...this.checkoutForm.value
+      },
+      theme: {
+        color: '#15558d'
+      },
+      handler: (response: any) => {
+        if (response.razorpay_payment_id) {
+          // this.dialogService.showToast('Your Payment Id is ' + response.razorpay_payment_id);
+            this.placeOrder();
+        }
+      }
+    }
+    let razorPayOpen = this.auth.nativeWindow.Razorpay(razorPayOptions);
+    razorPayOpen.open();
+  }
+
   placeOrder(): void {
     if (!this.checkoutForm.valid && !this.videosOnly() && !this.subscriptionsOnly()) {
       this.notifications.notify('Please complete the form before placing the order.', 'error');

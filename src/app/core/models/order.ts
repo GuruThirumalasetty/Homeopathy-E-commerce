@@ -31,6 +31,9 @@ export interface Transaction {
   status: 'success' | 'failed' | 'pending' | 'refunded';
   method: 'card' | 'upi' | 'netbanking' | 'wallet';
   createdAt: string;
+  createdBy?: string;
+  updatedAt?: string;
+  updatedBy?: string;
 }
 export interface Charges {
   gst : number;

@@ -63,7 +63,7 @@
               @for (item of order.items; track item.type !== 'subscription' ? item.id : item.subscriptionId) {
                 <li class="item-row">
                   @if (item.type !== 'subscription') {
-                    <img [src]="item.image" [alt]="item.title" class="item-image" [routerLink]="['/product', item.id]" />
+                    <img [src]="item.files_list ? item.files_list[0]?.file_path : ''" [alt]="item.title" class="item-image" [routerLink]="['/product', item.id]" />
                   } @else {
                     <div class="subscription-icon">
                       <i class="fas fa-crown"></i>

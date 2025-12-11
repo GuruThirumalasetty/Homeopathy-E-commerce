@@ -5,6 +5,8 @@ import { AppStateService } from '../../core/services/app-state.service';
 import { ApiService } from '../../core/services/api.service';
 import { NotificationService } from '../../core/services/notification.service';
 import { Product } from '../../core/models/product';
+import { common_response } from '../../core/models/common_response';
+import { AuthService } from '../../core/services/auth.service';
 
 @Component({
   selector: 'app-admin-products',
@@ -15,6 +17,8 @@ import { Product } from '../../core/models/product';
 })
 export class AdminProductsComponent {
   private readonly appState = inject(AppStateService);
+  private readonly auth = inject(AuthService);
+  private readonly user = signal(this.auth.user());
   private readonly api = inject(ApiService);
   private readonly notifications = inject(NotificationService);
 
@@ -30,6 +34,9 @@ export class AdminProductsComponent {
 
   search_products : FormControl = new FormControl('');
 
+  // handle file input change for image upload (accepts jpg/png)
+  protected uploadedImages: any[] = [];
+  
   constructor() {
     this.loadProducts();
     this.loadCategories();
@@ -37,7 +44,16 @@ export class AdminProductsComponent {
 
   private loadProducts(): void {
     this.api.getProducts().subscribe({
-      next: (products) => this.products.set(products || []),
+      next: (response: common_response) => {
+        if(response && response.status_code == 200){
+          let products = response.data || [];
+          this.products.set(products);
+        }
+        else{
+          this.products.set([]);
+          this.notifications.notify(response.message);
+        }
+      },
       error: () => {
         this.notifications.notify('Failed to load products', 'error');
         this.products.set([]);
@@ -59,7 +75,16 @@ export class AdminProductsComponent {
 
   private loadCategories(): void {
     this.api.getCategories().subscribe({
-      next: (categories) => this.categories.set(categories || []),
+      next: (result : common_response) => {
+        if(result.status_code == 200){
+          let categories = result.data || [];
+          this.categories.set(categories || []);
+        }
+        else{
+          this.categories.set([]);
+          this.notifications.notify(result.message);
+        }
+      },
       error: () => {
         this.notifications.notify('Failed to load categories', 'error');
         this.categories.set([]);
@@ -68,19 +93,22 @@ export class AdminProductsComponent {
   }
 
   protected readonly productForm = new FormGroup({
-    title: new FormControl('', { nonNullable: true, validators: [Validators.required] }),
-    author: new FormControl('', { nonNullable: true }),
-    instructor: new FormControl('', { nonNullable: true }),
+    name: new FormControl('', { nonNullable: true, validators: [Validators.required] }),
+    code: new FormControl('', { nonNullable: true, validators: [Validators.required] }),
+    contributor_name: new FormControl('', { nonNullable: true }),
+    // instructor: new FormControl('', { nonNullable: true }),
     stock_quantity: new FormControl(0, { nonNullable: true, validators: [Validators.required, Validators.min(1)] }),
     price: new FormControl(0, { nonNullable: true, validators: [Validators.required, Validators.min(1)] }),
     discount: new FormControl(0),
-    discountType: new FormControl<'percentage' | 'fixed'>('percentage', { nonNullable: true }),
+    discount_type: new FormControl<'percentage' | 'fixed'>('percentage', { nonNullable: true }),
     shipping_charges: new FormControl(0),
     tax: new FormControl(0),
     type: new FormControl<'book' | 'video'>('book', { nonNullable: true }),
-    categoryId: new FormControl('', { nonNullable: true, validators: [Validators.required] }),
+    category_id: new FormControl(0, { nonNullable: true, validators: [Validators.required] }),
     description: new FormControl('', { }),
+    status: new FormControl(1, { }),
     image: new FormControl('', { nonNullable: true }),
+    images: new FormControl(),
     rating: new FormControl(4.5, { nonNullable: true, validators: [Validators.min(0), Validators.max(5)] }),
     videoUrl: new FormControl('', { nonNullable: true })
   });
@@ -92,31 +120,43 @@ export class AdminProductsComponent {
     }
 
     const formValue = this.productForm.value;
-    const selectedCategory = this.categories().find(c => c.id === formValue.categoryId);
-    const productData: Omit<Product, 'id'> = {
-      title: formValue.title ?? '',
+    // const selectedCategory = this.categories().find(c => c.id === formValue.category_id);
+    const editingId = this.editingProductId();
+    const productData: Product = {
+      id: editingId || 0,
+      name: formValue.name ?? '',
+      code: formValue.code || '',
       stock_quantity: Number(formValue.stock_quantity),
       price: Number(formValue.price),
       discount: Number(formValue.discount),
-      discountType: formValue.discountType ?? 'percentage',
+      discount_type: formValue.discount_type ?? 'percentage',
       shipping_charges : formValue.type == 'book' ? formValue.shipping_charges ?? 0 : 0,
       tax : formValue.type == 'book' ? formValue.tax ?? 0 : 0,
       type: formValue.type ?? 'book',
-      category: selectedCategory?.name ?? 'general', // keep for backward compatibility
-      categoryId: formValue.categoryId ?? '',
-      categoryName: selectedCategory?.name ?? '',
+      category_id: formValue.category_id ?? 0,
       image: formValue.image ?? '',
       rating: Number(formValue.rating) ?? 4.5,
       description: formValue.description ?? 'New product added via admin panel.',
-      author: formValue.type === 'book' ? formValue.author : undefined,
-      instructor: formValue.type === 'video' ? formValue.instructor : undefined,
+      contributor_name: formValue.type === 'book' ? formValue.contributor_name : undefined,
+      status: formValue.status || 1,
       videoUrl: formValue.type === 'video' ? formValue.videoUrl : undefined
     };
 
-    const editingId = this.editingProductId();
     // ensure productData.image uses uploaded image if available
-    if (this.uploadedImageDataUrl) {
-      (productData as any).image = this.uploadedImageDataUrl;
+    if (this.uploadedImages.length) {
+      (productData as any).files_list = this.uploadedImages.map(file=>{
+        return {
+          "id": file.id || 0,
+          "product_id": editingId || 0,
+          "file_name": file.file_name,
+          "file_path": file.file_path,
+          "file_type": formValue.type,
+          "status": file.status || 1,
+          "mode": file.mode || 1,
+          "created_by": this.user()!.id,
+          "updated_by": this.user()!.id
+        }
+      });
     }
 
     if (editingId !== null) {
@@ -126,10 +166,15 @@ export class AdminProductsComponent {
         return;
       }
       this.api.updateProduct(editingId, productData).subscribe({
-        next: () => {
+        next: (response: common_response) => {
+          if(response && response.status_code == 200){
           this.notifications.notify('Product updated successfully!', 'success');
-          this.loadProducts();
-          this.resetForm();
+            this.loadProducts();
+            this.resetForm();
+          }
+          else{
+            this.notifications.notify(response.message);
+          }
         },
         error: () => {
           this.notifications.notify('Failed to update product', 'error');
@@ -137,10 +182,15 @@ export class AdminProductsComponent {
       });
     } else {
       this.api.createProduct(productData).subscribe({
-        next: () => {
-          this.notifications.notify('Product added successfully!', 'success');
-          this.loadProducts();
-          this.resetForm();
+        next: (response: common_response) => {
+          if(response && response.status_code == 200){
+            this.notifications.notify('Product added successfully!', 'success');
+            this.loadProducts();
+            this.resetForm();
+          }
+          else{
+            this.notifications.notify(response.message);
+          }
         },
         error: () => {
           this.notifications.notify('Failed to add product', 'error');
@@ -157,20 +207,21 @@ export class AdminProductsComponent {
     this.editingProductId.set(product.id);
     this.showForm.set(true);
     this.productForm.patchValue({
-      title: product.title,
+      name: product.name,
+      code: product.code,
       stock_quantity: product.stock_quantity,
       price: product.price,
       discount: product.discount,
-      discountType: product.discountType ?? 'percentage',
+      discount_type: product.discount_type ?? 'percentage',
       shipping_charges : product.shipping_charges || 0,
       tax: product.tax || 0,
       type: product.type,
-      categoryId: product.categoryId ?? '',
+      category_id: product.category_id ?? 0,
       description: product.description,
       image: product.image,
       rating: product.rating,
-      author: product.author,
-      instructor: product.instructor,
+      contributor_name: product.contributor_name,
+      status: product.status || 1,
       videoUrl: product.videoUrl ?? ''
     });
     this.uploadedImageDataUrl = product.image ?? null;
@@ -201,17 +252,17 @@ export class AdminProductsComponent {
 
   private resetForm(): void {
     this.productForm.reset({
-      title: '',
-      author: '',
-      instructor: '',
+      name: '',
+      code: '',
+      contributor_name: '',
       stock_quantity: 0,
       price: 0,
       discount: 0,
-      discountType: 'percentage',
+      discount_type: 'percentage',
       shipping_charges : 0,
       tax : 0,
       type: 'book',
-      categoryId: '',
+      category_id: 0,
       description: '',
       image: '',
       rating: 4.5,
@@ -221,28 +272,50 @@ export class AdminProductsComponent {
     this.showForm.set(false);
     this.uploadedImageDataUrl = null;
     this.uploadedVideoFileName = null;
+    this.uploadedImages = [];
   }
 
-  // handle file input change for image upload (accepts jpg/png)
-  handleImageFile(event: Event): void {
-    const input = event.target as HTMLInputElement;
-    if (!input.files || input.files.length === 0) return;
-    const file = input.files[0];
-    const allowed = ['image/jpeg', 'image/png'];
+handleImageFile(event: Event): void {
+  const input = event.target as HTMLInputElement;
+  if (!input.files || input.files.length === 0) return;
+
+  const allowed = ['image/jpeg', 'image/png'];
+
+  // clear previous images if needed
+  this.uploadedImages = [];
+
+  Array.from(input.files).forEach(file => {
     if (!allowed.includes(file.type)) {
       this.notifications.notify('Only JPG and PNG images are allowed', 'error');
       input.value = '';
       return;
     }
+
     const reader = new FileReader();
     reader.onload = () => {
       const result = reader.result as string;
-      this.uploadedImageDataUrl = result;
-      // set form image value to data url so it's persisted with product
-      this.productForm.patchValue({ image: result });
+      let file = reader;
+
+      // Store each image data URL
+      this.uploadedImages.push({ file_path: result, file, status: 0 });
+
+      // Update form - store all images
+      this.productForm.patchValue({ images: this.uploadedImages });
     };
+
     reader.readAsDataURL(file);
-  }
+  });
+}
+removeImage(index: number): void {
+  this.uploadedImages.splice(index, 1);
+
+  // update form value also
+  this.productForm.patchValue({
+    images: this.uploadedImages
+  });
+}
+
+
 
   // handle file input change for video upload (accepts mp4)
   handleVideoFile(event: Event): void {

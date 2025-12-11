@@ -334,3 +334,41 @@ textarea:focus {
   }
 }
 
+.image-preview {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.image-wrapper {
+  position: relative;
+  display: inline-block;
+  margin: 0 10px;
+}
+
+.image-wrapper img {
+  width: 120px;
+  height: 120px;
+  object-fit: cover;
+  border-radius: 5px;
+  border: 1px solid #ccc;
+}
+
+.remove-btn {
+  position: absolute;
+  top: 0px;
+  right: -9px;
+  // background: #ff4d4d;
+  color: black;
+  border: none;
+  border-radius: 50%;
+  width: 20px;
+  height: 20px;
+  font-size: 19px;
+  cursor: pointer;
+  padding: 0;
+  line-height: 20px;
+}
+.remove-btn:hover {
+  background: #e60000;
+  color: white;
+}

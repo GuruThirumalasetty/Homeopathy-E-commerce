@@ -171,14 +171,14 @@
               @for (item of order.items; track item.type !== 'subscription' ? item.id : item.subscriptionId) {
                 <div class="item-row">
                   @if (item.type !== 'subscription') {
-                    <img [src]="item.image" (click)="open_product_detail(item.id!)" [alt]="item.title" class="item-image product-link" />
+                    <img [src]="item.files_list ? item.files_list[0]?.file_path : ''" (click)="open_product_detail(item.id!)" [alt]="item.name" class="item-image product-link" />
                   } @else {
                     <div class="subscription-icon">
                       <i class="fas fa-crown"></i>
                     </div>
                   }
                   <div class="item-details">
-                    <h4 [class]="item.type !== 'subscription' ? 'product-link' : ''" (click)="item.type !== 'subscription' ? open_product_detail(item.id!) : null">{{ item.type !== 'subscription' ? item.title : item.name }}</h4>
+                    <h4 [class]="item.type !== 'subscription' ? 'product-link' : ''" (click)="item.type !== 'subscription' ? open_product_detail(item.id!) : null">{{ item.name }}</h4>
                     <p class="item-description">{{ item.description || 'No description available' }}</p>
                     @if (item.type !== 'subscription') {
                       <div class="rating-row">
@@ -195,7 +195,7 @@
                       <div class="item-pricing">
                         <span class="price">{{ item.purchasePrice || item.price || 0 | currency:'INR':'symbol':'1.2-2' }} per item </span>
                         @if (item.discount && item.discount > 0) {
-                          <span class="discount-summary">{{ item.discount }}{{ item.discountType === 'percentage' ? '%' : '₹' }} off per item. </span>
+                          <span class="discount-summary">{{ item.discount }}{{ item.discount_type === 'percentage' ? '%' : '₹' }} off per item. </span>
                           <span class="line-total">Line Total: {{ (item.purchasePrice || item.price || 0) * item.quantity | currency:'INR':'symbol':'1.2-2' }}</span>
                         } @else {
                           <span class="line-total">Line Total: {{ (item.purchasePrice || item.price || 0) * item.quantity | currency:'INR':'symbol':'1.2-2' }}</span>

@@ -17,10 +17,18 @@
     <form [formGroup]="productForm">
       <div class="grid-cols-3 gap-10">
         <label>
-          <span>Title <span class="required">*</span></span>
-          <input type="text" formControlName="title" placeholder="Product title" />
-          @if (productForm.controls.title.touched && productForm.controls.title.invalid) {
-          <span class="error">Title is required</span>
+          <span>Name <span class="required">*</span></span>
+          <input type="text" formControlName="name" placeholder="Product name" />
+          @if (productForm.controls.name.touched && productForm.controls.name.invalid) {
+          <span class="error">Name is required</span>
+          }
+        </label>
+
+        <label>
+          <span>Code <span class="required">*</span></span>
+          <input type="text" formControlName="code">
+          @if (productForm.controls.code.touched && productForm.controls.code.invalid) {
+            <span class="error">Code is required</span>
           }
         </label>
 
@@ -40,19 +48,19 @@
           } @else {
           Instructor
           }
-          <input type="text" [formControlName]="productForm.controls.type.value === 'book' ? 'author' : 'instructor'"
+          <input type="text" formControlName="contributor_name"
             [placeholder]="productForm.controls.type.value === 'book' ? 'Author name' : 'Instructor name'" />
         </label>
 
         <label>
           <span>Category <span class="required">*</span></span>
-          <select formControlName="categoryId">
+          <select formControlName="category_id">
             <option value="">Select category</option>
             @for (category of categories(); track category.id) {
             <option [value]="category.id">{{ category.name }}</option>
             }
           </select>
-          @if (productForm.controls.categoryId.touched && productForm.controls.categoryId.invalid) {
+          @if (productForm.controls.category_id.touched && productForm.controls.category_id.invalid) {
           <span class="error">Category is required</span>
           }
         </label>
@@ -77,14 +85,14 @@
 
         <label>
           <span>Discount Type</span>
-          <select formControlName="discountType">
+          <select formControlName="discount_type">
             <option value="percentage">Percentage (%)</option>
             <option value="fixed">Fixed Amount (₹)</option>
           </select>
         </label>
 
         <label>
-          <span>Discount {{ productForm.controls.discountType.value === 'percentage' ? '(%)' : '(₹)' }}</span>
+          <span>Discount {{ productForm.controls.discount_type.value === 'percentage' ? '(%)' : '(₹)' }}</span>
           <input type="number" formControlName="discount" step="0.01" placeholder="0.00" />
           @if (productForm.controls.discount.touched && productForm.controls.discount.invalid) {
           <span class="error">Valid discount is required</span>
@@ -114,12 +122,17 @@
           <textarea formControlName="description" rows="3" placeholder="Product description"></textarea>
         </label>
       </div>
-      <div class="grid-cols-2 gap-10">
+      <div>
         <label>
           <span>Image</span>
-          <input type="file" accept="image/png, image/jpeg" (change)="handleImageFile($event)" />
-          <div class="image-preview" *ngIf="uploadedImageDataUrl">
-            <img [src]="uploadedImageDataUrl" alt="Preview" />
+          <input type="file" accept="image/png, image/jpeg" (change)="handleImageFile($event)" multiple />
+          <div class="image-preview" *ngIf="uploadedImages.length">
+            @for (image of uploadedImages; let i = $index; track image) {
+              <div class="image-wrapper">
+                <button class="remove-btn" (click)="removeImage(i)">×</button>
+                <img [src]="image.file_path" alt="Preview" />
+              </div>
+            }
           </div>
         </label>
 
@@ -150,7 +163,7 @@
       <thead>
         <tr>
           <th>Image</th>
-          <th>Title</th>
+          <th>Name</th>
           <th>Type</th>
           <th>Category</th>
           <th>Price</th>
@@ -168,18 +181,18 @@
         @for (product of products(); track product.id) {
         <tr>
           <td>
-            <img [src]="product.image" [alt]="product.title" class="product-thumb" />
+            <img [src]="product.files_list ? product.files_list[0]?.file_path : ''" [alt]="product.name" class="product-thumb" />
           </td>
-          <td class="product-title">{{ product.title }}</td>
+          <td class="product-title">{{ product.name }}</td>
           <td>
             <span class="badge" [class.badge-book]="product.type === 'book'"
               [class.badge-video]="product.type === 'video'">
               {{ product.type === 'book' ? 'Book' : 'Video' }}
             </span>
           </td>
-          <td class="text-capitalize">{{ product.categoryName || product.category }}</td>
+          <td class="text-capitalize">{{ product.category_name }}</td>
           <td class="price">{{ product.price | currency:'INR':'symbol':'1.2-2' }}</td>
-          <td class="discount">{{ product.discount || 0 }}{{ product.discountType === 'percentage' ? '%' : '₹' }}</td>
+          <td class="discount">{{ product.discount || 0 }}{{ product.discount_type === 'percentage' ? '%' : '₹' }}</td>
           <td>
             <span class="rating">
               <i class="fas fa-star"></i> {{ product.rating }}

@@ -8,16 +8,37 @@
 }
 .poh-hero {
   position: relative;
+  margin-top: 7px;
   background: none; /* move bg to pseudo-element */
   height: 270px;
   display: flex;
   align-items: center;
+  box-shadow: 0 0px 16px 0 rgba(15, 23, 42, 0.08);
 }
 .poh-hero-content{
   display: flex;
   flex-direction: row;
   align-items: center;
   justify-content: space-around;
+}
+/* Adjust the size and color of the crown icon */
+.crown-icon {
+  font-size: 4rem; /* Makes the crown larger */
+  color: gold; /* Set the crown icon color to gold */
+  margin-right: 10px; /* Adds space between the crown and the heading */
+  vertical-align: middle; /* Vertically align the crown with the heading */
+  position: absolute;
+  top: 60px;
+  left: 370px;
+  transform: rotate(-20deg);
+  // background-image: url('/Golden-Crown.png');
+  // top: 0;
+  // left: 0;
+  // width: 50px;  /* same as your bg image width */
+  // height: 100%;
+  // background-repeat: no-repeat;
+  // background-size: 356px auto;
+  // background-position: 28px -40px;
 }
 .poh-heading{
   margin: auto;

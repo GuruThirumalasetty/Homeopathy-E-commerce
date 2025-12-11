@@ -170,7 +170,7 @@ export class AppStateService {
               name: it.name,
               price: it.price,
               discount: it.discount || 0,
-              discountType: it.discountType || 'percentage',
+              discount_type: it.discount_type || 'percentage',
               duration: it.duration,
               itemPrice: it.itemPrice || it.price,
               discountAmount,
@@ -185,22 +185,23 @@ export class AppStateService {
             return {
               id: it.productId,
               serverId: it.id,
-              title: it.title,
-              author: it.author,
-              instructor: it.instructor,
+              name: it.name,
+              code: it.code,
+              contributor_name: it.contributor_name,
               price: it.price,
               discount: it.discount || 0,
-              discountType: it.discountType || 'percentage',
+              discount_type: it.discount_type || 'percentage',
               itemPrice: it.itemPrice || it.price,
               discountAmount: it.discountAmount || 0,
               purchasePrice: it.purchasePrice || it.price,
               image: it.image,
               rating: it.rating,
               type: it.type,
-              productType: it.type, // This is the product type (book/video)
+              productType: it.productType, // This is the product type (book/video)
               category: it.category,
               description: it.description,
-              quantity: it.quantity || 1
+              quantity: it.quantity || 1,
+             files_list : it.files_list || []
             };
           }
         });
