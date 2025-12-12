@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, inject, signal } from '@angular/core';
+import { Component, computed, inject, signal } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { AppStateService } from '../../core/services/app-state.service';
 import { ApiService } from '../../core/services/api.service';
@@ -35,7 +35,8 @@ export class AdminProductsComponent {
   search_products : FormControl = new FormControl('');
 
   // handle file input change for image upload (accepts jpg/png)
-  protected uploadedImages: any[] = [];
+  protected uploadedImages = signal<any[]>([]);
+  protected readonly displaying_images = computed(()=> this.uploadedImages().filter(x=>x.mode !== 3) || []);
   
   constructor() {
     this.loadProducts();
@@ -143,14 +144,14 @@ export class AdminProductsComponent {
     };
 
     // ensure productData.image uses uploaded image if available
-    if (this.uploadedImages.length) {
-      (productData as any).files_list = this.uploadedImages.map(file=>{
+    if (this.uploadedImages().length) {
+      (productData as any).files_list = this.uploadedImages().map(file=>{
         return {
           "id": file.id || 0,
           "product_id": editingId || 0,
           "file_name": file.file_name,
           "file_path": file.file_path,
-          "file_type": formValue.type,
+          "file_type": file.file_type,
           "status": file.status || 1,
           "mode": file.mode || 1,
           "created_by": this.user()!.id,
@@ -165,7 +166,7 @@ export class AdminProductsComponent {
         this.notifications.notify('Cannot update product that exists in a cart', 'error');
         return;
       }
-      this.api.updateProduct(editingId, productData).subscribe({
+      this.api.updateProduct(productData).subscribe({
         next: (response: common_response) => {
           if(response && response.status_code == 200){
           this.notifications.notify('Product updated successfully!', 'success');
@@ -226,6 +227,13 @@ export class AdminProductsComponent {
     });
     this.uploadedImageDataUrl = product.image ?? null;
     this.uploadedVideoFileName = product.videoUrl ? product.videoUrl.split('/').pop() || null : null;
+    let uploaded_images = product.files_list?.map((x: any)=>{
+      return {
+        ...x,
+        mode: 2
+      }
+    }) || [];
+    this.uploadedImages.set(uploaded_images);
   }
 
   deleteProduct(id: number): void {
@@ -234,7 +242,7 @@ export class AdminProductsComponent {
       return;
     }
     if (confirm('Are you sure you want to delete this product?')) {
-      this.api.deleteProduct(id).subscribe({
+      this.api.deleteProduct({ id: id, status: 0}).subscribe({
         next: () => {
           this.notifications.notify('Product deleted successfully!', 'success');
           this.loadProducts();
@@ -272,17 +280,13 @@ export class AdminProductsComponent {
     this.showForm.set(false);
     this.uploadedImageDataUrl = null;
     this.uploadedVideoFileName = null;
-    this.uploadedImages = [];
+    this.uploadedImages.set([]);
   }
-
 handleImageFile(event: Event): void {
   const input = event.target as HTMLInputElement;
   if (!input.files || input.files.length === 0) return;
 
   const allowed = ['image/jpeg', 'image/png'];
-
-  // clear previous images if needed
-  this.uploadedImages = [];
 
   Array.from(input.files).forEach(file => {
     if (!allowed.includes(file.type)) {
@@ -292,26 +296,42 @@ handleImageFile(event: Event): void {
     }
 
     const reader = new FileReader();
+
     reader.onload = () => {
       const result = reader.result as string;
-      let file = reader;
 
-      // Store each image data URL
-      this.uploadedImages.push({ file_path: result, file, status: 0 });
+      // ✔ Add new image using signal.update()
+      this.uploadedImages.update(images => [
+        ...images,
+        { file_path: result,file_name: file.name, file_type: 'photo', file, status: 0, mode: 1 }
+      ]);
 
-      // Update form - store all images
-      this.productForm.patchValue({ images: this.uploadedImages });
+      // ✔ Patch the form with full images data (mode 1,2,3)
+      this.productForm.patchValue({
+        images: this.uploadedImages()
+      });
     };
 
     reader.readAsDataURL(file);
   });
 }
-removeImage(index: number): void {
-  this.uploadedImages.splice(index, 1);
+
+removeImage(image: any, index: number): void {
+
+  this.uploadedImages.update(images => {
+    // Case 1: Remove completely if mode == 1
+    if (image.mode === 1) {
+      return images.filter((_, i) => i !== index);  // new array
+    }
+    // Case 2: Change mode to 3
+    return images.map(img =>
+      img === image ? { ...img, mode: 3 } : img   // new object
+    );
+  });
 
   // update form value also
   this.productForm.patchValue({
-    images: this.uploadedImages
+    images: this.uploadedImages()
   });
 }
 

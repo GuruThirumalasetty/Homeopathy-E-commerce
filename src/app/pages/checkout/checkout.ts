@@ -8,6 +8,7 @@ import { NotificationService } from '../../core/services/notification.service';
 import { ApiService } from '../../core/services/api.service';
 import { AuthService } from '../../core/services/auth.service';
 import { Address } from '../../core/models/address';
+import { common_response } from '../../core/models/common_response';
 
 @Component({
   selector: 'app-checkout',
@@ -65,12 +66,19 @@ export class CheckoutComponent {
     const user = this.auth.user();
     if (user) {
       this.api.getAddresses(user.id).subscribe({
-        next: (addresses) => {
-          this.addresses.set(addresses);
+        next: (response: common_response) => {
+          if(response.status_code == 200){
+            const addresses = response.data || [];
+            this.addresses.set(addresses);
           // Set default address if available
-          const defaultAddr = addresses.find(addr => addr.isDefault);
-          if (defaultAddr) {
-            this.selectAddress(defaultAddr);
+            const defaultAddr = addresses.find((addr: Partial<Address>) => addr.set_as_default);
+            if (defaultAddr) {
+              this.selectAddress(defaultAddr);
+            }
+          }
+          else{
+            this.notifications.notify(response.message);
+            this.addresses.set([]);
           }
         }
       });
@@ -109,18 +117,25 @@ export class CheckoutComponent {
     const address = this.selectedAddressForEdit();
     if (!address) return;
 
-    this.api.updateAddress(address.id, address).subscribe({
+    this.api.updateAddress(address).subscribe({
       next: () => {
         // Reload addresses
         const user = this.auth.user();
         if (user) {
           this.api.getAddresses(user.id).subscribe({
-            next: (addresses) => {
-              this.addresses.set(addresses);
-              // Update selected if it was edited
-              const updated = addresses.find(a => a.id === address.id);
-              if (updated && this.selectedAddress()?.id === address.id) {
-                this.selectAddress(updated);
+            next: (response: common_response) => {
+              if(response.status_code == 200){
+                const addresses = response.data || [];
+                this.addresses.set(addresses);
+                // Update selected if it was edited
+                const updated = addresses.find((a: Partial<Address>) => a.id === address.id);
+                if (updated && this.selectedAddress()?.id === address.id) {
+                  this.selectAddress(updated);
+                }
+              }
+              else{
+                this.notifications.notify(response.message);
+                this.addresses.set([]);
               }
             }
           });

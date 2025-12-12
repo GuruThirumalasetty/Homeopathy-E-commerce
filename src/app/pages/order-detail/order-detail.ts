@@ -7,6 +7,8 @@ import { LoadingSpinnerComponent } from '../../shared/components/loading-spinner
 import { Order, Transaction } from '../../core/models/order';
 import { Address } from '../../core/models/address';
 import { User } from '../../core/models/user';
+import { common_response } from '../../core/models/common_response';
+import { NotificationService } from '../../core/services/notification.service';
 // Dynamic import for pdfmake to avoid build issues
 let pdfMakeInstance: any = null;
 
@@ -32,6 +34,7 @@ export class OrderDetailComponent {
   private readonly router = inject(Router);
   private readonly location = inject(Location);
   private readonly api = inject(ApiService);
+  private readonly notification = inject(NotificationService);
 
   protected readonly order = signal<Order | null>(null);
   protected readonly address = signal<Address | null>(null);
@@ -94,10 +97,17 @@ export class OrderDetailComponent {
 
           // Fetch address
           this.api.getAddresses(order.createdBy).subscribe({
-            next: (addresses) => {
-              const address = addresses.find(a => a.id === order.address_id);
-              if (address) {
-                this.address.set(address);
+            next: (response: common_response) => {
+              if(response.status_code == 200){
+                const addresses = response.data || [];
+                const address = addresses.find((a: Partial<Address>) => a.id === order.address_id);
+                if (address) {
+                  this.address.set(address);
+                }
+              }
+              else{
+                this.notification.notify(response.message);
+                this.address.set(null);
               }
             },
             error: () => {} // Optional
@@ -225,7 +235,7 @@ export class OrderDetailComponent {
               margin: [0, 10, 0, 5]
             },
             {
-              text: `${address.name}\n${address.street}\n${address.city}, ${address.state} ${address.zipCode}\n${address.country}`,
+              text: `${address.address}\n${address.street}\n${address.city}, ${address.state} ${address.zip_code}\n${address.country}`,
               margin: [0, 0, 0, 10]
             }
           ] : []),

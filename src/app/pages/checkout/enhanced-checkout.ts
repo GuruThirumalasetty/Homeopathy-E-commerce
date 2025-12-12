@@ -11,6 +11,7 @@ import { PaymentStateService, PaymentState } from '../../core/services/payment-s
 import { ApiService } from '../../core/services/api.service';
 import { Address } from '../../core/models/address';
 import { PaymentMethod } from '../../core/models/razorpay.models';
+import { common_response } from '../../core/models/common_response';
 
 @Component({
   selector: 'app-enhanced-checkout',
@@ -186,12 +187,19 @@ export class EnhancedCheckoutComponent implements OnInit, OnDestroy {
     const user = this.authService.user();
     if (user) {
       this.api.getAddresses(user.id).subscribe({
-        next: (addresses) => {
-          this.addresses.set(addresses);
-          // Select default address
-          const defaultAddr = addresses.find(addr => addr.isDefault);
-          if (defaultAddr) {
-            this.selectAddress(defaultAddr);
+        next: (response: common_response) => {
+          if(response.status_code == 200){
+            const addresses = response.data || [];
+            this.addresses.set(addresses);
+            // Select default address
+            const defaultAddr = addresses.find((addr: Partial<Address>) => addr.set_as_default);
+            if (defaultAddr) {
+              this.selectAddress(defaultAddr);
+            }
+          }
+          else{
+            this.notifications.notify(response.message);
+            this.addresses.set([]);
           }
         },
         error: (error) => {

@@ -33,9 +33,9 @@ export class ApiService {
     this.loadingService.startLoading();
     // Try direct resource fetch first (/products/:id). If that fails (404),
     // fall back to a query by id (/products?id=:id) which json-server also supports.
-    return this.http.post<any>(`${this.base_url}/Product/get`, { action_type : 'get', id: id}).pipe(
+    return this.http.post<any>(`${this.base_url}/Product/get`, { id: id }).pipe(
       catchError(() =>
-        this.http.post<any[]>(`${this.base_url}/Product/get`, { action_type : 'get', id: id}).pipe(
+        this.http.post<any[]>(`${this.base_url}/Product/get`, { id: id }).pipe(
           map(list => (list /*&& list.length > 0*/) ? list[0] : null)
         )
       ),
@@ -46,23 +46,23 @@ export class ApiService {
   // Create a product
   createProduct(product: any): Observable<common_response> {
     this.loadingService.startLoading();
-    return this.http.post<common_response>(`${this.base_url}/Product/insert`, { ...product, action_type: 'insert' }).pipe(
+    return this.http.post<common_response>(`${this.base_url}/Product/insert`, product).pipe(
       finalize(() => this.loadingService.stopLoading())
     );
   }
 
   // Update a product
-  updateProduct(id: number | string, updates: Partial<any>): Observable<any> {
+  updateProduct(updates: Partial<any>): Observable<any> {
     this.loadingService.startLoading();
-    return this.http.post<any>(`${this.base_url}/Product/update`, { ...updates, action_type: 'update' }).pipe(
+    return this.http.post<any>(`${this.base_url}/Product/update`, updates).pipe(
       finalize(() => this.loadingService.stopLoading())
     );
   }
 
   // Delete a product
-  deleteProduct(id: number | string): Observable<any> {
+  deleteProduct(updates: Partial<Product>): Observable<any> {
     this.loadingService.startLoading();
-    return this.http.delete<any>(`${this.baseUrl}/products/${id}`).pipe(
+    return this.http.post<any>(`${this.baseUrl}/products/change_status`, updates).pipe(
       finalize(() => this.loadingService.stopLoading())
     );
   }
@@ -315,30 +315,30 @@ export class ApiService {
   }
 
   // Addresses
-  getAddresses(userId: string): Observable<Address[]> {
+  getAddresses(user_id: string): Observable<common_response> {
     this.loadingService.startLoading();
-    return this.http.get<Address[]>(`${this.baseUrl}/addresses?userId=${userId}`).pipe(
+    return this.http.post<common_response>(`${this.base_url}/Addresses/get`,{ user_id: user_id}).pipe(
       finalize(() => this.loadingService.stopLoading())
     );
   }
 
-  createAddress(address: Address): Observable<Address> {
+  createAddress(address: Address): Observable<common_response> {
     this.loadingService.startLoading();
-    return this.http.post<Address>(`${this.baseUrl}/addresses`, address).pipe(
+    return this.http.post<common_response>(`${this.base_url}/Addresses/insert`, address).pipe(
       finalize(() => this.loadingService.stopLoading())
     );
   }
 
-  updateAddress(id: string, updates: Partial<Address>): Observable<Address> {
+  updateAddress(updates: Partial<Address>): Observable<common_response> {
     this.loadingService.startLoading();
-    return this.http.patch<Address>(`${this.baseUrl}/addresses/${id}`, updates).pipe(
+    return this.http.post<common_response>(`${this.base_url}/Addresses/update`, updates).pipe(
       finalize(() => this.loadingService.stopLoading())
     );
   }
 
-  deleteAddress(id: string): Observable<any> {
+  deleteAddress(updates: Partial<Address>): Observable<common_response> {
     this.loadingService.startLoading();
-    return this.http.delete<any>(`${this.baseUrl}/addresses/${id}`).pipe(
+    return this.http.post<common_response>(`${this.base_url}/Addresses/change_status`, updates).pipe(
       finalize(() => this.loadingService.stopLoading())
     );
   }
@@ -406,7 +406,7 @@ export class ApiService {
   // Categories
   getCategories(): Observable<common_response> {
     this.loadingService.startLoading();
-    return this.http.post<common_response>(`${this.base_url}/category/getallcategories`,{}).pipe(
+    return this.http.post<common_response>(`${this.base_url}/category/get`,{}).pipe(
       finalize(() => this.loadingService.stopLoading())
     );
   }
@@ -427,7 +427,7 @@ export class ApiService {
 
   deleteCategory(category: any): Observable<common_response> {
     this.loadingService.startLoading();
-    return this.http.post<common_response>(`${this.base_url}/category/updatestatus`,category).pipe(
+    return this.http.post<common_response>(`${this.base_url}/category/change_status`,category).pipe(
       finalize(() => this.loadingService.stopLoading())
     );
   }

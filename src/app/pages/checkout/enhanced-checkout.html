@@ -123,17 +123,17 @@
                     </label>
                     <div class="address-content">
                       <div class="address-header">
-                        <strong>{{ address.name }}</strong>
-                        @if (address.isDefault) {
+                        <strong>{{ address.address }}</strong>
+                        @if (address.set_as_default) {
                           <span class="default-badge">Default</span>
                         }
                       </div>
                       <div class="address-details">
-                        {{ address.street }}, {{ address.city }}, {{ address.state }} {{ address.zipCode }}
+                        {{ address.street }}, {{ address.city }}, {{ address.state }} {{ address.zip_code }}
                       </div>
                       <div class="address-country">{{ address.country }}</div>
-                      @if (address.phone) {
-                        <div class="address-phone">{{ address.phone }}</div>
+                      @if (address.phone_number) {
+                        <div class="address-phone">{{ address.phone_number }}</div>
                       }
                     </div>
                   </div>
@@ -337,9 +337,9 @@
             @if (selectedAddress()) {
               <div class="delivery-address">
                 <strong>Delivery Address:</strong>
-                <p>{{ selectedAddress()?.name }}</p>
+                <p>{{ selectedAddress()?.address }}</p>
                 <p>{{ selectedAddress()?.street }}, {{ selectedAddress()?.city }}</p>
-                <p>{{ selectedAddress()?.state }} {{ selectedAddress()?.zipCode }}</p>
+                <p>{{ selectedAddress()?.state }} {{ selectedAddress()?.zip_code }}</p>
               </div>
             }
           </div>

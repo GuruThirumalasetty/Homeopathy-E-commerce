@@ -1,12 +1,17 @@
 export interface Address {
   id: string;
-  userId: string;
-  name: string; // e.g., Home, Office
+  user_id: string;
+  address: string; // e.g., Home, Office
+  phone_number: string;
   street: string;
   city: string;
   state: string;
-  zipCode: string;
+  zip_code: string;
   country: string;
-  phone?: string;
-  isDefault?: boolean;
+  set_as_default?: number;
+  status: number;
+  created_on?: string;
+  created_by?: number;
+  updated_on?: string;
+  updated_by?: number;
 }

@@ -492,7 +492,95 @@
       "createdBy": "4"
     }
   ],
-  "cart": [],
+  "cart": [
+    {
+      "id": "ddd4",
+      "userId": "4",
+      "productId": 2,
+      "quantity": 1,
+      "name": "Advanced Python",
+      "code": "PRD002",
+      "price": 59.99,
+      "discount": 10,
+      "discount_type": "flat",
+      "shipping_charges": 50,
+      "tax": 10,
+      "itemPrice": 59.99,
+      "discountAmount": 10,
+      "purchasePrice": 49.99,
+      "taxAmount": 9.999,
+      "finalPrice": 109.989,
+      "rating": 4.7,
+      "type": "video",
+      "contributor_name": "Sarah Lee",
+      "description": "Deep dive into Python for professionals.",
+      "files_list": [
+        {
+          "id": 3,
+          "product_id": null,
+          "file_name": "python-cover.png",
+          "file_path": "https://images.unsplash.com/photo-1543002588-bfa74002ed7e?w=400",
+          "file_type": "image",
+          "status": 1,
+          "mode": null,
+          "created_on": "2025-12-09 22:59:50",
+          "created_by": 1,
+          "updated_on": "2025-12-10 14:57:24",
+          "updated_by": null
+        },
+        {
+          "id": 4,
+          "product_id": null,
+          "file_name": "python-intro.mp4",
+          "file_path": "https://images.unsplash.com/photo-1543002588-bfa74002ed7e?w=800",
+          "file_type": "image",
+          "status": 1,
+          "mode": null,
+          "created_on": "2025-12-09 22:59:50",
+          "created_by": 1,
+          "updated_on": "2025-12-10 14:57:24",
+          "updated_by": null
+        }
+      ]
+    },
+    {
+      "id": "2eb2",
+      "userId": "4",
+      "productId": 4,
+      "quantity": 1,
+      "name": "Business Analytics Course",
+      "code": "PRD004",
+      "price": 69.99,
+      "discount": 0,
+      "discount_type": "percentage",
+      "shipping_charges": 0,
+      "tax": 0,
+      "itemPrice": 69.99,
+      "discountAmount": 0,
+      "purchasePrice": 69.99,
+      "taxAmount": 0,
+      "finalPrice": 69.99,
+      "rating": 4.6,
+      "type": "book",
+      "contributor_name": "Emily Clark",
+      "description": "Learn data-driven business strategies.",
+      "files_list": [
+        {
+          "id": 7,
+          "product_id": null,
+          "file_name": "analytics-cover.jpg",
+          "file_path": "https://images.unsplash.com/photo-1611162617474-5b21e879e113?w=400",
+          "file_type": "image",
+          "status": 1,
+          "mode": null,
+          "created_on": "2025-12-09 22:59:50",
+          "created_by": 2,
+          "updated_on": "2025-12-10 14:57:24",
+          "updated_by": null
+        }
+      ]
+    }
+  ],
   "charges": [
     {
       "gst": 10,
