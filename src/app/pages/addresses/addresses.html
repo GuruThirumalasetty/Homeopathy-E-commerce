@@ -22,15 +22,15 @@
         <div class="form-grid">
           <label>
             <span>Address Name <span class="required">*</span></span>
-            <input type="text" formControlName="name" placeholder="e.g., Home, Office" />
-            @if (addressForm.controls['name'].touched && addressForm.controls['name'].invalid) {
+            <input type="text" formControlName="address" placeholder="e.g., Home, Office" />
+            @if (addressForm.controls['address'].touched && addressForm.controls['address'].invalid) {
               <span class="error">Name is required</span>
             }
           </label>
           <label>
             <span>Phone <span class="required">*</span></span>
-            <input type="tel" formControlName="phone" placeholder="Phone number" />
-            @if (addressForm.controls['phone'].touched && addressForm.controls['phone'].invalid) {
+            <input type="tel" formControlName="phone_number" placeholder="Phone number" />
+            @if (addressForm.controls['phone_number'].touched && addressForm.controls['phone_number'].invalid) {
               <span class="error">Phone number is required</span>
             }
           </label>
@@ -64,8 +64,8 @@
         <div class="form-grid">
           <label>
             <span>ZIP Code <span class="required">*</span></span>
-            <input type="text" formControlName="zipCode" placeholder="ZIP/Postal code" />
-            @if (addressForm.controls['zipCode'].touched && addressForm.controls['zipCode'].invalid) {
+            <input type="text" formControlName="zip_code" placeholder="ZIP/Postal code" />
+            @if (addressForm.controls['zip_code'].touched && addressForm.controls['zip_code'].invalid) {
               <span class="error">ZIP code is required</span>
             }
           </label>
@@ -79,7 +79,7 @@
         </div>
 
         <label class="checkbox-label">
-          <input type="checkbox" formControlName="isDefault" />
+          <input type="checkbox" formControlName="set_as_default" />
           <span>Set as default address</span>
         </label>
 
@@ -95,12 +95,12 @@
 
   <div class="addresses-grid">
     @for (address of addresses(); track address.id) {
-      <article class="address-card" [class.default]="address.isDefault">
-        @if (address.isDefault) {
+      <article class="address-card" [class.default]="address.set_as_default">
+        @if (address.set_as_default) {
           <div class="default-badge">Default</div>
         }
         <div class="address-header">
-          <h3>{{ address.name }}</h3>
+          <h3>{{ address.address }}</h3>
           <div class="card-actions">
             <button class="btn-icon" (click)="editAddress(address)" title="Edit">
               <i class="fas fa-edit"></i>
@@ -112,13 +112,13 @@
         </div>
         <div class="address-content">
           <p>{{ address.street }}</p>
-          <p>{{ address.city }}, {{ address.state }} {{ address.zipCode }}</p>
+          <p>{{ address.city }}, {{ address.state }} {{ address.zip_code }}</p>
           <p>{{ address.country }}</p>
-          @if (address.phone) {
-            <p><i class="fas fa-phone"></i> {{ address.phone }}</p>
+          @if (address.phone_number) {
+            <p><i class="fas fa-phone"></i> {{ address.phone_number }}</p>
           }
         </div>
-        @if (!address.isDefault) {
+        @if (!address.set_as_default) {
           <div class="card-footer">
             <button class="btn btn-outline" (click)="setDefault(address)">Set as Default</button>
           </div>

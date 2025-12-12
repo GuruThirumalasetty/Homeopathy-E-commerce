@@ -26,14 +26,14 @@
                     <input type="radio" name="selectedAddress" [value]="address.id" (change)="selectAddress(address)" [checked]="selectedAddress()?.id === address.id" />
                   </label>
                   <div class="address-content">
-                    <div class="address-name">{{ address.name }} @if (address.isDefault) { (Default) }</div>
-                    <div class="address-details">{{ address.street }}, {{ address.city }}, {{ address.state }} {{ address.zipCode }}</div>
+                    <div class="address-name">{{ address.address }} @if (address.set_as_default) { (Default) }</div>
+                    <div class="address-details">{{ address.street }}, {{ address.city }}, {{ address.state }} {{ address.zip_code }}</div>
                     <div class="address-country">{{ address.country }}</div>
-                    @if (address.phone) {
-                      <div class="address-phone">{{ address.phone }}</div>
+                    @if (address.phone_number) {
+                      <div class="address-phone">{{ address.phone_number }}</div>
                     }
                   </div>
-                  <button class="edit-btn" (click)="editAddress(address)" title="Edit Address">
+                  <button type="button" class="edit-btn" (click)="editAddress(address)" title="Edit Address">
                     <i class="fas fa-edit"></i>
                   </button>
                 </div>
@@ -73,51 +73,51 @@
                   <div class="form-grid">
                     <label>
                       <span>Address Name <span class="required">*</span></span>
-                      <input type="text" [(ngModel)]="selectedAddressForEdit()!.name" placeholder="e.g., Home, Office" />
+                      <input type="text"  [ngModelOptions]="{standalone: true}" [(ngModel)]="selectedAddressForEdit()!.address" placeholder="e.g., Home, Office" />
                     </label>
                     <label>
                       <span>Phone</span>
-                      <input type="tel" [(ngModel)]="selectedAddressForEdit()!.phone" placeholder="Phone number" />
+                      <input type="tel"  [ngModelOptions]="{standalone: true}" [(ngModel)]="selectedAddressForEdit()!.phone_number" placeholder="Phone number" />
                     </label>
                   </div>
 
                   <label>
                     <span>Street Address <span class="required">*</span></span>
-                    <input type="text" [(ngModel)]="selectedAddressForEdit()!.street" placeholder="Street address" />
+                    <input type="text"  [ngModelOptions]="{standalone: true}" [(ngModel)]="selectedAddressForEdit()!.street" placeholder="Street address" />
                   </label>
 
                   <div class="form-grid">
                     <label>
                       <span>City <span class="required">*</span></span>
-                      <input type="text" [(ngModel)]="selectedAddressForEdit()!.city" placeholder="City" />
+                      <input type="text"  [ngModelOptions]="{standalone: true}" [(ngModel)]="selectedAddressForEdit()!.city" placeholder="City" />
                     </label>
                     <label>
                       <span>State <span class="required">*</span></span>
-                      <input type="text" [(ngModel)]="selectedAddressForEdit()!.state" placeholder="State" />
+                      <input type="text"  [ngModelOptions]="{standalone: true}" [(ngModel)]="selectedAddressForEdit()!.state" placeholder="State" />
                     </label>
                   </div>
 
                   <div class="form-grid">
                     <label>
                       <span>ZIP Code <span class="required">*</span></span>
-                      <input type="text" [(ngModel)]="selectedAddressForEdit()!.zipCode" placeholder="ZIP/Postal code" />
+                      <input type="text"  [ngModelOptions]="{standalone: true}" [(ngModel)]="selectedAddressForEdit()!.zip_code" placeholder="ZIP/Postal code" />
                     </label>
                     <label>
                       <span>Country <span class="required">*</span></span>
-                      <input type="text" [(ngModel)]="selectedAddressForEdit()!.country" placeholder="Country" />
+                      <input type="text"  [ngModelOptions]="{standalone: true}" [(ngModel)]="selectedAddressForEdit()!.country" placeholder="Country" />
                     </label>
                   </div>
 
                   <label class="checkbox-label">
-                    <input type="checkbox" [(ngModel)]="selectedAddressForEdit()!.isDefault" />
+                    <input type="checkbox"  [ngModelOptions]="{standalone: true}" [(ngModel)]="selectedAddressForEdit()!.set_as_default" />
                     <span>Set as default address</span>
                   </label>
                 </form>
               }
             </div>
             <div class="dialog-footer">
-              <button class="btn btn-secondary" (click)="closeEditDialog()">Cancel</button>
-              <button class="btn btn-primary" (click)="updateAddress()">Update Address</button>
+              <button type="button" class="btn btn-secondary" (click)="closeEditDialog()">Cancel</button>
+              <button type="button" class="btn btn-primary" (click)="updateAddress()">Update Address</button>
             </div>
           </div>
         </div>

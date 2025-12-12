@@ -126,10 +126,10 @@
         <label>
           <span>Image</span>
           <input type="file" accept="image/png, image/jpeg" (change)="handleImageFile($event)" multiple />
-          <div class="image-preview" *ngIf="uploadedImages.length">
-            @for (image of uploadedImages; let i = $index; track image) {
+          <div class="image-preview" *ngIf="displaying_images().length">
+            @for (image of displaying_images(); let i = $index; track image) {
               <div class="image-wrapper">
-                <button class="remove-btn" (click)="removeImage(i)">×</button>
+                <button class="remove-btn" (click)="removeImage(image, i)">×</button>
                 <img [src]="image.file_path" alt="Preview" />
               </div>
             }
