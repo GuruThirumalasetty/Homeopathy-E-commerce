@@ -16,16 +16,16 @@ import { calculateDiscountAmount, calculatePurchasePrice, calculateTaxAmount, ca
   styleUrl: './cart.scss'
 })
 export class CartComponent {
-  private readonly appState = inject(AppStateService);
+  private readonly app_state = inject(AppStateService);
   private readonly notifications = inject(NotificationService);
   private readonly router = inject(Router);
   private readonly api = inject(ApiService);
   private readonly auth = inject(AuthService);
 
-  protected readonly items = this.appState.cart;
+  protected readonly items = this.app_state.cart;
   protected readonly subtotal = computed(() => this.items().reduce((total, item) => total + item.quantity * (item.finalPrice || item.purchasePrice || item.price || 0), 0));
   protected readonly totalDiscount = computed(() => this.items().reduce((total, item) => total + item.quantity * (item.discountAmount || 0), 0));
-  protected readonly highlightedSubscriptionId = this.appState.highlightedSubscriptionId;
+  protected readonly highlightedSubscriptionId = this.app_state.highlightedSubscriptionId;
   protected readonly shipping = computed(() => this.items().reduce((sum, item) => sum + (item.shipping_charges || 0), 0));
   protected readonly total = computed(() => this.subtotal() + this.shipping());
 
@@ -51,7 +51,7 @@ export class CartComponent {
 
     // Fallback to local update (guest or no serverId)
     if (item?.type !== 'subscription') {
-      this.appState.updateCartQuantity(itemId, quantity);
+      this.app_state.updateCartQuantity(itemId, quantity);
     }
   }
 
@@ -72,10 +72,10 @@ export class CartComponent {
 
     // Fallback to local remove
     if (item?.type !== 'subscription') {
-      this.appState.removeFromCart(itemId);
+      this.app_state.removeFromCart(itemId);
     } else if (item?.type === 'subscription') {
       // For subscriptions, just remove from local cart
-      this.appState.removeSubscriptionFromCart(itemId);
+      this.app_state.removeSubscriptionFromCart(itemId);
       this.notifications.notify('Subscription removed from cart', 'info');
     }
   }
@@ -142,7 +142,7 @@ export class CartComponent {
             };
           }
         });
-        this.appState.setCartItems(cartItems);
+        this.app_state.setCartItems(cartItems);
       },
       error: () => {
         this.notifications.notify('Failed to refresh cart from server', 'error');

@@ -112,13 +112,13 @@ export class HomeComponent {
   }
 
   protected isTypeInCart(type: string): boolean {
-    const cartItems = this.appState.cart();
+    const cartItems = this.app_state.cart();
     return cartItems.some(item => item.type === 'subscription' && item.planType === type);
   }
 
   constructor(
     private api: ApiService,
-    private appState: AppStateService,
+    private app_state: AppStateService,
     private notifications: NotificationService,
     private auth: AuthService,
     private router: Router
@@ -281,7 +281,7 @@ export class HomeComponent {
             };
           }
         });
-        this.appState.setCartItems(cartItems);
+        this.app_state.setCartItems(cartItems);
       },
       error: () => {
         this.notifications.notify('Item added locally but failed to refresh cart', 'error');

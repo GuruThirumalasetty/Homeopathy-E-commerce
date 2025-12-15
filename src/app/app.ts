@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, OnInit, signal } from '@angular/core';
 import { NgFor, SlicePipe, UpperCasePipe } from '@angular/common';
 import { RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
 import { navLinks } from './app.routes';
@@ -6,6 +6,10 @@ import { NotificationCenterComponent } from './shared/components/notification-ce
 import { LoadingSpinnerComponent } from './shared/components/loading-spinner/loading-spinner';
 import { AppStateService } from './core/services/app-state.service';
 import { AuthService } from './core/services/auth.service';
+import { ApiService } from './core/services/api.service';
+import { common_response } from './core/models/common_response';
+import { NotificationService } from './core/services/notification.service';
+import { Permission } from './core/models/user';
 
 @Component({
   selector: 'app-root',
@@ -13,16 +17,23 @@ import { AuthService } from './core/services/auth.service';
   templateUrl: './app.html',
   styleUrl: './app.scss'
 })
-export class App {
+export class App implements OnInit {
   protected readonly links = navLinks;
-  private readonly appState = inject(AppStateService);
+  private readonly app_state = inject(AppStateService);
   private readonly authService = inject(AuthService);
-  protected readonly cartCount = this.appState.cartCount;
+  private readonly api = inject(ApiService);
+  private readonly notification = inject(NotificationService);
+  protected readonly cartCount = this.app_state.cartCount;
   protected readonly user = this.authService.user;
   protected readonly isAuthenticated = this.authService.isAuthenticated;
   isSideNavExpanded = false;
   expandedByButton = false;
 
+  protected navigation_data = signal<Permission[]>([]);
+
+  ngOnInit(): void {
+    this.get_admin_permissions();
+  }
 toggleSidebar() {
   this.isSideNavExpanded = !this.isSideNavExpanded;
   this.expandedByButton = this.isSideNavExpanded;
@@ -48,124 +59,151 @@ get navigationData() {
   return this.userNavigationData;
 }
 
-protected readonly adminNavigationData = [
+get_admin_permissions(){
+  this.api.getPermissions().subscribe({
+    next: (response: common_response)=>{
+      if(response.status_code == 200){
+        this.navigation_data.set(response.data || []);
+      }
+      else{
+        this.notification.notify(response.message);
+        this.navigation_data.set([]);
+      }
+    }
+  })
+}
+
+protected readonly adminNavigationData: Permission[] = [
   {
+    id: 1,
     module: 'Admin',
-    page: 'Home',
-    router_link: '/home',
-    isNavVisible: 1,
-    permissions: { create: 1, view: 1, edit: 1, delete: 1 },
+    name: 'Home',
+    link: '/home',
+    is_nav_visible: 1,
+    permissions: { create: 1, view: 1, update: 1, delete: 1 },
     icon: 'admin',
     role: 'admin'
   },
   {
+    id: 1,
     module: 'Admin',
-    page: 'Admin Access',
-    router_link: '/admin',
-    isNavVisible: 1,
-    permissions: { create: 1, view: 1, edit: 1, delete: 1 },
+    name: 'Admin Access',
+    link: '/admin',
+    is_nav_visible: 1,
+    permissions: { create: 1, view: 1, update: 1, delete: 1 },
     icon: 'admin',
     role: 'admin'
   },
   {
+    id: 1,
     module: 'Admin',
-    page: 'Products',
-    router_link: '/products',
-    isNavVisible: 1,
-    permissions: { create: 1, view: 1, edit: 1, delete: 1 },
+    name: 'Products',
+    link: '/products',
+    is_nav_visible: 1,
+    permissions: { create: 1, view: 1, update: 1, delete: 1 },
     icon: 'admin',
     role: 'admin'
   },
   {
+    id: 1,
     module: 'Admin',
-    page: 'Dashboard',
-    router_link: '/dashboard',
-    isNavVisible: 1,
-    permissions: { create: 1, view: 1, edit: 1, delete: 1 },
+    name: 'Dashboard',
+    link: '/dashboard',
+    is_nav_visible: 1,
+    permissions: { create: 1, view: 1, update: 1, delete: 1 },
     icon: 'admin',
     role: 'admin'
   },
   {
+    id: 1,
     module: 'Admin',
-    page: 'Orders',
-    router_link: '/admin/orders',
-    isNavVisible: 1,
-    permissions: { create: 1, view: 1, edit: 1, delete: 1 },
+    name: 'Orders',
+    link: '/admin/orders',
+    is_nav_visible: 1,
+    permissions: { create: 1, view: 1, update: 1, delete: 1 },
     icon: 'admin',
     role: 'admin'
   },
   {
+    id: 1,
     module: 'Admin',
-    page: 'Events',
-    router_link: '/admin/events',
-    isNavVisible: 1,
-    permissions: { create: 1, view: 1, edit: 1, delete: 1 },
+    name: 'Events',
+    link: '/admin/events',
+    is_nav_visible: 1,
+    permissions: { create: 1, view: 1, update: 1, delete: 1 },
     icon: 'admin',
     role: 'admin'
   },
   {
+    id: 1,
     module: 'Admin',
-    page: 'Transactions',
-    router_link: '/transactions',
-    isNavVisible: 1,
-    permissions: { create: 1, view: 1, edit: 1, delete: 1 },
+    name: 'Transactions',
+    link: '/transactions',
+    is_nav_visible: 1,
+    permissions: { create: 1, view: 1, update: 1, delete: 1 },
     icon: 'admin',
     role: 'admin'
   }
 ];
 
-protected readonly userNavigationData = [
+protected readonly userNavigationData: Permission[] = [
   {
+    id: 1,
     module: 'User',
-    page: 'Home',
-    router_link: '/home',
-    isNavVisible: 1,
-    permissions: { create: 0, view: 1, edit: 0, delete: 0 },
+    name: 'Home',
+    link: '/home',
+    is_nav_visible: 1,
+    permissions: { create: 0, view: 1, update: 0, delete: 0 },
     icon: 'user',
     role: 'user'
   },
   {
+    id: 2,
     module: 'User',
-    page: 'Products',
-    router_link: '/products',
-    isNavVisible: 1,
-    permissions: { create: 0, view: 1, edit: 0, delete: 0 },
+    name: 'Products',
+    link: '/products',
+    is_nav_visible: 1,
+    permissions: { create: 0, view: 1, update: 0, delete: 0 },
     icon: 'user',
     role: 'user'
   },
   {
+    id: 1,
     module: 'User',
-    page: 'Dashboard',
-    router_link: '/dashboard',
-    isNavVisible: 1,
-    permissions: { create: 1, view: 1, edit: 1, delete: 1 },
+    name: 'Dashboard',
+    link: '/dashboard',
+    is_nav_visible: 1,
+    permissions: { create: 1, view: 1, update: 1, delete: 1 },
     icon: 'user',
     role: 'user'
   },
   {
+    id: 1,
     module: 'User',
-    page: 'My Orders',
-    router_link: '/orders',
-    isNavVisible: 1,
-    permissions: { create: 0, view: 1, edit: 0, delete: 0 },
+    name: 'My Orders',
+    link: '/orders',
+    is_nav_visible: 1,
+    permissions: { create: 0, view: 1, update: 0, delete: 0 },
     icon: 'user',
     role: 'user'
   },
   {
+    id: 1,
     module: 'User',
-    page: 'My Addresses',
-    router_link: '/addresses',
-    isNavVisible: 1,
-    permissions: { create: 1, view: 1, edit: 1, delete: 1 },
+    name: 'My Addresses',
+    link: '/addresses',
+    is_nav_visible: 1,
+    permissions: { create: 1, view: 1, update: 1, delete: 1 },
     icon: 'user',
     role: 'user'
   },
   {
+    id: 1,
     module: 'User',
-    page: 'My Transactions',
-    router_link: '/transactions',
-    isNavVisible: 1,
-    permissions: { create: 0, view: 1, edit: 0, delete: 0 },
+    name: 'My Transactions',
+    link: '/transactions',
+    is_nav_visible: 1,
+    permissions: { create: 0, view: 1, update: 0, delete: 0 },
     icon: 'user',
     role: 'user'
   }

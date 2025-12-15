@@ -16,7 +16,7 @@ import { AuthService } from '../../core/services/auth.service';
   styleUrl: './admin-products.scss'
 })
 export class AdminProductsComponent {
-  private readonly appState = inject(AppStateService);
+  private readonly app_state = inject(AppStateService);
   private readonly auth = inject(AuthService);
   private readonly user = signal(this.auth.user());
   private readonly api = inject(ApiService);

@@ -14,7 +14,7 @@ import { RouterLink } from '@angular/router';
   styleUrl: './admin-orders.scss'
 })
 export class AdminOrdersComponent {
-  private readonly appState = inject(AppStateService);
+  private readonly app_state = inject(AppStateService);
   private readonly api = inject(ApiService);
   protected readonly orders = signal<any[]>([]);
   protected readonly statuses = ['pending', 'processing', 'shipped', 'delivered', 'cancelled'] as const;
@@ -47,7 +47,7 @@ export class AdminOrdersComponent {
       next: () => this.loadOrders(),
       error: () => {
         // fallback to local update
-        this.appState.updateOrderStatus(orderId, status);
+        this.app_state.updateOrderStatus(orderId, status);
       }
     });
   }

@@ -18,7 +18,7 @@ import { calculateFinalPrice, calculateTaxAmount, calculateDiscountAmount, calcu
 })
 export class ProductDetailComponent {
   private readonly route = inject(ActivatedRoute);
-  private readonly appState = inject(AppStateService);
+  private readonly app_state = inject(AppStateService);
   private readonly notifications = inject(NotificationService);
   private readonly sanitizer = inject(DomSanitizer);
   private readonly api = inject(ApiService);
@@ -250,7 +250,7 @@ export class ProductDetailComponent {
             };
           }
         });
-        this.appState.setCartItems(cartItems as any);
+        this.app_state.setCartItems(cartItems as any);
         this.notifications.notify('Product added to cart', 'success');
       },
       error: () => {

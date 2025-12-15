@@ -3,7 +3,7 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable, of, throwError } from 'rxjs';
 import { map, catchError, finalize, switchMap } from 'rxjs/operators';
 import { Order, Transaction } from '../models/order';
-import { User, Permission, Role, RolePermission } from '../models/user';
+import { User, Permission, PermissionEntity, Role, RolePermission } from '../models/user';
 import { CartItem, Product } from '../models/product';
 import { Address } from '../models/address';
 import { Subscription } from '../models/subscription';
@@ -351,12 +351,6 @@ export class ApiService {
     );
   }
 
-  getPermissions(): Observable<Permission[]> {
-    this.loadingService.startLoading();
-    return this.http.get<Permission[]>(`${this.baseUrl}/permissions`).pipe(
-      finalize(() => this.loadingService.stopLoading())
-    );
-  }
 
   getRolePermissions(): Observable<Permission[]> {
     this.loadingService.startLoading();
@@ -394,7 +388,7 @@ export class ApiService {
           map(permissions => {
             return roles.map(role => ({
               ...role,
-              fullPermissions: permissions.filter(p => role.permissions.some(rp => rp.permission_id === p.permission_id))
+              fullPermissions: permissions.filter(p => role.permissions.some(rp => rp.permission_id === p.id))
             }));
           })
         );
@@ -428,6 +422,42 @@ export class ApiService {
   deleteCategory(category: any): Observable<common_response> {
     this.loadingService.startLoading();
     return this.http.post<common_response>(`${this.base_url}/category/change_status`,category).pipe(
+      finalize(() => this.loadingService.stopLoading())
+    );
+  }
+
+  // Permissions
+  getPermissions(): Observable<common_response> {
+    this.loadingService.startLoading();
+    return this.http.post<common_response>(`${this.base_url}/permissions/get`,{}).pipe(
+      finalize(() => this.loadingService.stopLoading())
+    );
+  }
+
+  createPermission(permission: any): Observable<common_response> {
+    this.loadingService.startLoading();
+    return this.http.post<common_response>(`${this.base_url}/permissions/insert`, permission).pipe(
+      finalize(() => this.loadingService.stopLoading())
+    );
+  }
+
+  updatePermission(updates: Partial<any>): Observable<common_response> {
+    this.loadingService.startLoading();
+    return this.http.post<common_response>(`${this.base_url}/permissions/update`, updates).pipe(
+      finalize(() => this.loadingService.stopLoading())
+    );
+  }
+
+  deletePermission(permission: any): Observable<common_response> {
+    this.loadingService.startLoading();
+    return this.http.post<common_response>(`${this.base_url}/permissions/change_status`,permission).pipe(
+      finalize(() => this.loadingService.stopLoading())
+    );
+  }
+
+  updatePermissionStatus(permission: any): Observable<common_response> {
+    this.loadingService.startLoading();
+    return this.http.post<common_response>(`${this.base_url}/permissions/status_update`, permission).pipe(
       finalize(() => this.loadingService.stopLoading())
     );
   }

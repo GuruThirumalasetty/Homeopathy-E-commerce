@@ -196,6 +196,12 @@ export const routes: Routes = [
     loadComponent: () => import('./pages/role-mapping/role-mapping.component').then(m => m.RoleMappingComponent)
   },
   {
+    path: 'admin/permissions',
+    title: 'Homeopathy | Permissions Management',
+    canActivate: [authGuard],
+    loadComponent: () => import('./pages/admin-permissions/admin-permissions').then(m => m.AdminPermissionsComponent)
+  },
+  {
     path: 'profile',
     title: 'Homeopathy | Profile',
     canActivate: [authGuard],

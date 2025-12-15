@@ -40,17 +40,17 @@
       <nav class="side-nav__menu">
         <ul>
           <li *ngFor="let item of navigationData" class="side-nav__item">
-            <a [routerLink]="item.router_link"
+            <a [routerLink]="item.link"
                routerLinkActive="active"
-               [routerLinkActiveOptions]="{ exact: item.router_link === '' }"
+               [routerLinkActiveOptions]="{ exact: item.link === '' }"
                class="side-nav__link">
                
               <span class="side-nav__icon">
-                {{ item.icon ? (item.page | slice:0:1 | uppercase) : (item.page | slice:0:1 | uppercase) }}
+                {{ item.icon ? (item.name | slice:0:1 | uppercase) : (item.name | slice:0:1 | uppercase) }}
               </span>
 
               <span class="side-nav__label">
-                {{ item.page }}
+                {{ item.name }}
               </span>
 
             </a>

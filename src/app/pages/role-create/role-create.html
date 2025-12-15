@@ -70,18 +70,18 @@
               <div class="action-column">Update</div>
               <div class="action-column">Delete</div>
             </div>
-            @for (permission of permissions; track permission.permission_id) {
+            @for (permission of permissions; track permission.id) {
               <div class="table-row">
                 <div class="permission-column">
-                  <div class="permission-name">{{ permission.permission_name }}</div>
+                  <div class="permission-name">{{ permission.name }}</div>
                   <!-- <div class="permission-module">{{ permission.module }}</div> -->
                 </div>
                 <div class="action-column">
                   <label class="action-checkbox">
                     <input
                       type="checkbox"
-                      [checked]="getPermissionAction(permission.permission_id, 'create')"
-                      (change)="togglePermissionAction(permission.permission_id, 'create')"
+                      [checked]="getPermissionAction(permission.id, 'create')"
+                      (change)="togglePermissionAction(permission.id, 'create')"
                     />
                     <span class="checkmark"></span>
                   </label>
@@ -90,8 +90,8 @@
                   <label class="action-checkbox">
                     <input
                       type="checkbox"
-                      [checked]="getPermissionAction(permission.permission_id, 'view')"
-                      (change)="togglePermissionAction(permission.permission_id, 'view')"
+                      [checked]="getPermissionAction(permission.id, 'view')"
+                      (change)="togglePermissionAction(permission.id, 'view')"
                     />
                     <span class="checkmark"></span>
                   </label>
@@ -100,8 +100,8 @@
                   <label class="action-checkbox">
                     <input
                       type="checkbox"
-                      [checked]="getPermissionAction(permission.permission_id, 'update')"
-                      (change)="togglePermissionAction(permission.permission_id, 'update')"
+                      [checked]="getPermissionAction(permission.id, 'update')"
+                      (change)="togglePermissionAction(permission.id, 'update')"
                     />
                     <span class="checkmark"></span>
                   </label>
@@ -110,8 +110,8 @@
                   <label class="action-checkbox">
                     <input
                       type="checkbox"
-                      [checked]="getPermissionAction(permission.permission_id, 'delete')"
-                      (change)="togglePermissionAction(permission.permission_id, 'delete')"
+                      [checked]="getPermissionAction(permission.id, 'delete')"
+                      (change)="togglePermissionAction(permission.id, 'delete')"
                     />
                     <span class="checkmark"></span>
                   </label>

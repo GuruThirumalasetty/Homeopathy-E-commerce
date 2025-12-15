@@ -10,6 +10,6 @@ import { AppStateService } from '../../core/services/app-state.service';
   styleUrl: './payment.scss'
 })
 export class PaymentComponent {
-  private readonly appState = inject(AppStateService);
-  protected readonly total = this.appState.cartTotal;
+  private readonly app_state = inject(AppStateService);
+  protected readonly total = this.app_state.cartTotal;
 }

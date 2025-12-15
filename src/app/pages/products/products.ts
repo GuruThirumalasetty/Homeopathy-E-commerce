@@ -69,20 +69,20 @@ export class ProductsComponent {
       if (ratings.length > 0 && product.rating < Math.max(...ratings)) {
         return false;
       }
-      // if (categories.length > 0 && !categories.includes(product.category)) {
-      //   return false;
-      // }
+      if (categories.length > 0 && !categories.includes(product.category_name || '')) {
+        return false;
+      }
       return true;
     });
   });
 
-  protected readonly resultsCount = computed(() => this.filteredProducts().length);
+  protected readonly results_count = computed(() => this.filteredProducts().length);
 
   constructor(
     private readonly route: ActivatedRoute,
     private readonly api: ApiService,
     private readonly notifications: NotificationService,
-    private readonly appState: AppStateService,
+    private readonly app_state: AppStateService,
     private readonly auth: AuthService,
     private readonly router: Router
   ) {
@@ -281,7 +281,7 @@ export class ProductsComponent {
             quantity
           };
         });
-        this.appState.setCartItems(cartItems);
+        this.app_state.setCartItems(cartItems);
         this.notifications.notify('Product added to cart', 'success');
       },
       error: () => {
