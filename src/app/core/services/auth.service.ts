@@ -24,7 +24,7 @@ export class AuthService {
     return user?.role === 'admin';
   });
 
-  private readonly appState = inject(AppStateService);
+  private readonly app_state = inject(AppStateService);
   private readonly api = inject(ApiService);
 
   constructor(private readonly router: Router) {
@@ -40,7 +40,7 @@ export class AuthService {
     const restored = this.restoreUser();
     if (restored) {
       this.userSignal.set(restored);
-      this.appState.loadUserData(restored.id);
+      this.app_state.loadUserData(restored.id);
     }
   }
 
@@ -58,7 +58,7 @@ export class AuthService {
       this.userSignal.set(user);
       this.persistUser(user);
       // load user-specific data from server
-      this.appState.loadUserData(user.id);
+      this.app_state.loadUserData(user.id);
       return true;
     }));
   }
@@ -84,7 +84,7 @@ export class AuthService {
             };
             this.userSignal.set(user);
             this.persistUser(user);
-            this.appState.loadUserData(user.id);
+            this.app_state.loadUserData(user.id);
             return true;
           }),
           catchError(() => of(false))
@@ -95,7 +95,7 @@ export class AuthService {
   }
 
   logout(): void {
-    this.appState.clearUserData();
+    this.app_state.clearUserData();
     this.userSignal.set(null);
     try { localStorage.removeItem(AUTH_STORAGE_KEY); } catch {};
     this.router.navigate(['/login']);

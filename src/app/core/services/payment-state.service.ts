@@ -59,7 +59,7 @@ export interface OrderPlacementRequest {
 export class PaymentStateService {
   private readonly razorpayService = inject(RazorpayService);
   private readonly authService = inject(AuthService);
-  private readonly appState = inject(AppStateService);
+  private readonly app_state = inject(AppStateService);
   private readonly apiService = inject(ApiService);
 
   private readonly paymentSessions = new Map<string, PaymentSession>();
@@ -321,7 +321,7 @@ export class PaymentStateService {
    * Clear cart after successful order
    */
   private clearCart(): void {
-    this.appState.clearCart();
+    this.app_state.clearCart();
   }
 
   /**

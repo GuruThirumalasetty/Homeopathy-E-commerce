@@ -142,7 +142,7 @@ export class RoleMappingComponent {
   };
 
   protected checked_permission(perm: Permission, permissionType: 'create' | 'view' | 'update' | 'delete', rolePermissions: RolePermission[]): boolean {
-    return rolePermissions.some(rp => rp.permission_id === perm.permission_id && rp[permissionType]);
+    return rolePermissions.some(rp => rp.permission_id === perm.id && rp[permissionType]);
   }
 
   protected save(): void {

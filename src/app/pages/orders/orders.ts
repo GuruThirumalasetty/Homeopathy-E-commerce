@@ -13,7 +13,6 @@ import { AuthService } from '../../core/services/auth.service';
   styleUrl: './orders.scss'
 })
 export class OrdersComponent {
-  private readonly appState = inject(AppStateService);
   private readonly api = inject(ApiService);
   private readonly auth = inject(AuthService);
   private readonly router = inject(Router);

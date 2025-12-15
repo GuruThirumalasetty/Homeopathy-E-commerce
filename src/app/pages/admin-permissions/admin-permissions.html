@@ -1,0 +1,140 @@
+<section class="admin-permissions container">
+  @if (!isAdmin) {
+    <div class="access-denied">
+      <h2>Access Denied</h2>
+      <p>You don't have permission to access this page.</p>
+    </div>
+  } @else {
+    <div class="admin-header">
+      <h2>Manage Permissions</h2>
+      <button class="btn btn-primary" (click)="showAddForm()">
+        <i class="fas fa-plus"></i> Add New Permission
+      </button>
+    </div>
+
+    @if (showForm()) {
+      <div class="permission-form-card">
+        <div class="form-header">
+          <h3>{{ editingPermission() !== null ? 'Edit Permission' : 'Add New Permission' }}</h3>
+        </div>
+        <form [formGroup]="permissionForm" (ngSubmit)="onSubmit()">
+          <div class="form-grid">
+            <label>
+              <span>Name <span class="required">*</span></span>
+              <input type="text" formControlName="name" placeholder="Permission name" />
+              @if (permissionForm.controls['name'].touched && permissionForm.controls['name'].invalid) {
+                <span class="error">Name is required (min 2 characters)</span>
+              }
+            </label>
+
+            <label>
+              <span>Description</span>
+              <textarea formControlName="description" placeholder="Permission description" rows="3"></textarea>
+              @if (permissionForm.controls['description'].touched && permissionForm.controls['description'].invalid) {
+                <span class="error">Description is required</span>
+              }
+            </label>
+
+            <label>
+              <span>Link <span class="required">*</span></span>
+              <input type="text" formControlName="link" placeholder="Permission link" />
+              @if (permissionForm.controls['link'].touched && permissionForm.controls['link'].invalid) {
+                <span class="error">Link is required</span>
+              }
+            </label>
+
+            <label>
+              <span>Is Nav Visible</span>
+              <select formControlName="is_nav_visible">
+                <option value="1">Yes</option>
+                <option value="0">No</option>
+              </select>
+            </label>
+
+            <!-- <label>
+              <span>Status</span>
+              <select formControlName="status">
+                <option value="1">Active</option>
+                <option value="0">Inactive</option>
+              </select>
+            </label> -->
+
+            <label>
+              <span>Icon <span class="required">*</span></span>
+              <input type="text" formControlName="icon" placeholder="Icon class (e.g., fas fa-user)" />
+              @if (permissionForm.controls['icon'].touched && permissionForm.controls['icon'].invalid) {
+                <span class="error">Icon is required</span>
+              }
+            </label>
+          </div>
+
+          <div class="form-actions">
+            <button class="btn btn-secondary" type="button" (click)="resetForm()">Cancel</button>
+            <button class="btn btn-primary" type="submit" [disabled]="permissionForm.invalid || loading()">
+              {{ editingPermission() !== null ? 'Update Permission' : 'Add Permission' }}
+            </button>
+          </div>
+        </form>
+      </div>
+    }
+
+    <div class="permissions-table-wrapper">
+      <table class="permissions-table">
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th>Description</th>
+            <th>Link</th>
+            <th>Nav Visible</th>
+            <th>Icon</th>
+            <th>Status</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          @if (permissions().length === 0) {
+            <tr>
+              <td colspan="7" class="empty-state">No permissions found. Add your first permission!</td>
+            </tr>
+          } @else {
+            @for (permission of permissions(); track permission.id) {
+              <tr>
+                <td class="permission-name">{{ permission.name }}</td>
+                <td>{{ permission.description }}</td>
+                <td>{{ permission.link }}</td>
+                <td>
+                  <span class="badge" [class.badge-yes]="permission.is_nav_visible === 1" [class.badge-no]="permission.is_nav_visible === 0">
+                    {{ permission.is_nav_visible === 1 ? 'Yes' : 'No' }}
+                  </span>
+                </td>
+                <td>
+                  <span class="badge" [class.badge-active]="permission.status === 1" [class.badge-inactive]="permission.status === 0">
+                    {{ permission.status === 1 ? 'Active' : 'Inactive' }}
+                  </span>
+                </td>
+                <td>
+                    {{permission.icon}}
+                  <!-- @if (permission.icon) {
+                    <i [class]="permission.icon"></i>
+                  } @else {
+                    -
+                  } -->
+                </td>
+                <td>
+                  <div class="action-buttons">
+                    <button class="btn-icon btn-edit" (click)="editPermission(permission)" title="Edit">
+                      <i class="fas fa-edit"></i>
+                    </button>
+                    <button class="btn-icon btn-delete" (click)="deletePermission(permission)" title="Delete">
+                      <i class="fas fa-trash"></i>
+                    </button>
+                  </div>
+                </td>
+              </tr>
+            }
+          }
+        </tbody>
+      </table>
+    </div>
+  }
+</section>

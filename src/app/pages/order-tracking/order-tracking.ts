@@ -15,16 +15,16 @@ import { RouterLink } from '@angular/router';
   styleUrl: './order-tracking.scss'
 })
 export class OrderTrackingComponent {
-  // private readonly appState = inject(AppStateService);
+  // private readonly app_state = inject(AppStateService);
   // protected readonly query = signal('');
-  // protected readonly orders = this.appState.orders;
+  // protected readonly orders = this.app_state.orders;
 
   // protected readonly match = computed(() => {
   //   const id = this.query().trim();
   //   return this.orders().find(order => order.id === id);
   // });
   
-  private readonly appState = inject(AppStateService);
+  private readonly app_state = inject(AppStateService);
   private readonly api = inject(ApiService);
   private readonly auth = inject(AuthService);
   protected readonly orders = signal<any[]>([]);

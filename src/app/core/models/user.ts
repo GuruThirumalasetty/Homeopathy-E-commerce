@@ -22,14 +22,28 @@ export interface User {
 }
 
 export interface Permission {
-  permission_id: number;
-  permission_name: string;
+  id: number;
+  name: string;
   module: string;
-  router_link: string;
-  isNavVisible: number;
+  link: string;
+  is_nav_visible: number;
   permissions: { create: number; view: number; update: number; delete: number; };
   icon: string;
-  id: string;
+  role?: string;
+}
+
+export interface PermissionEntity {
+  id?: number;
+  name: string;
+  description: string;
+  link: string;
+  is_nav_visible: number;
+  status: number;
+  icon: string;
+  created_on?: string;
+  created_by?: number;
+  updated_on?: string;
+  updated_by?: number;
 }
 
 export interface RolePermission {

@@ -54,7 +54,7 @@ export class RoleCreateComponent {
         this.permissions = permissions;
         // Initialize permission actions for each permission
         permissions.forEach(perm => {
-          this.permissionActions.set(perm.permission_id, { create: false, view: false, update: false, delete: false });
+          this.permissionActions.set(perm.id, { create: false, view: false, update: false, delete: false });
         });
       },
       error: () => {

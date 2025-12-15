@@ -13,9 +13,9 @@ import { AuthService } from '../../core/services/auth.service';
   styleUrl: './dashboard.scss'
 })
 export class DashboardComponent {
-  private readonly appState = inject(AppStateService);
-  protected readonly cartCount = this.appState.cartCount;
-  protected readonly cartTotal = this.appState.cartTotal;
+  private readonly app_state = inject(AppStateService);
+  protected readonly cartCount = this.app_state.cartCount;
+  protected readonly cartTotal = this.app_state.cartTotal;
   private readonly api = inject(ApiService);
   private readonly auth = inject(AuthService);
   protected readonly user = this.auth.user;

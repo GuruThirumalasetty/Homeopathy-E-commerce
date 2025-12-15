@@ -21,7 +21,7 @@ import { common_response } from '../../core/models/common_response';
   styleUrl: './enhanced-checkout.scss'
 })
 export class EnhancedCheckoutComponent implements OnInit, OnDestroy {
-  private readonly appState = inject(AppStateService);
+  private readonly app_state = inject(AppStateService);
   private readonly notifications = inject(NotificationService);
   private readonly authService = inject(AuthService);
   private readonly razorpayService = inject(RazorpayService);
@@ -30,9 +30,9 @@ export class EnhancedCheckoutComponent implements OnInit, OnDestroy {
   private readonly router = inject(Router);
 
   // Core data signals
-  protected readonly cartItems = this.appState.cart;
-  protected readonly subtotal = this.appState.cartTotal;
-  protected readonly totalDiscount = this.appState.cartTotalDiscount;
+  protected readonly cartItems = this.app_state.cart;
+  protected readonly subtotal = this.app_state.cartTotal;
+  protected readonly totalDiscount = this.app_state.cartTotalDiscount;
   protected readonly shipping = computed(() => 
     this.cartItems().reduce((sum, item) => sum + (item.shipping_charges || 0), 0)
   );

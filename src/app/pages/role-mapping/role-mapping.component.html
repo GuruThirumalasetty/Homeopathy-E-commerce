@@ -122,7 +122,7 @@
                       @for (perm of role.fullPermissions; track perm.id) {
                         <tr>
                           <!-- <td>{{ perm.module }}</td> -->
-                          <td>{{ perm.permission_name }}</td>
+                          <td>{{ perm.name }}</td>
                           <td><input type="checkbox" [checked]="checked_permission(perm, 'create', role.permissions)" disabled></td>
                           <td><input type="checkbox" [checked]="checked_permission(perm, 'view', role.permissions)" disabled></td>
                           <td><input type="checkbox" [checked]="checked_permission(perm, 'update', role.permissions)" disabled></td>

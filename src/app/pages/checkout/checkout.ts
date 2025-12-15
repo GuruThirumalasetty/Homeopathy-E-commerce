@@ -18,16 +18,16 @@ import { common_response } from '../../core/models/common_response';
   styleUrl: './checkout.scss'
 })
 export class CheckoutComponent {
-  private readonly appState = inject(AppStateService);
+  private readonly app_state = inject(AppStateService);
   private readonly notifications = inject(NotificationService);
   private readonly router = inject(Router);
   private readonly api = inject(ApiService);
   private readonly auth = inject(AuthService);
 
-  protected readonly items = this.appState.cart;
-  protected readonly subtotal = this.appState.cartTotal;
-  protected readonly totalDiscount = this.appState.cartTotalDiscount;
-  protected readonly charges = this.appState.charges;
+  protected readonly items = this.app_state.cart;
+  protected readonly subtotal = this.app_state.cartTotal;
+  protected readonly totalDiscount = this.app_state.cartTotalDiscount;
+  protected readonly charges = this.app_state.charges;
   protected readonly shipping = computed(() => this.items().reduce((sum, item) => sum + (item.shipping_charges || 0), 0));
   protected readonly total = computed(() => this.subtotal() + this.shipping());
 
@@ -248,12 +248,12 @@ export class CheckoutComponent {
             // clear server-side cart for user and local cart
             this.api.clearCartForUser(currentUser.id).subscribe({
               next: () => {
-                this.appState.clearCart();
+                this.app_state.clearCart();
                 this.notifications.notify('Order placed successfully!', 'success');
                 this.router.navigate(['/success'], { state: { orderId: savedOrder.id } });
               },
               error: () => {
-                this.appState.clearCart();
+                this.app_state.clearCart();
                 this.notifications.notify('Order placed, but failed to clear cart on server', 'warning');
                 this.router.navigate(['/success'], { state: { orderId: savedOrder.id } });
               }
@@ -261,7 +261,7 @@ export class CheckoutComponent {
           },
           error: () => {
             this.notifications.notify('Order placed but failed to record transaction', 'warning');
-            this.appState.clearCart();
+            this.app_state.clearCart();
             this.router.navigate(['/success'], { state: { orderId: savedOrder.id } });
           }
         });

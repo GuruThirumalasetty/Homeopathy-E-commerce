@@ -13,7 +13,6 @@ import { AuthService } from '../../core/services/auth.service';
   styleUrl: './transactions.scss'
 })
 export class TransactionsComponent {
-  private readonly appState = inject(AppStateService);
   private readonly api = inject(ApiService);
   private readonly auth = inject(AuthService);
   protected readonly user = this.auth.user;
