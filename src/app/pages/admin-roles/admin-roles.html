@@ -34,8 +34,8 @@
             <div class="role-permissions">
               <h4>Permissions ({{ role.fullPermissions?.length || 0 }})</h4>
               <div class="permissions-list">
-                @for (permission of (role.fullPermissions || []).slice(0, 3); track permission.permission_id) {
-                  <span class="permission-badge">{{ permission.permission_name }}</span>
+                @for (permission of (role.fullPermissions || []).slice(0, 3); track permission.id) {
+                  <span class="permission-badge">{{ permission.name }}</span>
                 }
                 @if ((role.fullPermissions?.length || 0) > 3) {
                   <a class="know-more-link" (click)="editRole(role)">know more...</a>

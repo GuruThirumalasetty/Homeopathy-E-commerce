@@ -16,9 +16,9 @@
         <div class="detail-item">
           <strong>Email:</strong> {{ user()!.email }}
         </div>
-        <div class="detail-item">
+        <!-- <div class="detail-item">
           <strong>Status:</strong> {{ (user()!.status || 'active') | titlecase }}
-        </div>
+        </div> -->
         @if (user()!.mobile_number) {
           <div class="detail-item">
             <strong>Mobile:</strong> {{ user()!.mobile_number }}

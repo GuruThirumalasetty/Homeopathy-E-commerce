@@ -160,10 +160,16 @@ export const routes: Routes = [
     loadComponent: () => import('./pages/admin-user-info/admin-user-info.component').then(m => m.AdminUserInfoComponent)
   },
   {
-    path: 'admin/subscriptions',
+    path: 'admin/manage-subscriptions',
     title: 'Homeopathy | Subscription Management',
     canActivate: [authGuard],
     loadComponent: () => import('./pages/subscription-master/subscription-master').then(m => m.SubscriptionMasterComponent)
+  },
+  {
+    path: 'admin/subscriptions',
+    title: 'Homeopathy | Admin Subscriptions',
+    canActivate: [authGuard],
+    loadComponent: () => import('./pages/admin-subscriptions/admin-subscriptions').then(m => m.AdminSubscriptionsComponent)
   },
   {
     path: 'admin/roles',
@@ -229,7 +235,13 @@ export const routes: Routes = [
     path: 'enhanced-checkout',
     title: 'Homeopathy | Checkout',
     canActivate: [authGuard],
-    loadComponent: () => import('./pages/checkout/enhanced-checkout').then(m => m.EnhancedCheckoutComponent)
+    loadComponent: () => import('./pages/enhanced-checkout/enhanced-checkout').then(m => m.EnhancedCheckoutComponent)
+  },
+  {
+    path: 'perceptions-on-homeopathy',
+    title: 'Homeopathy | Perceptions On Homeopathy',
+    canActivate: [authGuard],
+    loadComponent: () => import('./pages/tree/tree').then(m => m.TreeComponent)
   },
   {
     path: '**',
