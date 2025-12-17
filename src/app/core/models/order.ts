@@ -22,6 +22,7 @@ export interface Order {
   deliveryDate?: string;
   address_id: string;
   email: string;
+  userSubscriptions?: number[]; // Array of subscription IDs associated with this order
 }
 
 export interface Transaction {

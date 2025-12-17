@@ -1,0 +1,133 @@
+<div class="body">
+  <div class="container">
+    <div class="row">
+
+      <!-- ===================== TREE VIEW ===================== -->
+      <div class="tree">
+        <!-- Recursive renderer for nested nodes -->
+        <ng-template #renderNodes let-nodes>
+          <ul>
+            <li *ngFor="let node of nodes; trackBy: trackById">
+
+              <!-- NODE LABEL -->
+              <span
+                (contextmenu)="onNodeClick(node, $event); $event.preventDefault()"
+                (click)="onNodeExpand(node, $event)"
+                [class.selected]="selectedNode?.id === node.id && showMenu"
+                [class.chile_opened]="expandedNodeIds.has(node.id || 0)"
+                tabindex="0">
+                {{ node.name }}
+              </span>
+
+              <!-- CHILDREN (normal tree rendering) -->
+              <ng-container *ngIf="node.children && node.children.length > 0 && expandedNodeIds.has(node.id)">
+                <!-- For normal nodes render children as nested tree -->
+                <ng-container *ngIf="node.isChartParent !== 1">
+                  <ng-container
+                    *ngTemplateOutlet="renderNodes; context: { $implicit: node.children }">
+                  </ng-container>
+                </ng-container>
+
+                <!-- For isChartParent === 1 : children will be shown in chart area instead -->
+              </ng-container>
+
+            </li>
+          </ul>
+        </ng-template>
+
+        <!-- start with root nodes -->
+        <ng-container *ngIf="treeNodes && treeNodes.length; else emptyState">
+          <ng-container
+            *ngTemplateOutlet="renderNodes; context: { $implicit: treeNodes }">
+          </ng-container>
+        </ng-container>
+
+        <ng-template #emptyState>
+          <p style="text-align:center; color:#666;">No nodes to display.</p>
+        </ng-template>
+      </div>
+
+      <!-- ===================== CHART AREA ===================== -->
+      <div class="chart-root-container" *ngIf="chartColumns.length">
+        <div class="chart-main-box">
+          <div class="chart-columns">
+            <!-- one box per level -->
+            <div class="chart-box"
+     #chartBox
+     [attr.id]="'chart-box-' + colIndex"
+     *ngFor="let col of chartColumns; let colIndex = index">
+
+              <!-- <div class="chart-title">
+                {{ colIndex === 0 ? 'You can click if the following applies —'
+                                  : 'Select for a differentiator' }}
+              </div> -->
+
+              <div class="chart-items">
+                <div
+                  *ngFor="let child of col.items; trackBy: trackById"
+                  class="chart-item"
+                  [class.selected]="col.selectedChildId === child.id"
+                  (click)="onChartItemClick(colIndex, child, $event)"
+                  (contextmenu)="onNodeClick(child, $event); $event.preventDefault()">
+                  {{ child.name }}
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ===================== CONTEXT MENU ===================== -->
+      <div
+        *ngIf="showMenu && selectedNode"
+        class="context-menu"
+        (click)="$event.stopPropagation()"
+        role="menu"
+        aria-label="Node actions"
+        [ngStyle]="{ top: menuPosition.y + 'px', left: menuPosition.x + 'px' }">
+
+        <button class="menu-item" role="menuitem"
+                (click)="onAddClick(); $event.stopPropagation()">Add Child</button>
+        <button class="menu-item" role="menuitem"
+                (click)="onUpdateClick(); $event.stopPropagation()">Update</button>
+        <button class="menu-item" role="menuitem"
+                (click)="onDeleteClick(); $event.stopPropagation()">Delete</button>
+      </div>
+
+      <!-- ===================== DIALOG OVERLAY ===================== -->
+      <div
+        *ngIf="showDialog"
+        class="dialog-overlay"
+        (click)="onDialogCancel()">
+
+        <div class="dialog-box" (click)="$event.stopPropagation()">
+          <h3>{{ dialogMode === 'Add' ? 'Add Child' : 'Update Node' }}</h3>
+
+          <label>
+            Name
+            <input [(ngModel)]="dialogModel.name" />
+          </label>
+
+          <label>
+            Gender
+            <select [(ngModel)]="dialogModel.gender">
+              <option value="Male">Male</option>
+              <option value="Female">Female</option>
+            </select>
+          </label>
+
+          <label>
+            Birth Year
+            <input type="number" [(ngModel)]="dialogModel.birthYear" />
+          </label>
+
+          <div class="dialog-actions">
+            <button (click)="onDialogSave()">{{ dialogMode }}</button>
+            <button (click)="onDialogCancel()">Cancel</button>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>

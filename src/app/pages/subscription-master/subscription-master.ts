@@ -1,11 +1,28 @@
 import { CommonModule } from '@angular/common';
 import { Component, inject, signal, OnInit } from '@angular/core';
-import { FormControl, FormGroup, ReactiveFormsModule, Validators, FormArray } from '@angular/forms';
+import {
+  FormControl,
+  FormGroup,
+  ReactiveFormsModule,
+  Validators,
+  FormArray
+} from '@angular/forms';
 import { Router } from '@angular/router';
-import { Subscription } from '../../core/models/subscription';
+import { features, Subscription } from '../../core/models/subscription';
 import { ApiService } from '../../core/services/api.service';
 import { AuthService } from '../../core/services/auth.service';
 import { NotificationService } from '../../core/services/notification.service';
+
+/* ---------------- TYPES ---------------- */
+
+type FeatureForm = FormGroup<{
+  id: FormControl<number>;
+  name: FormControl<string>;
+  status: FormControl<number>;
+  mode: FormControl<number>;
+}>;
+
+/* ---------------- COMPONENT ---------------- */
 
 @Component({
   selector: 'app-subscription-master',
@@ -15,6 +32,7 @@ import { NotificationService } from '../../core/services/notification.service';
   styleUrl: './subscription-master.scss'
 })
 export class SubscriptionMasterComponent implements OnInit {
+
   private readonly api = inject(ApiService);
   private readonly auth = inject(AuthService);
   private readonly notifications = inject(NotificationService);
@@ -24,9 +42,11 @@ export class SubscriptionMasterComponent implements OnInit {
   protected readonly editingSubscriptionId = signal<number | null>(null);
   protected readonly showForm = signal(false);
 
+  /* ---------------- LIFECYCLE ---------------- */
+
   ngOnInit(): void {
-    // Check if user is admin
     const currentUser = this.auth.user();
+
     if (!currentUser || currentUser.role !== 'admin') {
       this.notifications.notify('Access denied. Admin privileges required.', 'error');
       this.router.navigate(['/home']);
@@ -38,7 +58,7 @@ export class SubscriptionMasterComponent implements OnInit {
 
   private loadSubscriptions(): void {
     this.api.getSubscriptions().subscribe({
-      next: (subscriptions) => this.subscriptions.set(subscriptions || []),
+      next: subscriptions => this.subscriptions.set(subscriptions || []),
       error: () => {
         this.notifications.notify('Failed to load subscriptions', 'error');
         this.subscriptions.set([]);
@@ -46,46 +66,57 @@ export class SubscriptionMasterComponent implements OnInit {
     });
   }
 
+  /* ---------------- FORM ---------------- */
+
   protected readonly subscriptionForm = new FormGroup({
     name: new FormControl('', { nonNullable: true, validators: [Validators.required] }),
     type: new FormControl('book', { nonNullable: true, validators: [Validators.required] }),
     description: new FormControl('', { nonNullable: true, validators: [Validators.required] }),
-    price: new FormControl(0, { nonNullable: true, validators: [Validators.required, Validators.min(0)] }),
-    discount: new FormControl(0, { validators: [Validators.min(0)] }),
+    price: new FormControl(0, {
+      nonNullable: true,
+      validators: [Validators.required, Validators.min(0)]
+    }),
+    discount: new FormControl(0),
     discount_type: new FormControl<'percentage' | 'fixed'>('percentage', { nonNullable: true }),
-    duration: new FormControl<'monthly' | 'yearly'>('monthly', { nonNullable: true, validators: [Validators.required] }),
-    benefits: new FormArray<FormControl<string>>([]),
-    limitations: new FormArray<FormControl<string>>([]),
+    duration: new FormControl<'monthly' | 'yearly'>('monthly', {
+      nonNullable: true,
+      validators: [Validators.required]
+    }),
+
+    /* BENEFITS AS FEATURES */
+    features: new FormArray<FeatureForm>([]),
+
     popular: new FormControl(false, { nonNullable: true })
   });
 
+  /* ---------------- GETTERS ---------------- */
+
+  get features(): FormArray<FeatureForm> {
+    return this.subscriptionForm.controls.features;
+  }
+
   get show_pof_type(): boolean {
-    return this.subscriptions().some(x=>x.type == 'perceptions on homeopathy');
+    return this.subscriptions().some(x => x.type === 'perceptions on homeopathy');
   }
 
-  get benefits(): FormArray {
-    return this.subscriptionForm.get('benefits') as FormArray;
+  /* ---------------- FEATURES ---------------- */
+
+  protected addFeature(): void {
+    const featureForm: FeatureForm = new FormGroup({
+      id: new FormControl(0, { nonNullable: true }),
+      name: new FormControl('', { nonNullable: true, validators: [Validators.required] }),
+      status: new FormControl(1, { nonNullable: true }),
+      mode: new FormControl(1, { nonNullable: true })
+    });
+
+    this.features.push(featureForm);
   }
 
-  get limitations(): FormArray {
-    return this.subscriptionForm.get('limitations') as FormArray;
+  protected removeFeature(index: number): void {
+    this.features.removeAt(index);
   }
 
-  protected addBenefit(): void {
-    this.benefits.push(new FormControl('', { nonNullable: true, validators: [Validators.required] }));
-  }
-
-  protected removeBenefit(index: number): void {
-    this.benefits.removeAt(index);
-  }
-
-  protected addLimitation(): void {
-    this.limitations.push(new FormControl('', { nonNullable: true, validators: [Validators.required] }));
-  }
-
-  protected removeLimitation(index: number): void {
-    this.limitations.removeAt(index);
-  }
+  /* ---------------- SUBMIT ---------------- */
 
   protected submit(): void {
     if (this.subscriptionForm.invalid) {
@@ -94,16 +125,19 @@ export class SubscriptionMasterComponent implements OnInit {
     }
 
     const formValue = this.subscriptionForm.value;
+
     const subscriptionData: Omit<Subscription, 'id'> = {
       name: formValue.name ?? '',
-      type : formValue.type || '',
+      type: formValue.type ?? '',
       description: formValue.description ?? '',
       price: Number(formValue.price),
       discount: Number(formValue.discount) || 0,
       discount_type: formValue.discount_type ?? 'percentage',
       duration: formValue.duration ?? 'monthly',
-      benefits: this.benefits.value.filter((b: string) => b.trim()),
-      limitations: this.limitations.value.filter((l: string) => l.trim()),
+
+      /* FEATURES = BENEFITS */
+      features: this.features.value as features[],
+
       popular: formValue.popular ?? false
     };
 
@@ -134,26 +168,23 @@ export class SubscriptionMasterComponent implements OnInit {
     }
   }
 
+  /* ---------------- EDIT ---------------- */
+
   protected editSubscription(subscription: Subscription): void {
     this.editingSubscriptionId.set(subscription.id);
     this.showForm.set(true);
 
-    // Clear existing arrays
-    while (this.benefits.length) {
-      this.benefits.removeAt(0);
-    }
-    while (this.limitations.length) {
-      this.limitations.removeAt(0);
-    }
+    this.features.clear();
 
-    // Add benefits
-    subscription.benefits.forEach(benefit => {
-      this.benefits.push(new FormControl(benefit, { nonNullable: true, validators: [Validators.required] }));
-    });
+    subscription.features?.forEach(feature => {
+      const fg: FeatureForm = new FormGroup({
+        id: new FormControl(feature.id, { nonNullable: true }),
+        name: new FormControl(feature.name, { nonNullable: true }),
+        status: new FormControl(feature.status, { nonNullable: true }),
+        mode: new FormControl(feature.mode, { nonNullable: true })
+      });
 
-    // Add limitations
-    subscription.limitations.forEach(limitation => {
-      this.limitations.push(new FormControl(limitation, { nonNullable: true, validators: [Validators.required] }));
+      this.features.push(fg);
     });
 
     this.subscriptionForm.patchValue({
@@ -164,9 +195,11 @@ export class SubscriptionMasterComponent implements OnInit {
       discount_type: subscription.discount_type || 'percentage',
       duration: subscription.duration,
       popular: subscription.popular || false,
-      type: subscription.type || 'book',
+      type: subscription.type || 'book'
     });
   }
+
+  /* ---------------- DELETE ---------------- */
 
   protected deleteSubscription(id: number): void {
     if (confirm('Are you sure you want to delete this subscription?')) {
@@ -182,6 +215,8 @@ export class SubscriptionMasterComponent implements OnInit {
     }
   }
 
+  /* ---------------- RESET ---------------- */
+
   protected cancelEdit(): void {
     this.resetForm();
   }
@@ -189,6 +224,7 @@ export class SubscriptionMasterComponent implements OnInit {
   private resetForm(): void {
     this.subscriptionForm.reset({
       name: '',
+      type: 'book',
       description: '',
       price: 0,
       discount: 0,
@@ -197,13 +233,7 @@ export class SubscriptionMasterComponent implements OnInit {
       popular: false
     });
 
-    // Clear arrays
-    while (this.benefits.length) {
-      this.benefits.removeAt(0);
-    }
-    while (this.limitations.length) {
-      this.limitations.removeAt(0);
-    }
+    this.features.clear();
 
     this.editingSubscriptionId.set(null);
     this.showForm.set(false);

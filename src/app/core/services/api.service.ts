@@ -7,6 +7,7 @@ import { User, Permission, PermissionEntity, Role, RolePermission } from '../mod
 import { CartItem, Product } from '../models/product';
 import { Address } from '../models/address';
 import { Subscription } from '../models/subscription';
+import { UserSubscription } from '../models/user-subscription';
 import { Event, EventStatus, EventFilters, EventFormData } from '../models/event';
 import { EventBusinessLogic } from '../utils/event-business-logic';
 import { LoadingService } from './loading.service';
@@ -118,6 +119,22 @@ export class ApiService {
   deleteSubscription(id: number | string): Observable<any> {
     this.loadingService.startLoading();
     return this.http.delete<any>(`${this.baseUrl}/subscriptions/${id}`).pipe(
+      finalize(() => this.loadingService.stopLoading())
+    );
+  }
+
+  // User Subscriptions
+  getUserSubscriptions(): Observable<UserSubscription[]> {
+    this.loadingService.startLoading();
+    return this.http.get<UserSubscription[]>(`${this.baseUrl}/user-subscriptions`).pipe(
+      finalize(() => this.loadingService.stopLoading())
+    );
+  }
+
+  // Create a user subscription
+  createUserSubscription(subscription: Omit<UserSubscription, 'id' | 'createdAt' | 'updatedAt'>): Observable<UserSubscription> {
+    this.loadingService.startLoading();
+    return this.http.post<UserSubscription>(`${this.baseUrl}/user-subscriptions`, subscription).pipe(
       finalize(() => this.loadingService.stopLoading())
     );
   }

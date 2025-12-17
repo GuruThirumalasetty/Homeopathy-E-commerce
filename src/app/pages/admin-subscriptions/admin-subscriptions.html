@@ -1,0 +1,64 @@
+<div class="admin-subscriptions-container">
+  <h1>Subscriptions Management</h1>
+  <div class="actions">
+    <button (click)="loadSubscriptions()" class="refresh-btn">Refresh Data</button>
+  </div>
+
+  @if (loading()) {
+    <app-loading-spinner></app-loading-spinner>
+  } @else if (error()) {
+    <div class="error-message">
+      <p>{{ error() }}</p>
+      <button (click)="loadSubscriptions()" class="retry-btn">Retry</button>
+    </div>
+  } @else {
+    <div class="subscriptions-table-container">
+      <table class="subscriptions-table">
+        <thead>
+          <tr>
+            <th>User ID</th>
+            <th>User Name</th>
+            <th>Email</th>
+            <th>Subscription</th>
+            <th>Purchased Price</th>
+            <th>Start Date</th>
+            <th>End Date</th>
+            <th>Status</th>
+            <th>Auto Renew</th>
+            <th>Next Renewal</th>
+            <!-- <th>Actions</th> -->
+          </tr>
+        </thead>
+        <tbody>
+          @for (subscription of subscriptions(); track subscription.id) {
+            <tr>
+              <td>{{ subscription.userId }}</td>
+              <td>{{ subscription.userName }}</td>
+              <td>{{ subscription.userEmail }}</td>
+              <td>{{ subscription.subscriptionName }}</td>
+              <td>₹{{ subscription.purchasedPrice }}</td>
+              <td>{{ formatDate(subscription.startDate) }}</td>
+              <td>{{ formatDate(subscription.endDate) }}</td>
+              <td>
+                <span [class]="getStatusClass(subscription.status)">
+                  {{ subscription.status | titlecase }}
+                </span>
+              </td>
+              <td>{{ subscription.renewalInfo?.autoRenew ? 'Yes' : 'No' }}</td>
+              <td>{{ subscription.renewalInfo?.nextRenewalDate ? formatDate(subscription.renewalInfo!.nextRenewalDate) : '-' }}</td>
+              <!-- <td>
+                <button class="action-btn edit-btn" title="Edit Subscription">Edit</button>
+                <button class="action-btn delete-btn" title="Delete Subscription">Delete</button>
+              </td> -->
+            </tr>
+          }
+          @empty {
+            <tr>
+              <td colspan="11" class="no-data">No subscriptions found.</td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  }
+</div>

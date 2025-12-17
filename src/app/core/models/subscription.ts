@@ -6,10 +6,17 @@ export interface Subscription {
   discount?: number;
   discount_type?: 'percentage' | 'fixed';
   duration: 'monthly' | 'yearly';
-  benefits: string[];
-  limitations: string[];
+  features: features[];
+  // limitations: string[];
   description: string;
   popular?: boolean;
+}
+
+export interface features {
+  id: number;
+  name: string;
+  status: number;
+  mode: number;
 }
 
 export interface SubscriptionCartItem extends Subscription {

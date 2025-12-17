@@ -26,7 +26,7 @@ export class AdminUsersComponent {
   protected readonly userForm: FormGroup = this.fb.group({
     name: ['', [Validators.required, Validators.minLength(2)]],
     email: ['', [Validators.required, Validators.email]],
-    mobile_number: [''],
+    mobile_number: ['',[Validators.required]],
     role: ['user' as UserRole, Validators.required],
     status: ['active', Validators.required]
   });

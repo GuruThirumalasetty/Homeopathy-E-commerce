@@ -143,6 +143,16 @@ protected readonly adminNavigationData: Permission[] = [
     permissions: { create: 1, view: 1, update: 1, delete: 1 },
     icon: 'admin',
     role: 'admin'
+  },
+  {
+    id: 1,
+    module: 'Admin',
+    name: 'Subscriptions',
+    link: '/admin/subscriptions',
+    is_nav_visible: 1,
+    permissions: { create: 1, view: 1, update: 1, delete: 1 },
+    icon: 'admin',
+    role: 'admin'
   }
 ];
 

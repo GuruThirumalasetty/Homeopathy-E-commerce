@@ -148,31 +148,45 @@ export class CheckoutComponent {
       }
     });
   }
+payNow() {
+  const options = {
+    key: 'rzp_test_RXcOaqiKNtlfib',
+    amount: Math.round(this.total() * 100),
+    currency: 'INR',
+    name: 'GVR Info Systems',
+    description: 'Test Payment',
 
-  payNow() {
-    const razorPayOptions = {
-      description: 'Razorpay testing Demo',
-      corrency: 'INR',
-      amount: this.total() * 100,
-      name: 'GVR Info Systems',
-      key: 'rzp_test_RXcOaqiKNtlfib',
-      image: '/Manus_Homeopathy_Logo.png',
-      prefill: {
-        ...this.checkoutForm.value
-      },
-      theme: {
-        color: '#15558d'
-      },
-      handler: (response: any) => {
-        if (response.razorpay_payment_id) {
-          // this.dialogService.showToast('Your Payment Id is ' + response.razorpay_payment_id);
-            this.placeOrder();
-        }
+    // REMOVE image
+    // image: '...',
+
+    prefill: {
+      name: this.checkoutForm.value.fullName,
+      email: this.checkoutForm.value.email,
+      contact: '9133800412'
+    },
+
+    method: {
+      card: true,
+      upi: true,     // 🔴 DISABLE
+      netbanking: false,
+      wallet: false
+    },
+
+    handler: (response: any) => {
+      this.placeOrder();
+    },
+
+    modal: {
+      ondismiss: () => {
+        console.log('Checkout closed');
       }
     }
-    let razorPayOpen = this.auth.nativeWindow.Razorpay(razorPayOptions);
-    razorPayOpen.open();
-  }
+  };
+
+  const rzp = new (window as any).Razorpay(options);
+  rzp.open();
+}
+
 
   placeOrder(): void {
     if (!this.checkoutForm.valid && !this.videosOnly() && !this.subscriptionsOnly()) {
@@ -210,6 +224,8 @@ export class CheckoutComponent {
       }
     }
 
+    const subscriptionIds = items.filter(item => item.type === 'subscription').map(item => item.subscriptionId).filter(id => id);
+
     const orderPayload = {
       userId: currentUser.id,
       name : this.checkoutForm.controls.fullName.value,
@@ -228,7 +244,8 @@ export class CheckoutComponent {
       status: 'processing',
       createdAt: new Date().toISOString(),
       placed_on: new Date().toISOString(),
-      createdBy: currentUser.id
+      createdBy: currentUser.id,
+      userSubscriptions: subscriptionIds
     };
 
     this.api.placeOrder(orderPayload).subscribe({
@@ -245,6 +262,41 @@ export class CheckoutComponent {
         };
         this.api.createTransaction(tx).subscribe({
           next: () => {
+            // Create user subscriptions for subscription items
+            const subscriptionItems = items.filter(item => item.type === 'subscription');
+            if (subscriptionItems.length > 0) {
+              const subscriptionPromises = subscriptionItems.map(item => {
+                const startDate = new Date();
+                const endDate = new Date(startDate);
+                endDate.setMonth(endDate.getMonth() + (item.duration == 'monthly' ? 1 : 12)); // Assume duration in months
+
+                const userSubscription = {
+                  userId: currentUser.id,
+                  userName: currentUser.name || 'Unknown',
+                  userEmail: currentUser.email || '',
+                  subscriptionId: item.subscriptionId!,
+                  subscriptionName: item.name || 'Unknown Subscription',
+                  purchasedPrice: item.finalPrice || item.purchasePrice || item.price || 0,
+                  startDate: startDate.toISOString(),
+                  endDate: endDate.toISOString(),
+                  status: 'active' as const,
+                  renewalInfo: {
+                    autoRenew: true,
+                    nextRenewalDate: endDate.toISOString()
+                  }
+                };
+
+                return this.api.createUserSubscription(userSubscription).toPromise();
+              });
+
+              Promise.all(subscriptionPromises).then(() => {
+                this.notifications.notify('Subscriptions activated successfully!', 'success');
+              }).catch((err) => {
+                console.error('Failed to create user subscriptions:', err);
+                this.notifications.notify('Order placed, but failed to activate subscriptions', 'warning');
+              });
+            }
+
             // clear server-side cart for user and local cart
             this.api.clearCartForUser(currentUser.id).subscribe({
               next: () => {

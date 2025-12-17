@@ -14,7 +14,7 @@ export class AdminComponent {
     { title: 'Orders', description: 'Manage customer orders', link: '/admin/orders' },
     { title: 'Products', description: 'Add or edit catalog items', link: '/admin/products' },
     { title: 'Categories', description: 'Manage product categories', link: '/admin/categories' },
-    { title: 'Subscriptions', description: 'Manage subscription plans', link: '/admin/subscriptions' },
+    { title: 'Subscriptions', description: 'Manage subscription plans', link: '/admin/manage-subscriptions' },
     { title: 'Permissions', description: 'Manage system permissions', link: '/admin/permissions' },
     { title: 'Roles', description: 'Manage user roles and permissions', link: '/admin/roles' },
     { title: 'Users', description: "View Manus' users", link: '/admin/users' },
