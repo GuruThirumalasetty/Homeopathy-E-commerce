@@ -7,6 +7,7 @@ import { AuthService } from '../../core/services/auth.service';
 import { Router } from '@angular/router';
 import { Product, CartItem } from '../../core/models/product';
 import { Subscription, SubscriptionCartItem } from '../../core/models/subscription';
+import { UserSubscription } from '../../core/models/user-subscription';
 import { NotificationService } from '../../core/services/notification.service';
 import { calculateFinalPrice, calculateTaxAmount, calculateDiscountAmount, calculatePurchasePrice } from '../../core/utils/discount-utils';
 
@@ -22,11 +23,21 @@ export class HomeComponent {
 
   protected products = signal<Product[]>([]);
   protected subscriptions = signal<Subscription[]>([]);
+  protected userSubscriptions = signal<UserSubscription[]>([]);
   protected readonly featuredBooks = computed(() =>
     this.products().filter(product => product.type === 'book').slice(0, 4)
   );
   protected readonly featuredVideos = computed(() =>
     this.products().filter(product => product.type === 'video').slice(0, 4)
+  );
+  protected readonly activeUserSubscriptions = computed(() => {
+    const now = new Date();
+    return this.userSubscriptions().filter(sub =>
+      sub.status === 'active' && new Date(sub.endDate) > now
+    );
+  });
+  protected readonly hasActiveSubscription = computed(() =>
+    this.activeUserSubscriptions().length > 0
   );
 
   protected readonly subscriptionTypes = computed(() => {
@@ -42,8 +53,40 @@ export class HomeComponent {
     }));
   });
 
-  protected readonly bookPlans = computed(() => this.subscriptions().filter(s => s.type === 'book'));
-  protected readonly videoPlans = computed(() => this.subscriptions().filter(s => s.type === 'video'));
+  protected readonly bookPlans = computed(() => {
+    const allBookPlans = this.subscriptions().filter(s => s.type === 'book');
+    const activeBookSubscriptions = this.activeUserSubscriptions().filter(sub => {
+      const subscription = this.subscriptions().find(s => s.id === sub.subscriptionId);
+      return subscription?.type === 'book';
+    });
+    
+    if (activeBookSubscriptions.length === 0) {
+      return allBookPlans;
+    }
+    
+    // Filter out plans where user already has an active subscription
+    return allBookPlans.filter(plan =>
+      !activeBookSubscriptions.some(activeSub => activeSub.subscriptionId === plan.id)
+    );
+  });
+
+  protected readonly videoPlans = computed(() => {
+    const allVideoPlans = this.subscriptions().filter(s => s.type === 'video');
+    const activeVideoSubscriptions = this.activeUserSubscriptions().filter(sub => {
+      const subscription = this.subscriptions().find(s => s.id === sub.subscriptionId);
+      return subscription?.type === 'video';
+    });
+    
+    if (activeVideoSubscriptions.length === 0) {
+      return allVideoPlans;
+    }
+    
+    // Filter out plans where user already has an active subscription
+    return allVideoPlans.filter(plan =>
+      !activeVideoSubscriptions.some(activeSub => activeSub.subscriptionId === plan.id)
+    );
+  });
+
   protected readonly perception_on_homeopathy_plan : any = computed(() => this.subscriptions().find(s => s.type === 'perceptions on homeopathy') || '');
 
   // Discount calculation methods for products
@@ -147,6 +190,22 @@ export class HomeComponent {
         this.notifications.notify('Failed to load subscription plans from server', 'error');
       }
     });
+
+    // Load user subscriptions if logged in
+    const currentUser = this.auth.user();
+    if (currentUser) {
+      this.api.getUserSubscriptions().subscribe({
+        next: (userSubscriptions) => {
+          // Filter to only this user's subscriptions
+          const userSubs = userSubscriptions.filter(sub => sub.userId === currentUser.id);
+          this.userSubscriptions.set(userSubs);
+        },
+        error: () => {
+          // Silently fail for user subscriptions
+          this.userSubscriptions.set([]);
+        }
+      });
+    }
   }
 
   addToCart(product: Product): void {

@@ -111,6 +111,7 @@
       </article>
       }
     </div>
+    @if (!hasActiveSubscription()) {
     <div class="subscription-plans-section">
       <h3>Book Subscription Plans</h3>
       <div class="subscription-plans gap-25" [ngClass]="{ 'grid-cols-3' : bookPlans().length <= 3, 'grid-cols-4' : bookPlans().length > 3 }">
@@ -153,23 +154,13 @@
               <p>{{ plan.description }}</p>
             </div>
             <div class="plan-benefits">
-              <h4>Benefits:</h4>
+              <h4>Features:</h4>
               <ul>
-                @for (benefit of plan.benefits; track $index) {
-                <li><i class="fas fa-check"></i> {{ benefit }}</li>
+                @for (feature of plan.features; track feature.id) {
+                <li><i class="fas fa-check"></i> {{ feature.name }}</li>
                 }
               </ul>
             </div>
-            @if (plan.limitations && plan.limitations.length > 0) {
-            <div class="plan-limitations">
-              <h4>Limitations:</h4>
-              <ul>
-                @for (limitation of plan.limitations; track $index) {
-                <li><i class="fas fa-times"></i> {{ limitation }}</li>
-                }
-              </ul>
-            </div>
-            }
           </div>
           <button class="btn btn-primary subscribe-btn" (click)="subscribe(plan)">
             Subscribe Now
@@ -178,6 +169,7 @@
         }
       </div>
     </div>
+    }
   </div>
 </section>
 
@@ -225,6 +217,7 @@
       </article>
       }
     </div>
+    @if (!hasActiveSubscription()) {
     <div class="subscription-plans-section">
       <h3>Video Subscription Plans</h3>
       <div class="subscription-plans gap-25" [ngClass]="{ 'grid-cols-3' : videoPlans().length <= 3, 'grid-cols-4' : videoPlans().length > 3 }">
@@ -251,7 +244,7 @@
                     <span class="period">/{{ plan.duration }}</span>
                   </div>
                 </div>
-                
+
                 <div class="discount-info">
                   Save ₹{{ getSubscriptionDiscountAmount(plan) | number:'1.2-2' }}
                   ({{ plan.discount_type === 'percentage' ? plan.discount + '%' : '₹' + plan.discount }} off)
@@ -268,23 +261,13 @@
             <p>{{ plan.description }}</p>
           </div>
           <div class="plan-benefits">
-            <h4>Benefits:</h4>
+            <h4>Features:</h4>
             <ul>
-              @for (benefit of plan.benefits; track $index) {
-              <li><i class="fas fa-check"></i> {{ benefit }}</li>
+              @for (feature of plan.features; track feature.id) {
+              <li><i class="fas fa-check"></i> {{ feature.name }}</li>
               }
             </ul>
           </div>
-          @if (plan.limitations && plan.limitations.length > 0) {
-          <div class="plan-limitations">
-            <h4>Limitations:</h4>
-            <ul>
-              @for (limitation of plan.limitations; track $index) {
-              <li><i class="fas fa-times"></i> {{ limitation }}</li>
-              }
-            </ul>
-          </div>
-          }
           </div>
           <button class="btn btn-primary subscribe-btn" (click)="subscribe(plan)">
             Subscribe Now
@@ -293,5 +276,6 @@
         }
       </div>
     </div>
+    }
   </div>
 </section>
