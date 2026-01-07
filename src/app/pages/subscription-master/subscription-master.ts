@@ -83,7 +83,7 @@ export class SubscriptionMasterComponent implements OnInit {
       validators: [Validators.required]
     }),
 
-    /* BENEFITS AS FEATURES */
+    /* FEATURES */
     features: new FormArray<FeatureForm>([]),
 
     popular: new FormControl(false, { nonNullable: true })
@@ -135,7 +135,6 @@ export class SubscriptionMasterComponent implements OnInit {
       discount_type: formValue.discount_type ?? 'percentage',
       duration: formValue.duration ?? 'monthly',
 
-      /* FEATURES = BENEFITS */
       features: this.features.value as features[],
 
       popular: formValue.popular ?? false

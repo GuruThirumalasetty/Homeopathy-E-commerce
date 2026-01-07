@@ -216,7 +216,17 @@ protected readonly userNavigationData: Permission[] = [
     permissions: { create: 0, view: 1, update: 0, delete: 0 },
     icon: 'user',
     role: 'user'
-  }
+  },
+  {
+    id: 1,
+    module: 'User',
+    name: 'My Subscriptions',
+    link: '/my-subscriptions',
+    is_nav_visible: 1,
+    permissions: { create: 0, view: 1, update: 0, delete: 0 },
+    icon: 'user',
+    role: 'user'
+  },
 ];
 
 

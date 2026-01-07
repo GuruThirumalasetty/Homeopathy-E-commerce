@@ -1,0 +1,71 @@
+<section class="my-subscriptions-page">
+  <div class="subscriptions-header">
+    <h1>My Subscriptions</h1>
+    <p class="subtitle">Manage your active subscription plans</p>
+  </div>
+
+  @if (loading()) {
+    <div class="loading-state">
+      <i class="fas fa-spinner fa-spin"></i>
+      <p>Loading your subscriptions...</p>
+    </div>
+  } @else if (subscriptions().length === 0) {
+    <div class="empty-state">
+      <i class="fas fa-crown"></i>
+      <h3>No Active Subscriptions</h3>
+      <p>You don't have any active subscriptions. Browse our plans to get started!</p>
+      <a routerLink="/home" class="btn btn-primary">
+        <i class="fas fa-shopping-bag"></i>
+        Browse Plans
+      </a>
+    </div>
+  } @else {
+    <div class="subscriptions-grid">
+      @for (subscription of subscriptions(); track subscription.id) {
+        <article class="subscription-card" [class.expired]="subscription.status === 'expired'">
+          <div>
+            <div class="card-header">
+              <h3 class="plan-name">{{ subscription.subscriptionName }}</h3>
+              <span class="status-badge" [class]="'badge-' + subscription.status">
+                {{ subscription.status === 'active' ? 'Active' : 'Expired' }}
+              </span>
+            </div>
+
+            <div class="plan-details">
+              <div class="price-info">
+                <span class="amount">{{ subscription.purchasedPrice | currency:'INR':'symbol':'1.2-2' }}</span>
+                <span class="billing-cycle">/ {{ getBillingCycle(subscription) }}</span>
+              </div>
+
+              <div class="dates">
+                <p><strong>Start Date:</strong> {{ subscription.startDate | date:'mediumDate' }}</p>
+                <p><strong>End Date:</strong> {{ subscription.endDate | date:'mediumDate' }}</p>
+              </div>
+            </div>
+
+            <div class="features">
+              <h4>Key Features:</h4>
+              <ul class="features-list">
+                @for (feature of getFeatures(subscription); track feature) {
+                  <li><i class="fas fa-check"></i> {{ feature }}</li>
+                }
+              </ul>
+            </div>
+          </div>
+          
+
+          <div>
+            @if (subscription.status === 'active') {
+              <div class="card-actions">
+                <button class="btn btn-primary renew-btn" (click)="renewSubscription(subscription)">
+                  <i class="fas fa-refresh"></i>
+                  Renew Plan
+                </button>
+              </div>
+            }
+          </div>
+        </article>
+      }
+    </div>
+  }
+</section>

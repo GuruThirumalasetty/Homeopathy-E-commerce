@@ -7,6 +7,7 @@ import { NotificationService } from '../../core/services/notification.service';
 import { Product } from '../../core/models/product';
 import { common_response } from '../../core/models/common_response';
 import { AuthService } from '../../core/services/auth.service';
+import { Location } from '@angular/common';
 
 @Component({
   selector: 'app-admin-products',
@@ -21,6 +22,7 @@ export class AdminProductsComponent {
   private readonly user = signal(this.auth.user());
   private readonly api = inject(ApiService);
   private readonly notifications = inject(NotificationService);
+  private readonly location = inject(Location);
 
   protected readonly products = signal<Product[]>([]);
   // set of productIds that exist in any cart (prevents edit/delete)
@@ -39,6 +41,12 @@ export class AdminProductsComponent {
   protected readonly displaying_images = computed(()=> this.uploadedImages().filter(x=>x.mode !== 3) || []);
   
   constructor() {
+    const currentUser = this.auth.user();
+    if (!currentUser || currentUser.role !== 'admin') {
+      this.notifications.notify('Access denied. Admin privileges required.', 'error');
+      this.location.back();
+      return;
+    }
     this.loadProducts();
     this.loadCategories();
   }

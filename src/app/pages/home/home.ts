@@ -87,6 +87,16 @@ export class HomeComponent {
     );
   });
 
+  
+  protected readonly hasActiveHomeopathySubscription = computed(() => {
+    const plan = this.perception_on_homeopathy_plan();
+    if (!plan) return false;
+
+    return this.activeUserSubscriptions().some(sub =>
+      sub.subscriptionId === plan.id && sub.status === 'active'
+    );
+  });
+  
   protected readonly perception_on_homeopathy_plan : any = computed(() => this.subscriptions().find(s => s.type === 'perceptions on homeopathy') || '');
 
   // Discount calculation methods for products
@@ -394,5 +404,77 @@ export class HomeComponent {
         this.notifications.notify('Failed to add subscription to cart', 'error');
       }
     });
+  }
+
+  // Helpers for the homeopathy subscription card
+  protected getHomeopathyUserSubscription(): UserSubscription | null {
+    const plan = this.perception_on_homeopathy_plan();
+    if (!plan) return null;
+    return this.activeUserSubscriptions().find(sub => sub.subscriptionId === plan.id && sub.status === 'active') || null;
+  }
+
+  protected daysRemainingForHomeopathy(): number {
+    const sub = this.getHomeopathyUserSubscription();
+    if (!sub) return 0;
+    const now = new Date();
+    const end = new Date(sub.endDate);
+    const diff = Math.ceil((end.getTime() - now.getTime()) / (1000 * 60 * 60 * 24));
+    return Math.max(0, diff);
+  }
+
+  protected totalDaysForHomeopathy(): number {
+    const sub = this.getHomeopathyUserSubscription();
+    if (!sub) return 0;
+    const start = new Date(sub.startDate);
+    const end = new Date(sub.endDate);
+    const diff = Math.ceil((end.getTime() - start.getTime()) / (1000 * 60 * 60 * 24));
+    return Math.max(1, diff);
+  }
+
+  protected getHomeopathySubscriptionProgress(): number {
+    const total = this.totalDaysForHomeopathy();
+    const remaining = this.daysRemainingForHomeopathy();
+    if (total === 0) return 0;
+    const percentRemaining = Math.round((remaining / total) * 100);
+    // progress bar shows used percent
+    return Math.min(100, Math.max(0, 100 - percentRemaining));
+  }
+
+  protected getHomeopathyEndDate(): string {
+    const sub = this.getHomeopathyUserSubscription();
+    if (!sub) return '';
+    const d = new Date(sub.endDate);
+    return d.toLocaleDateString(undefined, { day: 'numeric', month: 'short', year: 'numeric' });
+  }
+
+  protected viewHomeopathySubscription(): void {
+    const plan = this.perception_on_homeopathy_plan();
+    if (!plan) return;
+
+    // Find the active subscription for this plan
+    const activeSub = this.activeUserSubscriptions().find(sub =>
+      sub.subscriptionId === plan.id && sub.status === 'active'
+    );
+
+    if (activeSub) {
+      // Navigate to tree view or detailed plan page
+      // Assuming there's a tree component for perceptions on homeopathy
+      this.router.navigate(['/perceptions-on-homeopathy']);
+    }
+  }
+
+  protected renewHomeopathySubscription(): void {
+    const plan = this.perception_on_homeopathy_plan();
+    if (!plan) return;
+
+    // Find the active subscription for this plan
+    const activeSub = this.activeUserSubscriptions().find(sub =>
+      sub.subscriptionId === plan.id && sub.status === 'active'
+    );
+
+    if (activeSub) {
+      // Navigate to renewal page
+      this.router.navigate(['/renew-subscription', activeSub.id]);
+    }
   }
 }
