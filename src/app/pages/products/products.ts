@@ -47,7 +47,7 @@ export class ProductsComponent {
     const categories = this.selectedCategories();
     const type = this.currentType();
 
-    return this.products().filter(product => {
+    const filtered = this.products().filter(product => {
       if (type === 'books' && product.type !== 'book') {
         return false;
       }
@@ -73,6 +73,14 @@ export class ProductsComponent {
         return false;
       }
       return true;
+    });
+
+    // Prioritize videos and books first
+    return filtered.sort((a, b) => {
+      const typeOrder = { 'video': 1, 'book': 2 };
+      const aOrder = typeOrder[a.type as keyof typeof typeOrder] || 3;
+      const bOrder = typeOrder[b.type as keyof typeof typeOrder] || 3;
+      return aOrder - bOrder;
     });
   });
 

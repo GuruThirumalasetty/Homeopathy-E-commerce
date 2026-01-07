@@ -751,4 +751,11 @@ export class ApiService {
 
     return [headers.join(','), ...rows].join('\n');
   }
+
+  get_nodes_by_parent_id(node_id: number | null){
+    this.loadingService.startLoading();
+    return this.http.post<common_response>(`${this.base_url}/Tree/get`,{ parent_id: node_id }).pipe(
+      finalize(() => this.loadingService.stopLoading())
+    );
+  }
 }

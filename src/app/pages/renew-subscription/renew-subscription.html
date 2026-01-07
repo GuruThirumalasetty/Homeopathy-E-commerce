@@ -1,0 +1,109 @@
+<section class="renew-subscription-page">
+  <div class="renewal-header">
+    <h1>Renew Subscription</h1>
+    <p class="subtitle">Review your plan details and complete renewal</p>
+  </div>
+
+  @if (loading()) {
+    <div class="loading-state">
+      <i class="fas fa-spinner fa-spin"></i>
+      <p>Loading renewal details...</p>
+    </div>
+  } @else if (renewalData(); as data) {
+    <div class="renewal-content">
+      <!-- Plan Review Section -->
+      <div class="plan-review-card">
+        <h2>Plan Details</h2>
+        <div class="plan-info">
+          <div class="plan-header">
+            <h3>{{ data.subscription.subscriptionName }}</h3>
+            <span class="renewal-badge">Renewal</span>
+          </div>
+
+          <div class="plan-pricing">
+            <div class="price-display">
+              <span class="amount">{{ getRenewalAmount() | currency:'INR':'symbol':'1.2-2' }}</span>
+              <span class="period">/ {{ getRenewalPeriod() }}</span>
+            </div>
+          </div>
+
+          <div class="current-dates">
+            <p><strong>Current Plan:</strong> {{ data.subscription.startDate | date:'mediumDate' }} - {{ data.subscription.endDate | date:'mediumDate' }}</p>
+            <p><strong>New End Date:</strong> {{ getNewEndDate() | date:'mediumDate' }}</p>
+          </div>
+
+          <div class="features-section">
+            <h4>Plan Features:</h4>
+            <ul class="features-list">
+              @for (feature of getFeatures(); track feature) {
+                <li><i class="fas fa-check"></i> {{ feature }}</li>
+              }
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <!-- Payment Section -->
+      <div class="payment-card">
+        <h2>Payment Method</h2>
+        <div class="payment-options">
+          <div class="payment-option">
+            <input
+              type="radio"
+              id="razorpay"
+              name="paymentMethod"
+              value="razorpay"
+              [(ngModel)]="data.selectedPaymentMethod"
+              checked
+            />
+            <label for="razorpay">
+              <i class="fas fa-credit-card"></i>
+              Credit/Debit Card, UPI, Net Banking
+            </label>
+          </div>
+          <!-- Add more payment options as needed -->
+        </div>
+      </div>
+
+      <!-- Order Summary -->
+      <div class="order-summary-card">
+        <h2>Order Summary</h2>
+        <div class="summary-details">
+          <div class="summary-row">
+            <span>{{ data.subscription.subscriptionName }} Renewal</span>
+            <span>{{ getRenewalAmount() | currency:'INR':'symbol':'1.2-2' }}</span>
+          </div>
+          <div class="summary-row total">
+            <span><strong>Total Amount</strong></span>
+            <span><strong>{{ getRenewalAmount() | currency:'INR':'symbol':'1.2-2' }}</strong></span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Action Buttons -->
+      <div class="action-buttons">
+        <button
+          class="btn btn-secondary cancel-btn"
+          (click)="cancelRenewal()"
+          [disabled]="processing()"
+        >
+          <i class="fas fa-times"></i>
+          Cancel
+        </button>
+        <button
+          class="btn btn-primary confirm-btn"
+          (click)="confirmRenewal()"
+          [disabled]="processing()"
+        >
+          @if (processing()) {
+            <i class="fas fa-spinner fa-spin"></i>
+            Processing...
+          } @else {
+            <i class="fas fa-check"></i>
+            Confirm Renewal
+          }
+        </button>
+      </div>
+    </div>
+  }
+</section>

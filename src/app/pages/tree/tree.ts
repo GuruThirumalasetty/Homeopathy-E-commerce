@@ -2,6 +2,8 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { FormsModule } from '@angular/forms';
 import { Component, HostListener, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { MatDialog } from '@angular/material/dialog';
+import { TreeDialogComponent } from './tree-dialog/tree-dialog';
 
 export interface Person {
   id: number;
@@ -32,7 +34,6 @@ interface ChartColumn {
   styleUrl: './tree.scss'
 })
 export class TreeComponent implements OnInit {
-  
 
   // Nested nodes used by the template
   public treeNodes: TreeNode[] = [];
@@ -94,7 +95,9 @@ export class TreeComponent implements OnInit {
     { id: 137, parentId: 134, name: 'Next Level Remedy 112', gender: 'Male', birthYear: 2025, isChartParent: 0 },
 ];
 
-  constructor() {}
+  constructor(
+    private readonly dialog: MatDialog
+  ) {}
 
   ngOnInit(): void {
     this.refresh();
@@ -332,5 +335,13 @@ export class TreeComponent implements OnInit {
 
   trackById(index: number, item: TreeNode) {
     return item.id;
+  }
+
+  open_dialog(node: any){
+    this.dialog.open(TreeDialogComponent,{
+      data: node
+    }).afterClosed().subscribe((response: any)=>{
+      
+    })
   }
 }

@@ -6,6 +6,7 @@ export const navLinks = [
   { path: 'products', label: 'Products' },
   { path: 'about', label: 'About' },
   { path: 'contact', label: 'Contact' },
+  { path: 'my-subscriptions', label: 'My Subscriptions' },
   { path: 'dashboard', label: 'Dashboard' },
   { path: 'admin', label: 'Admin' }
 ];
@@ -224,6 +225,18 @@ export const routes: Routes = [
     title: 'Homeopathy | Addresses',
     canActivate: [authGuard],
     loadComponent: () => import('./pages/addresses/addresses').then(m => m.AddressesComponent)
+  },
+  {
+    path: 'my-subscriptions',
+    title: 'Homeopathy | My Subscriptions',
+    canActivate: [authGuard],
+    loadComponent: () => import('./pages/my-subscriptions/my-subscriptions').then(m => m.MySubscriptionsComponent)
+  },
+  {
+    path: 'renew-subscription/:id',
+    title: 'Homeopathy | Renew Subscription',
+    canActivate: [authGuard],
+    loadComponent: () => import('./pages/renew-subscription/renew-subscription').then(m => m.RenewSubscriptionComponent)
   },
   {
     path: 'admin/events',

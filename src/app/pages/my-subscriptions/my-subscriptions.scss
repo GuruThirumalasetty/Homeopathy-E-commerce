@@ -1,0 +1,196 @@
+.my-subscriptions-page {
+  padding: 2rem;
+  width: 100%;
+  margin: 0 auto;
+
+  .subscriptions-header {
+    text-align: center;
+    margin-bottom: 2rem;
+
+    h1 {
+      color: #2c3e50;
+      margin-bottom: 0.5rem;
+    }
+
+    .subtitle {
+      color: #7f8c8d;
+      font-size: 1.1rem;
+    }
+  }
+
+  .loading-state, .empty-state {
+    text-align: center;
+    padding: 3rem;
+    color: #7f8c8d;
+
+    i {
+      font-size: 3rem;
+      margin-bottom: 1rem;
+      color: #3498db;
+    }
+
+    h3 {
+      margin-bottom: 1rem;
+    }
+
+    .btn {
+      margin-top: 1.5rem;
+    }
+  }
+
+  .subscriptions-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+    gap: 2rem;
+
+    .subscription-card {
+      background: white;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      border-radius: 12px;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      padding: 1.5rem;
+      transition: transform 0.2s, box-shadow 0.2s;
+
+      &:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 15px rgba(0, 0, 0, 0.15);
+      }
+
+      &.expired {
+        opacity: 0.7;
+        background: #f8f9fa;
+        border: 1px solid #dee2e6;
+
+        &:hover {
+          transform: none;
+          box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+      }
+
+      .card-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 1rem;
+
+        .plan-name {
+          color: #2c3e50;
+          margin: 0;
+        }
+
+        .status-badge {
+          padding: 0.25rem 0.75rem;
+          border-radius: 20px;
+          font-size: 0.875rem;
+          font-weight: 500;
+
+          &.badge-active {
+            background: #d4edda;
+            color: #155724;
+          }
+
+          &.badge-expired {
+            background: #f8d7da;
+            color: #721c24;
+          }
+        }
+      }
+
+      .plan-details {
+        margin-bottom: 1.5rem;
+
+        .price-info {
+          margin-bottom: 1rem;
+
+          .amount {
+            font-size: 2rem;
+            font-weight: bold;
+            color: #27ae60;
+          }
+
+          .billing-cycle {
+            color: #7f8c8d;
+            font-size: 1.1rem;
+          }
+        }
+
+        .dates {
+          font-size: 0.9rem;
+          color: #555;
+
+          p {
+            margin: 0.25rem 0;
+          }
+        }
+      }
+
+      .features {
+        margin-bottom: 1.5rem;
+
+        h4 {
+          margin-bottom: 0.75rem;
+          color: #2c3e50;
+        }
+
+        .features-list {
+          list-style: none;
+          padding: 0;
+          margin: 0;
+
+          li {
+            display: flex;
+            align-items: center;
+            margin-bottom: 0.5rem;
+            font-size: 0.9rem;
+
+            i {
+              color: #27ae60;
+              margin-right: 0.5rem;
+              width: 16px;
+            }
+          }
+        }
+      }
+
+      .card-actions {
+        .renew-btn {
+          width: 100%;
+          padding: 0.75rem;
+          background: #3498db;
+          color: white;
+          border: none;
+          border-radius: 8px;
+          font-size: 1rem;
+          cursor: pointer;
+          transition: background 0.2s;
+
+          &:hover {
+            background: #2980b9;
+          }
+
+          i {
+            margin-right: 0.5rem;
+          }
+        }
+      }
+    }
+  }
+}
+
+// Responsive design
+@media (max-width: 768px) {
+  .my-subscriptions-page {
+    padding: 1rem;
+
+    .subscriptions-grid {
+      grid-template-columns: 1fr;
+      gap: 1rem;
+
+      .subscription-card {
+        padding: 1rem;
+      }
+    }
+  }
+}
